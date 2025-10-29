@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Sign Up' if signup else 'Sign In' }} - GlideML{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="auth-container">
+        <!-- Left Side - Branding -->
+        <div class="auth-branding">
+            <div class="branding-content">
+                <a href="{{ url_for('main.landing') }}" class="brand-logo">
+                    <div class="logo-box">
+                        <span class="logo-icon">🤖</span>
+                    </div>
+                    <span class="brand-name">GlideML</span>
+                </a>
+
+                <div class="branding-text">
+                    <h1 class="branding-title">
+                        Build ML Models
+                        <span class="gradient-text">Visually</span>
+                    </h1>
+                    <p class="branding-description">
+                        Join thousands of developers and data scientists creating powerful 
+                        machine learning pipelines with our intuitive drag-and-drop platform.
+                    </p>
+                </div>
+
+                <div class="features-list">
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i data-lucide="check-circle"></i>
+                        </div>
+                        <span>No coding required</span>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i data-lucide="check-circle"></i>
+                        </div>
+                        <span>15+ ML components</span>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i data-lucide="check-circle"></i>
+                        </div>
+                        <span>Cloud synchronization</span>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i data-lucide="check-circle"></i>
+                        </div>
+                        <span>Export to Python code</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="auth-glow"></div>
+        </div>
+
+        <!-- Right Side - Form -->
+        <div class="auth-form-container">
+            <div class="auth-form-wrapper">
+                <!-- Theme Toggle -->
+                <div class="form-header">
+                    <button id="theme-toggle" class="btn btn-ghost btn-sm" aria-label="Toggle theme">
+                        <i data-lucide="moon" class="theme-icon"></i>
+                    </button>
+                </div>
+
+                <!-- Form Card -->
+                <div class="auth-card">
+                    <div class="auth-card-header">
+                        <h2 class="auth-title">{{ 'Create Account' if signup else 'Welcome Back' }}</h2>
+                        <p class="auth-subtitle">
+                            {{ 'Sign up to start building ML models' if signup else 'Sign in to continue to your dashboard' }}
+                        </p>
+                    </div>
+
+                    <!-- Flash Messages -->
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ 'error' if category == 'error' else 'info' }}">
+                                    <i data-lucide="{{ 'alert-circle' if category == 'error' else 'info' }}"></i>
+                                    <span>{{ message }}</span>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+
+                    <!-- Forms -->
+                    {% if signup %}
+                        <!-- Sign Up Form -->
+                        <form method="POST" action="{{ url_for('auth.signup') }}" class="auth-form">
+                            {{ form.hidden_tag() }}
+
+                            <div class="form-group">
+                                <label for="username" class="form-label">Username</label>
+                                {{ form.username(class="form-input" + (" form-input-error" if form.username.errors else ""), placeholder="johndoe") }}
+                                {% if form.username.errors %}
+                                    <span class="form-error">{{ form.username.errors[0] }}</span>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email" class="form-label">Email</label>
+                                {{ form.email(class="form-input" + (" form-input-error" if form.email.errors else ""), placeholder="john@example.com") }}
+                                {% if form.email.errors %}
+                                    <span class="form-error">{{ form.email.errors[0] }}</span>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group">
+                                <label for="password" class="form-label">Password</label>
+                                {{ form.password(class="form-input" + (" form-input-error" if form.password.errors else ""), placeholder="••••••••") }}
+                                {% if form.password.errors %}
+                                    <span class="form-error">{{ form.password.errors[0] }}</span>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group">
+                                <label for="confirm_password" class="form-label">Confirm Password</label>
+                                {{ form.confirm_password(class="form-input" + (" form-input-error" if form.confirm_password.errors else ""), placeholder="••••••••") }}
+                                {% if form.confirm_password.errors %}
+                                    <span class="form-error">{{ form.confirm_password.errors[0] }}</span>
+                                {% endif %}
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-full">
+                                <i data-lucide="user-plus"></i>
+                                Create Account
+                            </button>
+                        </form>
+                    {% else %}
+                        <!-- Sign In Form -->
+                        <form method="POST" action="{{ url_for('auth.login') }}" class="auth-form">
+                            {{ form.hidden_tag() }}
+
+                            <div class="form-group">
+                                <label for="email" class="form-label">Email</label>
+                                {{ form.email(class="form-input" + (" form-input-error" if form.email.errors else ""), placeholder="john@example.com") }}
+                                {% if form.email.errors %}
+                                    <span class="form-error">{{ form.email.errors[0] }}</span>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group">
+                                <label for="password" class="form-label">Password</label>
+                                {{ form.password(class="form-input" + (" form-input-error" if form.password.errors else ""), placeholder="••••••••") }}
+                                {% if form.password.errors %}
+                                    <span class="form-error">{{ form.password.errors[0] }}</span>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-options">
+                                <label class="checkbox-label">
+                                    {{ form.remember_me(class="checkbox") }}
+                                    <span>Remember me</span>
+                                </label>
+                                <a href="#" class="link-primary">Forgot password?</a>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-full">
+                                <i data-lucide="log-in"></i>
+                                Sign In
+                            </button>
+                        </form>
+                    {% endif %}
+
+                    <!-- Toggle Auth Mode -->
+                    <div class="auth-footer">
+                        <span class="auth-footer-text">
+                            {{ "Already have an account?" if signup else "Don't have an account?" }}
+                        </span>
+                        <a href="{{ url_for('auth.login') if signup else url_for('auth.signup') }}" class="link-primary">
+                            {{ 'Sign In' if signup else 'Sign Up' }}
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Additional Info -->
+                <div class="auth-info">
+                    <p class="info-text">
+                        By continuing, you agree to our 
+                        <a href="#" class="link-muted">Terms of Service</a> 
+                        and 
+                        <a href="#" class="link-muted">Privacy Policy</a>.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+<script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+</script>
+{% endblock %}

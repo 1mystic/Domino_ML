@@ -1,0 +1,377 @@
+[
+  {
+    "id": "csv-loader",
+    "name": "CSV Loader",
+    "category": "Data Sources",
+    "type": "data",
+    "description": "Load data from CSV file",
+    "icon": "📊",
+    "parameters": [
+      {
+        "name": "file_path",
+        "type": "string",
+        "label": "File Path",
+        "description": "Path to the CSV file",
+        "defaultValue": "data.csv",
+        "required": true
+      },
+      {
+        "name": "separator",
+        "type": "select",
+        "label": "Separator",
+        "defaultValue": ",",
+        "options": [",", ";", "\\t", "|"]
+      }
+    ],
+    "inputs": [],
+    "outputs": ["data"],
+    "pythonTemplate": "\nimport pandas as pd\n\n# Load data from CSV\ndata = pd.read_csv('{file_path}', sep='{separator}')\nprint(f\"Loaded dataset with shape: {data.shape}\")\n"
+  },
+  {
+    "id": "sample-data",
+    "name": "Sample Dataset",
+    "category": "Data Sources",
+    "type": "data",
+    "description": "Load built-in sample datasets",
+    "icon": "🎯",
+    "parameters": [
+      {
+        "name": "dataset",
+        "type": "select",
+        "label": "Dataset",
+        "defaultValue": "iris",
+        "options": ["iris", "wine", "breast_cancer", "digits"]
+      }
+    ],
+    "inputs": [],
+    "outputs": ["data"],
+    "pythonTemplate": "\nfrom sklearn.datasets import load_{dataset}\nimport pandas as pd\n\n# Load sample dataset\ndataset = load_{dataset}()\ndata = pd.DataFrame(dataset.data, columns=dataset.feature_names)\nif hasattr(dataset, 'target'):\n    data['target'] = dataset.target\nprint(f\"Loaded dataset with shape: {data.shape}\")\n"
+  },
+  {
+    "id": "standard-scaler",
+    "name": "Standard Scaler",
+    "category": "Preprocessing",
+    "type": "preprocessing",
+    "description": "Standardize features by removing mean and scaling to unit variance",
+    "icon": "📏",
+    "parameters": [
+      {
+        "name": "with_mean",
+        "type": "boolean",
+        "label": "Center Data",
+        "defaultValue": true
+      },
+      {
+        "name": "with_std",
+        "type": "boolean",
+        "label": "Scale Data",
+        "defaultValue": true
+      }
+    ],
+    "inputs": ["data"],
+    "outputs": ["scaled_data"],
+    "pythonTemplate": "\nfrom sklearn.preprocessing import StandardScaler\n\n# Initialize and fit the scaler\nscaler = StandardScaler(with_mean={with_mean}, with_std={with_std})\nscaled_data = scaler.fit_transform(data)\nprint(f\"Applied StandardScaler to data with shape: {scaled_data.shape}\")\n"
+  },
+  {
+    "id": "train-test-split",
+    "name": "Train Test Split",
+    "category": "Preprocessing",
+    "type": "preprocessing",
+    "description": "Split data into training and testing sets",
+    "icon": "✂️",
+    "parameters": [
+      {
+        "name": "test_size",
+        "type": "number",
+        "label": "Test Size",
+        "defaultValue": 0.2,
+        "min": 0.1,
+        "max": 0.9,
+        "step": 0.05
+      },
+      {
+        "name": "random_state",
+        "type": "number",
+        "label": "Random State",
+        "defaultValue": 42
+      }
+    ],
+    "inputs": ["data"],
+    "outputs": ["X_train", "X_test", "y_train", "y_test"],
+    "pythonTemplate": "\nfrom sklearn.model_selection import train_test_split\n\n# Separate features and target\nX = data.drop('target', axis=1)\ny = data['target']\n\n# Split the data\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size={test_size}, random_state={random_state}\n)\nprint(f\"Training set size: {X_train.shape[0]}\")\nprint(f\"Test set size: {X_test.shape[0]}\")\n"
+  },
+  {
+    "id": "min-max-scaler",
+    "name": "Min-Max Scaler",
+    "category": "Preprocessing",
+    "type": "preprocessing",
+    "description": "Scale features to a fixed range, typically [0, 1]",
+    "icon": "📐",
+    "parameters": [
+      {
+        "name": "feature_range_min",
+        "type": "number",
+        "label": "Range Min",
+        "defaultValue": 0,
+        "min": -10,
+        "max": 10,
+        "step": 0.1
+      },
+      {
+        "name": "feature_range_max",
+        "type": "number",
+        "label": "Range Max",
+        "defaultValue": 1,
+        "min": -10,
+        "max": 10,
+        "step": 0.1
+      }
+    ],
+    "inputs": ["data"],
+    "outputs": ["scaled_data"],
+    "pythonTemplate": "\nfrom sklearn.preprocessing import MinMaxScaler\n\n# Initialize and fit the scaler\nscaler = MinMaxScaler(feature_range=({feature_range_min}, {feature_range_max}))\nscaled_data = scaler.fit_transform(data)\nprint(f\"Applied MinMaxScaler to data with shape: {scaled_data.shape}\")\n"
+  },
+  {
+    "id": "pca",
+    "name": "PCA Dimensionality Reduction",
+    "category": "Preprocessing",
+    "type": "preprocessing",
+    "description": "Principal Component Analysis for dimensionality reduction",
+    "icon": "📊",
+    "parameters": [
+      {
+        "name": "n_components",
+        "type": "number",
+        "label": "Components",
+        "defaultValue": 2,
+        "min": 1,
+        "max": 50
+      },
+      {
+        "name": "whiten",
+        "type": "boolean",
+        "label": "Whiten Components",
+        "defaultValue": false
+      }
+    ],
+    "inputs": ["data"],
+    "outputs": ["transformed_data"],
+    "pythonTemplate": "\nfrom sklearn.decomposition import PCA\n\n# Initialize and fit PCA\npca = PCA(n_components={n_components}, whiten={whiten})\ntransformed_data = pca.fit_transform(data)\nprint(f\"PCA reduced data to {transformed_data.shape[1]} components\")\nprint(f\"Explained variance ratio: {pca.explained_variance_ratio_}\")\n"
+  },
+  {
+    "id": "random-forest-classifier",
+    "name": "Random Forest Classifier",
+    "category": "Classification",
+    "type": "model",
+    "description": "Random Forest classification algorithm",
+    "icon": "🌲",
+    "parameters": [
+      {
+        "name": "n_estimators",
+        "type": "number",
+        "label": "Number of Trees",
+        "defaultValue": 100,
+        "min": 1,
+        "max": 1000
+      },
+      {
+        "name": "max_depth",
+        "type": "number",
+        "label": "Max Depth",
+        "defaultValue": 10,
+        "min": 1,
+        "max": 50
+      },
+      {
+        "name": "random_state",
+        "type": "number",
+        "label": "Random State",
+        "defaultValue": 42
+      }
+    ],
+    "inputs": ["X_train", "y_train"],
+    "outputs": ["model"],
+    "pythonTemplate": "\nfrom sklearn.ensemble import RandomForestClassifier\n\n# Initialize and train the model\nmodel = RandomForestClassifier(\n    n_estimators={n_estimators},\n    max_depth={max_depth},\n    random_state={random_state}\n)\nmodel.fit(X_train, y_train)\nprint(\"Random Forest Classifier trained successfully\")\n"
+  },
+  {
+    "id": "svm-classifier",
+    "name": "SVM Classifier",
+    "category": "Classification",
+    "type": "model",
+    "description": "Support Vector Machine classifier",
+    "icon": "⚡",
+    "parameters": [
+      {
+        "name": "kernel",
+        "type": "select",
+        "label": "Kernel",
+        "defaultValue": "rbf",
+        "options": ["linear", "poly", "rbf", "sigmoid"]
+      },
+      {
+        "name": "C",
+        "type": "number",
+        "label": "Regularization (C)",
+        "defaultValue": 1.0,
+        "min": 0.01,
+        "max": 100,
+        "step": 0.01
+      }
+    ],
+    "inputs": ["X_train", "y_train"],
+    "outputs": ["model"],
+    "pythonTemplate": "\nfrom sklearn.svm import SVC\n\n# Initialize and train the model\nmodel = SVC(kernel='{kernel}', C={C}, random_state=42)\nmodel.fit(X_train, y_train)\nprint(\"SVM Classifier trained successfully\")\n"
+  },
+  {
+    "id": "logistic-regression",
+    "name": "Logistic Regression",
+    "category": "Classification",
+    "type": "model",
+    "description": "Linear classifier for binary and multiclass problems",
+    "icon": "📈",
+    "parameters": [
+      {
+        "name": "C",
+        "type": "number",
+        "label": "Regularization (C)",
+        "defaultValue": 1.0,
+        "min": 0.01,
+        "max": 100,
+        "step": 0.01
+      },
+      {
+        "name": "max_iter",
+        "type": "number",
+        "label": "Max Iterations",
+        "defaultValue": 1000,
+        "min": 100,
+        "max": 5000,
+        "step": 100
+      }
+    ],
+    "inputs": ["X_train", "y_train"],
+    "outputs": ["model"],
+    "pythonTemplate": "\nfrom sklearn.linear_model import LogisticRegression\n\n# Initialize and train the model\nmodel = LogisticRegression(C={C}, max_iter={max_iter}, random_state=42)\nmodel.fit(X_train, y_train)\nprint(\"Logistic Regression model trained successfully\")\n"
+  },
+  {
+    "id": "knn-classifier",
+    "name": "K-Nearest Neighbors",
+    "category": "Classification",
+    "type": "model",
+    "description": "Instance-based learning algorithm",
+    "icon": "👥",
+    "parameters": [
+      {
+        "name": "n_neighbors",
+        "type": "number",
+        "label": "Number of Neighbors",
+        "defaultValue": 5,
+        "min": 1,
+        "max": 50
+      },
+      {
+        "name": "weights",
+        "type": "select",
+        "label": "Weights",
+        "defaultValue": "uniform",
+        "options": ["uniform", "distance"]
+      }
+    ],
+    "inputs": ["X_train", "y_train"],
+    "outputs": ["model"],
+    "pythonTemplate": "\nfrom sklearn.neighbors import KNeighborsClassifier\n\n# Initialize and train the model\nmodel = KNeighborsClassifier(\n    n_neighbors={n_neighbors},\n    weights='{weights}'\n)\nmodel.fit(X_train, y_train)\nprint(\"K-Nearest Neighbors Classifier trained successfully\")\n"
+  },
+  {
+    "id": "linear-regression",
+    "name": "Linear Regression",
+    "category": "Regression",
+    "type": "model",
+    "description": "Linear regression algorithm",
+    "icon": "📈",
+    "parameters": [
+      {
+        "name": "fit_intercept",
+        "type": "boolean",
+        "label": "Fit Intercept",
+        "defaultValue": true
+      }
+    ],
+    "inputs": ["X_train", "y_train"],
+    "outputs": ["model"],
+    "pythonTemplate": "\nfrom sklearn.linear_model import LinearRegression\n\n# Initialize and train the model\nmodel = LinearRegression(fit_intercept={fit_intercept})\nmodel.fit(X_train, y_train)\nprint(\"Linear Regression model trained successfully\")\n"
+  },
+  {
+    "id": "random-forest-regressor",
+    "name": "Random Forest Regressor",
+    "category": "Regression",
+    "type": "model",
+    "description": "Random Forest regression algorithm",
+    "icon": "🌳",
+    "parameters": [
+      {
+        "name": "n_estimators",
+        "type": "number",
+        "label": "Number of Trees",
+        "defaultValue": 100,
+        "min": 1,
+        "max": 1000
+      },
+      {
+        "name": "max_depth",
+        "type": "number",
+        "label": "Max Depth",
+        "defaultValue": 10,
+        "min": 1,
+        "max": 50
+      }
+    ],
+    "inputs": ["X_train", "y_train"],
+    "outputs": ["model"],
+    "pythonTemplate": "\nfrom sklearn.ensemble import RandomForestRegressor\n\n# Initialize and train the model\nmodel = RandomForestRegressor(\n    n_estimators={n_estimators},\n    max_depth={max_depth},\n    random_state=42\n)\nmodel.fit(X_train, y_train)\nprint(\"Random Forest Regressor trained successfully\")\n"
+  },
+  {
+    "id": "classification-metrics",
+    "name": "Classification Metrics",
+    "category": "Evaluation",
+    "type": "evaluation",
+    "description": "Calculate classification performance metrics",
+    "icon": "📊",
+    "parameters": [],
+    "inputs": ["model", "X_test", "y_test"],
+    "outputs": ["metrics"],
+    "pythonTemplate": "\nfrom sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, classification_report\n\n# Make predictions\ny_pred = model.predict(X_test)\n\n# Calculate metrics\naccuracy = accuracy_score(y_test, y_pred)\nprecision = precision_score(y_test, y_pred, average='weighted')\nrecall = recall_score(y_test, y_pred, average='weighted')\nf1 = f1_score(y_test, y_pred, average='weighted')\n\nprint(f\"Accuracy: {accuracy:.4f}\")\nprint(f\"Precision: {precision:.4f}\")\nprint(f\"Recall: {recall:.4f}\")\nprint(f\"F1-Score: {f1:.4f}\")\nprint(\"\\nDetailed Classification Report:\")\nprint(classification_report(y_test, y_pred))\n"
+  },
+  {
+    "id": "regression-metrics",
+    "name": "Regression Metrics",
+    "category": "Evaluation",
+    "type": "evaluation",
+    "description": "Calculate regression performance metrics",
+    "icon": "📈",
+    "parameters": [],
+    "inputs": ["model", "X_test", "y_test"],
+    "outputs": ["metrics"],
+    "pythonTemplate": "\nfrom sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score\nimport numpy as np\n\n# Make predictions\ny_pred = model.predict(X_test)\n\n# Calculate metrics\nmse = mean_squared_error(y_test, y_pred)\nrmse = np.sqrt(mse)\nmae = mean_absolute_error(y_test, y_pred)\nr2 = r2_score(y_test, y_pred)\n\nprint(f\"Mean Squared Error: {mse:.4f}\")\nprint(f\"Root Mean Squared Error: {rmse:.4f}\")\nprint(f\"Mean Absolute Error: {mae:.4f}\")\nprint(f\"R² Score: {r2:.4f}\")\n"
+  },
+  {
+    "id": "kmeans-clustering",
+    "name": "K-Means Clustering",
+    "category": "Clustering",
+    "type": "model",
+    "description": "Partition data into K clusters",
+    "icon": "🎯",
+    "parameters": [
+      {
+        "name": "n_clusters",
+        "type": "number",
+        "label": "Number of Clusters",
+        "defaultValue": 3,
+        "min": 2,
+        "max": 20
+      }
+    ],
+    "inputs": ["data"],
+    "outputs": ["labels", "model"],
+    "pythonTemplate": "\nfrom sklearn.cluster import KMeans\n\n# Initialize and fit the model\nmodel = KMeans(n_clusters={n_clusters}, random_state=42)\nlabels = model.fit_predict(data)\nprint(f\"K-Means clustering completed with {len(set(labels))} clusters\")\n"
+  }
+]

@@ -1,0 +1,238 @@
+[
+  {
+    "id": "iris-classification",
+    "name": "Iris Classification",
+    "description": "Classic iris flower classification using Random Forest",
+    "category": "Classification",
+    "icon": "🌸",
+    "pipeline": {
+      "name": "Iris Classification Pipeline",
+      "description": "Classify iris flowers using Random Forest",
+      "nodes": [
+        {
+          "id": "data-1",
+          "type": "data",
+          "category": "Data Sources",
+          "name": "Sample Dataset",
+          "position": {"x": 100, "y": 100},
+          "data": {
+            "label": "Iris Dataset",
+            "description": "Load iris dataset",
+            "type": "data",
+            "parameters": {"dataset": "iris"},
+            "inputs": [],
+            "outputs": ["data"]
+          }
+        },
+        {
+          "id": "split-1",
+          "type": "preprocessing",
+          "category": "Preprocessing",
+          "name": "Train Test Split",
+          "position": {"x": 300, "y": 100},
+          "data": {
+            "label": "Split Data",
+            "description": "Split into train/test sets",
+            "type": "preprocessing",
+            "parameters": {"test_size": 0.3, "random_state": 42},
+            "inputs": ["data"],
+            "outputs": ["X_train", "X_test", "y_train", "y_test"]
+          }
+        },
+        {
+          "id": "model-1",
+          "type": "model",
+          "category": "Classification",
+          "name": "Random Forest Classifier",
+          "position": {"x": 500, "y": 100},
+          "data": {
+            "label": "RF Classifier",
+            "description": "Train Random Forest model",
+            "type": "model",
+            "parameters": {"n_estimators": 100, "max_depth": 10, "random_state": 42},
+            "inputs": ["X_train", "y_train"],
+            "outputs": ["model"]
+          }
+        },
+        {
+          "id": "eval-1",
+          "type": "evaluation",
+          "category": "Evaluation",
+          "name": "Classification Metrics",
+          "position": {"x": 700, "y": 100},
+          "data": {
+            "label": "Evaluate Model",
+            "description": "Calculate performance metrics",
+            "type": "evaluation",
+            "parameters": {},
+            "inputs": ["model", "X_test", "y_test"],
+            "outputs": ["metrics"]
+          }
+        }
+      ],
+      "edges": [
+        {"id": "e1", "source": "data-1", "target": "split-1"},
+        {"id": "e2", "source": "split-1", "target": "model-1"},
+        {"id": "e3", "source": "model-1", "target": "eval-1"},
+        {"id": "e4", "source": "split-1", "target": "eval-1"}
+      ]
+    }
+  },
+  {
+    "id": "regression-pipeline",
+    "name": "Linear Regression Pipeline",
+    "description": "Simple linear regression with scaling",
+    "category": "Regression",
+    "icon": "📈",
+    "pipeline": {
+      "name": "Linear Regression Pipeline",
+      "description": "Predict continuous values using linear regression",
+      "nodes": [
+        {
+          "id": "data-1",
+          "type": "data",
+          "category": "Data Sources",
+          "name": "Sample Dataset",
+          "position": {"x": 100, "y": 100},
+          "data": {
+            "label": "Wine Dataset",
+            "description": "Load wine dataset",
+            "type": "data",
+            "parameters": {"dataset": "wine"},
+            "inputs": [],
+            "outputs": ["data"]
+          }
+        },
+        {
+          "id": "scaler-1",
+          "type": "preprocessing",
+          "category": "Preprocessing",
+          "name": "Standard Scaler",
+          "position": {"x": 250, "y": 100},
+          "data": {
+            "label": "Scale Features",
+            "description": "Standardize feature values",
+            "type": "preprocessing",
+            "parameters": {"with_mean": true, "with_std": true},
+            "inputs": ["data"],
+            "outputs": ["scaled_data"]
+          }
+        },
+        {
+          "id": "split-1",
+          "type": "preprocessing",
+          "category": "Preprocessing",
+          "name": "Train Test Split",
+          "position": {"x": 400, "y": 100},
+          "data": {
+            "label": "Split Data",
+            "description": "Split into train/test sets",
+            "type": "preprocessing",
+            "parameters": {"test_size": 0.2, "random_state": 42},
+            "inputs": ["data"],
+            "outputs": ["X_train", "X_test", "y_train", "y_test"]
+          }
+        },
+        {
+          "id": "model-1",
+          "type": "model",
+          "category": "Regression",
+          "name": "Linear Regression",
+          "position": {"x": 550, "y": 100},
+          "data": {
+            "label": "Linear Model",
+            "description": "Train linear regression model",
+            "type": "model",
+            "parameters": {"fit_intercept": true},
+            "inputs": ["X_train", "y_train"],
+            "outputs": ["model"]
+          }
+        },
+        {
+          "id": "eval-1",
+          "type": "evaluation",
+          "category": "Evaluation",
+          "name": "Regression Metrics",
+          "position": {"x": 700, "y": 100},
+          "data": {
+            "label": "Evaluate Model",
+            "description": "Calculate regression metrics",
+            "type": "evaluation",
+            "parameters": {},
+            "inputs": ["model", "X_test", "y_test"],
+            "outputs": ["metrics"]
+          }
+        }
+      ],
+      "edges": [
+        {"id": "e1", "source": "data-1", "target": "scaler-1"},
+        {"id": "e2", "source": "scaler-1", "target": "split-1"},
+        {"id": "e3", "source": "split-1", "target": "model-1"},
+        {"id": "e4", "source": "model-1", "target": "eval-1"},
+        {"id": "e5", "source": "split-1", "target": "eval-1"}
+      ]
+    }
+  },
+  {
+    "id": "clustering-pipeline",
+    "name": "K-Means Clustering",
+    "description": "Unsupervised clustering with K-Means",
+    "category": "Clustering",
+    "icon": "🎯",
+    "pipeline": {
+      "name": "K-Means Clustering Pipeline",
+      "description": "Group data into clusters",
+      "nodes": [
+        {
+          "id": "data-1",
+          "type": "data",
+          "category": "Data Sources",
+          "name": "Sample Dataset",
+          "position": {"x": 100, "y": 100},
+          "data": {
+            "label": "Iris Dataset",
+            "description": "Load iris dataset",
+            "type": "data",
+            "parameters": {"dataset": "iris"},
+            "inputs": [],
+            "outputs": ["data"]
+          }
+        },
+        {
+          "id": "pca-1",
+          "type": "preprocessing",
+          "category": "Preprocessing",
+          "name": "PCA Dimensionality Reduction",
+          "position": {"x": 300, "y": 100},
+          "data": {
+            "label": "Reduce Dimensions",
+            "description": "Apply PCA",
+            "type": "preprocessing",
+            "parameters": {"n_components": 2, "whiten": false},
+            "inputs": ["data"],
+            "outputs": ["transformed_data"]
+          }
+        },
+        {
+          "id": "model-1",
+          "type": "model",
+          "category": "Clustering",
+          "name": "K-Means Clustering",
+          "position": {"x": 500, "y": 100},
+          "data": {
+            "label": "Cluster Data",
+            "description": "Apply K-Means",
+            "type": "model",
+            "parameters": {"n_clusters": 3},
+            "inputs": ["data"],
+            "outputs": ["labels", "model"]
+          }
+        }
+      ],
+      "edges": [
+        {"id": "e1", "source": "data-1", "target": "pca-1"},
+        {"id": "e2", "source": "pca-1", "target": "model-1"}
+      ]
+    }
+  }
+]

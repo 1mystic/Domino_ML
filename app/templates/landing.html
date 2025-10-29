@@ -1,0 +1,270 @@
+{% extends "base.html" %}
+
+{% block title %}GlideML - Visual ML Pipeline Builder{% endblock %}
+{% block description %}Build powerful machine learning pipelines with our intuitive drag-and-drop interface. No coding required.{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="landing-page">
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="flex items-center justify-between py-4">
+                <div class="flex items-center gap-3">
+                    <div class="logo-box">
+                        <span class="logo-icon">🤖</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="logo-text">GlideML</h1>
+                        <span class="badge badge-secondary">Beta</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button id="theme-toggle" class="btn btn-ghost btn-sm" aria-label="Toggle theme">
+                        <i data-lucide="moon" class="theme-icon"></i>
+                    </button>
+                    {% if current_user.is_authenticated %}
+                        <a href="{{ url_for('main.builder') }}" class="btn btn-primary btn-sm">
+                            <i data-lucide="layout-dashboard"></i>
+                            <span class="hide-mobile">Dashboard</span>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="hero-grid">
+                <!-- Left Side - Content -->
+                <div class="hero-content">
+                    <div class="hero-badge">
+                        <div class="pulse-dot"></div>
+                        <span>No-Code ML Platform</span>
+                    </div>
+                    
+                    <div class="hero-title-group">
+                        <h1 class="hero-title">
+                            Build ML Models
+                            <span class="gradient-text">Visually</span>
+                        </h1>
+                        <p class="hero-description">
+                            Create powerful machine learning pipelines with our intuitive drag-and-drop interface. 
+                            No coding required.
+                        </p>
+                    </div>
+
+                    <!-- CTA Buttons -->
+                    <div class="cta-buttons">
+                        <a href="{{ url_for('main.builder') }}" class="btn btn-primary btn-lg">
+                            <i data-lucide="play"></i>
+                            Try It First
+                            <i data-lucide="arrow-right"></i>
+                        </a>
+                        
+                        {% if not current_user.is_authenticated %}
+                        <a href="{{ url_for('auth.signup') }}" class="btn btn-outline btn-lg">
+                            <i data-lucide="user-plus"></i>
+                            Join Us
+                        </a>
+                        {% endif %}
+                    </div>
+
+                    <!-- Stats -->
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-number">15+</div>
+                            <div class="stat-label">ML Components</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">3+</div>
+                            <div class="stat-label">Ready Templates</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">100%</div>
+                            <div class="stat-label">Visual Interface</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">∞</div>
+                            <div class="stat-label">Possibilities</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Side - Visual -->
+                <div class="hero-visual">
+                    <div class="hero-card">
+                        <div class="card-glow"></div>
+                        <div class="card-content">
+                            <div class="demo-box">
+                                <div class="demo-header">
+                                    <span>Visual ML Pipeline Builder</span>
+                                </div>
+                                <div class="demo-canvas">
+                                    <!-- Sample nodes -->
+                                    <div class="demo-node" style="top: 20%; left: 10%;">
+                                        <div class="node-icon">📊</div>
+                                        <div class="node-label">Load Data</div>
+                                    </div>
+                                    <div class="demo-node" style="top: 20%; left: 40%;">
+                                        <div class="node-icon">📏</div>
+                                        <div class="node-label">Scale</div>
+                                    </div>
+                                    <div class="demo-node" style="top: 20%; left: 70%;">
+                                        <div class="node-icon">🌲</div>
+                                        <div class="node-label">Train</div>
+                                    </div>
+                                    <!-- Connection lines -->
+                                    <svg class="connection-lines">
+                                        <line x1="20%" y1="50%" x2="40%" y2="50%" stroke="#3b82f6" stroke-width="2"/>
+                                        <line x1="55%" y1="50%" x2="70%" y2="50%" stroke="#3b82f6" stroke-width="2"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="floating-element floating-1"></div>
+                    <div class="floating-element floating-2"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">
+                    Everything you need to build
+                    <span class="gradient-text">ML models</span>
+                </h2>
+                <p class="section-description">
+                    From data preprocessing to model deployment, our platform provides all the tools 
+                    you need for your machine learning journey.
+                </p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i data-lucide="git-branch"></i>
+                    </div>
+                    <h3 class="feature-title">Drag & Drop Interface</h3>
+                    <p class="feature-description">
+                        Build ML pipelines visually with our intuitive drag-and-drop interface
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i data-lucide="code"></i>
+                    </div>
+                    <h3 class="feature-title">Code Generation</h3>
+                    <p class="feature-description">
+                        Automatically generate Python code from your visual pipelines
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i data-lucide="cloud"></i>
+                    </div>
+                    <h3 class="feature-title">Cloud Storage</h3>
+                    <p class="feature-description">
+                        Save and access your models from anywhere with cloud synchronization
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i data-lucide="sparkles"></i>
+                    </div>
+                    <h3 class="feature-title">Smart Validation</h3>
+                    <p class="feature-description">
+                        Get real-time feedback and suggestions to optimize your models
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i data-lucide="brain"></i>
+                    </div>
+                    <h3 class="feature-title">Pre-built Templates</h3>
+                    <p class="feature-description">
+                        Start quickly with proven ML pipeline templates
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i data-lucide="download"></i>
+                    </div>
+                    <h3 class="feature-title">Import/Export</h3>
+                    <p class="feature-description">
+                        Share your models with team members and collaborate easily
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-card">
+                <div class="cta-bg"></div>
+                <div class="cta-content">
+                    <h2 class="cta-title">Ready to start building?</h2>
+                    <p class="cta-description">
+                        Join thousands of developers and data scientists who are already building 
+                        amazing ML models with our platform.
+                    </p>
+                    
+                    <div class="cta-buttons">
+                        <a href="{{ url_for('main.builder') }}" class="btn btn-lg cta-btn-white">
+                            <i data-lucide="play"></i>
+                            Start Building Now
+                        </a>
+                        
+                        {% if not current_user.is_authenticated %}
+                        <a href="{{ url_for('auth.signup') }}" class="btn btn-outline btn-lg cta-btn-outline">
+                            <i data-lucide="user-plus"></i>
+                            Create Account
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="flex items-center gap-3">
+                    <div class="footer-logo">🤖</div>
+                    <span class="footer-brand">GlideML</span>
+                </div>
+                
+                <div class="footer-text">
+                    © 2025 GlideML. Built with ❤️ for the ML community.
+                </div>
+            </div>
+        </div>
+    </footer>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+<script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+</script>
+{% endblock %}

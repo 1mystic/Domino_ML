@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}404 - Page Not Found | GlideML{% endblock %}
+
+{% block content %}
+<div class="error-page">
+    <div class="error-container">
+        <div class="error-content">
+            <div class="error-icon">🔍</div>
+            <h1 class="error-title">404</h1>
+            <h2 class="error-subtitle">Page Not Found</h2>
+            <p class="error-description">
+                Sorry, we couldn't find the page you're looking for. 
+                The page might have been moved, deleted, or never existed.
+            </p>
+            
+            <div class="error-actions">
+                <a href="{{ url_for('main.landing') }}" class="btn btn-primary">
+                    <i data-lucide="home"></i>
+                    Go Home
+                </a>
+                <a href="{{ url_for('main.builder') }}" class="btn btn-outline">
+                    <i data-lucide="layout-dashboard"></i>
+                    Go to Builder
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.error-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(to bottom, var(--color-slate-50), var(--color-slate-100));
+}
+
+[data-theme="dark"] .error-page {
+    background: linear-gradient(to bottom, var(--color-slate-900), var(--color-slate-950));
+}
+
+.error-container {
+    max-width: 600px;
+    padding: 2rem;
+}
+
+.error-content {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.error-icon {
+    font-size: 4rem;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+}
+
+.error-title {
+    font-size: 6rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--color-blue-600), var(--color-purple-600));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0;
+}
+
+.error-subtitle {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--foreground);
+    margin: 0;
+}
+
+.error-description {
+    font-size: 1.125rem;
+    color: var(--muted-foreground);
+    line-height: 1.6;
+    margin: 0;
+}
+
+.error-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 1rem;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+</script>
+{% endblock %}
