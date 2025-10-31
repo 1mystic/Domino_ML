@@ -19,6 +19,34 @@ A Flask-based visual ML pipeline builder. This application allows users to quick
 - **Import/Export**: Export models as JSON and import them back
 - **Responsive Design**: Mobile-friendly interface
 
+### ✨ NEW - Phase 1 & 2 Features
+
+#### 🔄 Undo/Redo System (Phase 1)
+- **History Management**: Track up to 50 canvas operations with smart state management
+- **Keyboard Shortcuts**: 
+  - `Ctrl+Z` / `Cmd+Z` - Undo last action
+  - `Ctrl+Shift+Z` / `Cmd+Shift+Z` - Redo undone action
+- **Batch Operations**: Group multiple actions into single undo/redo step
+- **Persistence**: Last 10 actions saved to localStorage for session recovery
+- **Visual Feedback**: Dynamic toolbar buttons with action descriptions
+- **Supported Actions**: Node add/delete, edge add/delete, parameter updates, template loads
+
+#### 📦 Pipeline Versioning (Phase 2)
+- **Version Control**: Full version tracking for ML pipelines with parent-child lineage
+- **Version Management**:
+  - Create new versions with descriptions and tags
+  - Load and compare different versions
+  - Activate specific versions for production
+  - Delete unused versions
+- **Experiment Tracking**: Store and track model metrics across versions
+  - Training, validation, and test metrics
+  - Epoch-based metric tracking
+  - Custom metadata support
+- **Release Management**: Tag versions (production, staging, experimental, etc.)
+- **Collaboration**: Add comments to versions for team collaboration
+- **Version Timeline**: Visual timeline showing version history
+- **Code Snapshots**: Automatically generate and store Python code for each version
+
 ## 📋 Prerequisites
 
 - Python 3.8 or higher
@@ -97,7 +125,7 @@ The application will be available at `http://localhost:5000`
 dominoML-flask/
 ├── app/
 │   ├── __init__.py              # Flask app factory
-│   ├── models.py                # Database models (User, SavedModel)
+│   ├── models.py                # Database models (User, SavedModel, PipelineVersion, etc.)
 │   ├── forms.py                 # WTForms for authentication
 │   ├── data/
 │   │   ├── ml_components.json   # ML component definitions
@@ -106,7 +134,7 @@ dominoML-flask/
 │   │   ├── __init__.py
 │   │   ├── main.py              # Main routes (landing, builder)
 │   │   ├── auth.py              # Authentication routes
-│   │   └── api.py               # REST API endpoints
+│   │   └── api.py               # REST API endpoints (models, versions, metrics)
 │   ├── static/
 │   │   ├── css/
 │   │   │   ├── main.css         # Main styles
@@ -117,19 +145,25 @@ dominoML-flask/
 │   │   │   ├── canvas.js        # Flow canvas logic
 │   │   │   ├── components.js    # Component library logic
 │   │   │   ├── properties.js    # Property panel logic
+│   │   │   ├── history.js       # ⭐ NEW: Undo/Redo system
+│   │   │   ├── versions.js      # ⭐ NEW: Version management UI
 │   │   │   ├── theme.js         # Theme toggle logic
-│   │   │   └── api.js           # API calls
+│   │   │   └── api.js           # API client (updated with version endpoints)
 │   │   └── images/
 │   ├── templates/
 │   │   ├── base.html            # Base template
 │   │   ├── landing.html         # Landing page
 │   │   ├── auth.html            # Login/signup page
-│   │   ├── builder.html         # ML builder interface
+│   │   ├── builder.html         # ML builder interface (updated with history & version UI)
 │   │   └── 404.html             # 404 error page
 │   └── utils/
 │       ├── __init__.py
 │       ├── data_loader.py       # Load components and templates
 │       └── code_generator.py    # Generate Python code from pipeline
+├── migrations/                   # ⭐ NEW: Database migrations
+│   ├── README.md                # Migration documentation
+│   └── applied/                 # Applied migrations archive
+│       └── 2025-10-31_add_versioning.sql
 ├── config.py                    # Application configuration
 ├── run.py                       # Application entry point
 ├── requirements.txt             # Python dependencies
@@ -195,6 +229,38 @@ The application uses a custom CSS design system that replicates the original Tai
 - **Preprocessing**: Data cleaning, feature engineering, scaling, dimensionality reduction
 - **Models**: Classification, regression, clustering algorithms
 - **Evaluation**: Metrics, validation, performance analysis
+
+### Using Undo/Redo
+- **Undo**: Press `Ctrl+Z` (or `Cmd+Z` on Mac) or click the undo button in the toolbar
+- **Redo**: Press `Ctrl+Shift+Z` (or `Cmd+Shift+Z` on Mac) or click the redo button
+- **History**: Hover over undo/redo buttons to see the action description
+- **Persistence**: Your last 10 actions are saved when you reload the page
+
+### Managing Pipeline Versions
+1. **Create Version**: 
+   - Build your pipeline
+   - Save the model first
+   - Click "Versions" button in the toolbar
+   - Click "Create New Version"
+   - Add name, description, and optional tags
+   
+2. **Load Version**:
+   - Click "Versions" button
+   - Browse version timeline
+   - Click "Load" on any version to restore it to the canvas
+   
+3. **Activate Version**:
+   - Set a version as "active" to mark it for production
+   - Only one version can be active at a time
+   
+4. **Compare Versions**:
+   - View changes between versions
+   - Track metric improvements
+   
+5. **Add Metrics** (via API):
+   - Store training/validation metrics
+   - Track experiment results
+   - Compare performance across versions
 
 ## 🔧 Development
 

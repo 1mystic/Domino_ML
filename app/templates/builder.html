@@ -34,9 +34,26 @@
                 <span class="hide-mobile">Open</span>
             </button>
             
+            <button id="versions-btn" class="btn btn-ghost btn-sm hide-mobile" title="Version History">
+                <i data-lucide="git-branch"></i>
+                <span>Versions</span>
+            </button>
+            
             <button id="import-model-btn" class="btn btn-ghost btn-sm hide-mobile" title="Import JSON">
                 <i data-lucide="upload"></i>
                 <span>Import</span>
+            </button>
+            
+            <div class="toolbar-divider"></div>
+            
+            <button id="undo-btn" class="btn btn-ghost btn-sm" title="Undo" disabled>
+                <i data-lucide="undo"></i>
+                <span class="hide-mobile">Undo</span>
+            </button>
+            
+            <button id="redo-btn" class="btn btn-ghost btn-sm" title="Redo" disabled>
+                <i data-lucide="redo"></i>
+                <span class="hide-mobile">Redo</span>
             </button>
             
             <div class="toolbar-divider hide-mobile"></div>
@@ -50,6 +67,8 @@
                 <i data-lucide="check-circle"></i>
                 Validate
             </button>
+            
+        
         </div>
 
         <div class="toolbar-right">
@@ -102,6 +121,11 @@
 
     <!-- Main Content -->
     <div class="builder-container">
+        <!-- Expand Sidebar Button (visible when collapsed) -->
+        <button id="expand-sidebar-btn" class="expand-sidebar-btn" hidden>
+            <i data-lucide="panel-left-open"></i>
+        </button>
+        
         <!-- Component Library Sidebar -->
         <aside class="component-sidebar" id="component-sidebar">
             <div class="sidebar-header">
@@ -360,15 +384,47 @@
             </div>
         </div>
     </div>
+
+    <!-- Version History Dialog -->
+    <div id="versions-dialog" class="dialog-overlay" hidden>
+        <div class="dialog dialog-lg">
+            <div class="dialog-header">
+                <h3 class="dialog-title">Version History</h3>
+                <button class="dialog-close" data-close-dialog="versions-dialog">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="dialog-content">
+                <div style="margin-bottom: 1rem;">
+                    <button id="create-version-btn" class="btn btn-primary btn-sm">
+                        <i data-lucide="plus"></i>
+                        Create New Version
+                    </button>
+                </div>
+                
+                <div id="versions-list">
+                    <div class="loading-state">
+                        <i data-lucide="loader" class="spinner"></i>
+                        <span>Loading versions...</span>
+                    </div>
+                </div>
+            </div>
+            <div class="dialog-footer">
+                <button class="btn btn-ghost" data-close-dialog="versions-dialog">Close</button>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
 <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+<script src="{{ url_for('static', filename='js/history.js') }}"></script>
 <script src="{{ url_for('static', filename='js/api.js') }}"></script>
 <script src="{{ url_for('static', filename='js/components.js') }}"></script>
 <script src="{{ url_for('static', filename='js/properties.js') }}"></script>
 <script src="{{ url_for('static', filename='js/canvas.js') }}"></script>
+<script src="{{ url_for('static', filename='js/versions.js') }}"></script>
 <script>
     // Initialize Lucide icons
     lucide.createIcons();

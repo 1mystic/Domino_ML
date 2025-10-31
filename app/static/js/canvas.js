@@ -12,10 +12,34 @@
         panStart: { x: 0, y: 0 },
         currentModelId: null,
         currentModelName: null,
+        historyInitialized: false,
     };
 
     let canvas, canvasNodes, canvasSvg, emptyState;
     let nodeIdCounter = 0;
+
+    // History helper function
+    function recordHistory(action, metadata = {}) {
+        if (window.historyManager) {
+            window.historyManager.recordState(
+                { nodes: state.nodes, edges: state.edges },
+                action,
+                metadata
+            );
+        }
+    }
+
+    // Initialize history on first state
+    function initializeHistory() {
+        if (!state.historyInitialized && window.historyManager) {
+            window.historyManager.recordState(
+                { nodes: state.nodes, edges: state.edges },
+                'INIT',
+                { timestamp: Date.now() }
+            );
+            state.historyInitialized = true;
+        }
+    }
 
     // Initialize canvas
     window.canvasInit = function() {
@@ -32,6 +56,7 @@
         setupCanvasHandlers();
         setupToolbarHandlers();
         setupDialogHandlers();
+        initializeHistory();
         render();
     };
 
@@ -93,6 +118,12 @@
         // Import model
         const importModelBtn = document.getElementById('import-model-btn');
         if (importModelBtn) importModelBtn.addEventListener('click', () => openDialog('import-dialog'));
+
+        // Undo/Redo
+        const undoBtn = document.getElementById('undo-btn');
+        const redoBtn = document.getElementById('redo-btn');
+        if (undoBtn) undoBtn.addEventListener('click', () => window.canvasUndo());
+        if (redoBtn) redoBtn.addEventListener('click', () => window.canvasRedo());
 
         // Zoom controls
         const zoomIn = document.getElementById('zoom-in-btn');
@@ -172,6 +203,7 @@
         }
 
         state.nodes.push(node);
+        recordHistory('ADD_NODE', { nodeId: node.id, componentId: component.id });
         render();
         selectNode(node);
     }
@@ -301,13 +333,16 @@
 
     // Delete node
     window.deleteNode = function(nodeId) {
+        const deletedNode = state.nodes.find(n => n.id === nodeId);
         state.nodes = state.nodes.filter(n => n.id !== nodeId);
         state.edges = state.edges.filter(e => e.source !== nodeId && e.target !== nodeId);
+        recordHistory('DELETE_NODE', { nodeId, label: deletedNode?.data?.label });
         render();
     };
 
     // Update node
     window.updateNode = function(node) {
+        recordHistory('UPDATE_PARAMS', { nodeId: node.id, label: node.data.label });
         render();
     };
 
@@ -477,6 +512,7 @@
                         
                         if (!exists) {
                             state.edges.push(edge);
+                            recordHistory('ADD_EDGE', { edgeId, source: edge.source, target: edge.target });
                             renderEdges();
                             window.showToast('Nodes connected', 'success');
                         } else {
@@ -627,12 +663,77 @@
         const targetNode = state.nodes.find(n => n.id === edge.target);
         
         state.edges = state.edges.filter(e => e.id !== edgeId);
+        recordHistory('DELETE_EDGE', { edgeId, source: edge.source, target: edge.target });
         renderEdges();
         
         const sourceLabel = sourceNode?.data?.label || 'Unknown';
         const targetLabel = targetNode?.data?.label || 'Unknown';
         window.showToast(`Disconnected: ${sourceLabel} → ${targetLabel}`, 'success');
     }
+
+    // Undo last action
+    window.canvasUndo = function() {
+        if (!window.historyManager) {
+            window.showToast('History not available', 'error');
+            return;
+        }
+
+        const previousState = window.historyManager.undo();
+        if (previousState) {
+            // Pause history while restoring
+            window.historyManager.pause();
+            
+            state.nodes = previousState.nodes || [];
+            state.edges = previousState.edges || [];
+            
+            // Update node counter
+            nodeIdCounter = Math.max(0, ...state.nodes.map(n => 
+                parseInt(n.id.replace(/\D/g, '')) || 0
+            ));
+            
+            render();
+            selectNode(null);
+            
+            window.historyManager.resume();
+            
+            const action = window.historyManager.getLastAction();
+            window.showToast(`Undo: ${action}`, 'success');
+        } else {
+            window.showToast('Nothing to undo', 'info');
+        }
+    };
+
+    // Redo last undone action
+    window.canvasRedo = function() {
+        if (!window.historyManager) {
+            window.showToast('History not available', 'error');
+            return;
+        }
+
+        const nextState = window.historyManager.redo();
+        if (nextState) {
+            // Pause history while restoring
+            window.historyManager.pause();
+            
+            state.nodes = nextState.nodes || [];
+            state.edges = nextState.edges || [];
+            
+            // Update node counter
+            nodeIdCounter = Math.max(0, ...state.nodes.map(n => 
+                parseInt(n.id.replace(/\D/g, '')) || 0
+            ));
+            
+            render();
+            selectNode(null);
+            
+            window.historyManager.resume();
+            
+            const action = window.historyManager.getNextAction();
+            window.showToast(`Redo: ${action}`, 'success');
+        } else {
+            window.showToast('Nothing to redo', 'info');
+        }
+    };
 
     // New model
     function newModel() {
@@ -834,6 +935,9 @@
             nodeIdCounter = Math.max(0, ...state.nodes.map(n => 
                 parseInt(n.id.replace(/\D/g, '')) || 0
             ));
+            
+            // Record as batch operation
+            recordHistory('LOAD_TEMPLATE', { templateId, templateName: template.name, nodeCount: state.nodes.length });
             
             render();
             fitView();
@@ -1089,4 +1193,45 @@
         const dialog = document.getElementById(id);
         if (dialog) dialog.hidden = true;
     }
+
+    // Public API for version management
+    window.getCurrentModelId = function() {
+        return state.currentModelId;
+    };
+
+    window.getCanvasState = function() {
+        return {
+            nodes: state.nodes,
+            edges: state.edges
+        };
+    };
+
+    window.loadCanvasState = function(newState) {
+        // Pause history while loading
+        if (window.historyManager) {
+            window.historyManager.pause();
+        }
+
+        state.nodes = newState.nodes || [];
+        state.edges = newState.edges || [];
+
+        // Update node counter
+        nodeIdCounter = Math.max(0, ...state.nodes.map(n => 
+            parseInt(n.id.replace(/\D/g, '')) || 0
+        ));
+
+        render();
+        selectNode(null);
+
+        // Resume history and record
+        if (window.historyManager) {
+            window.historyManager.resume();
+            window.historyManager.recordState(
+                { nodes: state.nodes, edges: state.edges },
+                'LOAD_VERSION',
+                { timestamp: Date.now() }
+            );
+        }
+    };
 })();
+

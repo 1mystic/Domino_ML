@@ -124,15 +124,22 @@
     // Setup sidebar toggle
     function setupSidebarToggle() {
         const toggleBtn = document.getElementById('toggle-sidebar-btn');
+        const expandBtn = document.getElementById('expand-sidebar-btn');
         const sidebar = document.getElementById('component-sidebar');
         
-        if (!toggleBtn || !sidebar) return;
+        if (!toggleBtn || !sidebar || !expandBtn) return;
 
+        // Collapse sidebar
         toggleBtn.addEventListener('click', () => {
-            sidebar.classList.toggle('sidebar-collapsed');
-            const icon = toggleBtn.querySelector('[data-lucide]');
-            const isCollapsed = sidebar.classList.contains('sidebar-collapsed');
-            icon.setAttribute('data-lucide', isCollapsed ? 'panel-left-open' : 'panel-left-close');
+            sidebar.classList.add('sidebar-collapsed');
+            expandBtn.hidden = false;
+            lucide.createIcons();
+        });
+
+        // Expand sidebar
+        expandBtn.addEventListener('click', () => {
+            sidebar.classList.remove('sidebar-collapsed');
+            expandBtn.hidden = true;
             lucide.createIcons();
         });
     }

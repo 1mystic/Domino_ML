@@ -5,6 +5,7 @@
     // Helper function for API calls
     async function apiCall(endpoint, options = {}) {
         const defaultOptions = {
+            credentials: 'include', // Include cookies for session authentication
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -85,12 +86,45 @@
         }),
     };
 
+    // Versions API
+    const versionsAPI = {
+        create: (modelId, data) => apiCall(`/models/${modelId}/versions`, {
+            method: 'POST',
+            body: JSON.stringify(data),
+        }),
+        
+        list: (modelId) => apiCall(`/models/${modelId}/versions`),
+        
+        get: (versionId) => apiCall(`/versions/${versionId}`),
+        
+        activate: (versionId) => apiCall(`/versions/${versionId}/activate`, {
+            method: 'POST',
+        }),
+        
+        delete: (versionId) => apiCall(`/versions/${versionId}`, {
+            method: 'DELETE',
+        }),
+        
+        compare: (version1Id, version2Id) => apiCall('/versions/compare', {
+            method: 'POST',
+            body: JSON.stringify({ version1_id: version1Id, version2_id: version2Id }),
+        }),
+        
+        addMetrics: (versionId, metrics) => apiCall(`/versions/${versionId}/metrics`, {
+            method: 'POST',
+            body: JSON.stringify({ metrics }),
+        }),
+        
+        getMetrics: (versionId) => apiCall(`/versions/${versionId}/metrics`),
+    };
+
     // Export API to global scope
     window.api = {
         models: modelsAPI,
         templates: templatesAPI,
         components: componentsAPI,
         code: codeAPI,
+        versions: versionsAPI,
     };
 
     // Toast notifications
