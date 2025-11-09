@@ -47,6 +47,24 @@ A Flask-based visual ML pipeline builder. This application allows users to quick
 - **Version Timeline**: Visual timeline showing version history
 - **Code Snapshots**: Automatically generate and store Python code for each version
 
+#### 🚀 Export Runnable Artifacts (Phase 3)
+- **Python Scripts**: Export as standalone executable Python scripts
+  - Command-line interface with argparse
+  - Logging and error handling
+  - Dry-run and verbose modes
+  - Auto-generated requirements.txt
+- **Jupyter Notebooks**: Export as interactive notebooks
+  - Cell-based structure with documentation
+  - Import organization
+  - Step-by-step execution
+- **Docker Containers**: Full containerization support
+  - Complete Dockerfile generation
+  - docker-compose.yml orchestration
+  - Volume mounts for data/output
+  - Deployment documentation
+  - GPU support templates
+- **Requirements**: Auto-generated dependency lists with pinned versions
+
 ## 📋 Prerequisites
 
 - Python 3.8 or higher

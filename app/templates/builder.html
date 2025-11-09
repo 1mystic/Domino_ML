@@ -68,7 +68,6 @@
                 Validate
             </button>
             
-        
         </div>
 
         <div class="toolbar-right">
@@ -78,8 +77,13 @@
             </button>
             
             <button id="export-code-btn" class="btn btn-primary btn-sm">
-                <i data-lucide="code"></i>
-                <span>Export Code</span>
+                <i data-lucide="code" style="margin-right: 3px;"></i>
+                <span> Code</span>
+            </button>
+
+            <button id="export-btn" class="btn btn-primary btn-sm" title="Export Pipeline">
+                <i data-lucide="package"></i>
+                <span>Export</span>
             </button>
             
             <div class="toolbar-divider"></div>
@@ -414,6 +418,82 @@
             </div>
         </div>
     </div>
+
+    <!-- Export Formats Dialog (Phase 3) -->
+    <div id="export-formats-dialog" class="dialog-overlay" hidden>
+        <div class="dialog">
+            <div class="dialog-header">
+                <h3 class="dialog-title">Export Pipeline</h3>
+                <button class="dialog-close" data-close-dialog="export-formats-dialog">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="dialog-content">
+                <p class="text-sm text-muted mb-4">Choose an export format for your ML pipeline:</p>
+                
+                <div class="export-options">
+                    <!-- Python Script -->
+                    <button class="export-option-card" data-export-format="python">
+                        <div class="export-option-icon">
+                            <i data-lucide="file-code"></i>
+                        </div>
+                        <div class="export-option-content">
+                            <h4>Python Script</h4>
+                            <p>Standalone executable Python script with CLI support and error handling</p>
+                        </div>
+                        <div class="export-option-arrow">
+                            <i data-lucide="arrow-right"></i>
+                        </div>
+                    </button>
+
+                    <!-- Jupyter Notebook -->
+                    <button class="export-option-card" data-export-format="notebook">
+                        <div class="export-option-icon">
+                            <i data-lucide="notebook"></i>
+                        </div>
+                        <div class="export-option-content">
+                            <h4>Jupyter Notebook</h4>
+                            <p>Interactive notebook with step-by-step cells and documentation</p>
+                        </div>
+                        <div class="export-option-arrow">
+                            <i data-lucide="arrow-right"></i>
+                        </div>
+                    </button>
+
+                    <!-- Docker Container -->
+                    <button class="export-option-card" data-export-format="docker">
+                        <div class="export-option-icon">
+                            <i data-lucide="container"></i>
+                        </div>
+                        <div class="export-option-content">
+                            <h4>Docker Container</h4>
+                            <p>Complete Docker setup with Dockerfile, compose, and deployment docs</p>
+                        </div>
+                        <div class="export-option-arrow">
+                            <i data-lucide="arrow-right"></i>
+                        </div>
+                    </button>
+
+                    <!-- Requirements.txt -->
+                    <button class="export-option-card" data-export-format="requirements">
+                        <div class="export-option-icon">
+                            <i data-lucide="package"></i>
+                        </div>
+                        <div class="export-option-content">
+                            <h4>Requirements</h4>
+                            <p>Python dependencies list with pinned versions</p>
+                        </div>
+                        <div class="export-option-arrow">
+                            <i data-lucide="arrow-right"></i>
+                        </div>
+                    </button>
+                </div>
+            </div>
+            <div class="dialog-footer">
+                <button class="btn btn-ghost" data-close-dialog="export-formats-dialog">Cancel</button>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
 
@@ -425,6 +505,7 @@
 <script src="{{ url_for('static', filename='js/properties.js') }}"></script>
 <script src="{{ url_for('static', filename='js/canvas.js') }}"></script>
 <script src="{{ url_for('static', filename='js/versions.js') }}"></script>
+<script src="{{ url_for('static', filename='js/export.js') }}"></script>
 <script>
     // Initialize Lucide icons
     lucide.createIcons();
@@ -434,6 +515,11 @@
         // Initialize all components
         window.canvasInit();
         window.componentsInit();
+        
+        // Initialize export manager
+        if (window.ExportManager) {
+            window.ExportManager.init();
+        }
         
         // User menu toggle
         const userMenuBtn = document.getElementById('user-menu-btn');

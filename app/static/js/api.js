@@ -154,4 +154,18 @@
             setTimeout(() => toast.remove(), 300);
         }, 3000);
     };
+
+    // Export API (Phase 3)
+    const exportAPI = {
+        exportPython: (modelId) => apiCall(`/models/${modelId}/export/python`, { method: 'POST' }),
+        exportNotebook: (modelId) => apiCall(`/models/${modelId}/export/notebook`, { method: 'POST' }),
+        exportDocker: (modelId, pythonVersion = '3.10') => apiCall(`/models/${modelId}/export/docker`, {
+            method: 'POST',
+            body: JSON.stringify({ python_version: pythonVersion })
+        }),
+        exportRequirements: (modelId) => apiCall(`/models/${modelId}/export/requirements`, { method: 'POST' })
+    };
+
+    // Export all APIs
+    window.api.export = exportAPI;
 })();

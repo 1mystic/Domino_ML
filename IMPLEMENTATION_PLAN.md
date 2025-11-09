@@ -9,7 +9,7 @@
 |-------|---------|--------|----------------|
 | 1 | Undo/Redo System | ✅ Complete | Oct 31, 2025 |
 | 2 | Pipeline Versioning | ✅ Complete | Oct 31, 2025 |
-| 3 | Export Artifacts | ⏳ Pending | - |
+| 3 | Export Artifacts | ✅ Complete | Nov 9, 2025 |
 | 4 | Sandbox Runner | ⏳ Pending | - |
 | 5 | Experiment Tracking | ⏳ Pending | - |
 | 6 | Hyperparameter Tuning | ⏳ Pending | - |

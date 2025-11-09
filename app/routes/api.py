@@ -313,3 +313,97 @@ def get_metrics(version_id):
     metrics = ModelMetric.query.filter_by(version_id=version_id).order_by(ModelMetric.created_at).all()
     return jsonify([m.to_dict() for m in metrics])
 
+
+# ===== EXPORT ENDPOINTS (Phase 3) =====
+
+@bp.route('/models/<int:model_id>/export/python', methods=['POST'])
+@login_required
+def export_python(model_id):
+    """Export pipeline as Python script"""
+    from app.utils.exporters.python_exporter import PythonExporter
+    
+    model = SavedModel.query.get_or_404(model_id)
+    if model.user_id != current_user.id:
+        return jsonify({'error': 'Unauthorized'}), 403
+    
+    nodes = json.loads(model.nodes)
+    edges = json.loads(model.edges)
+    
+    result = PythonExporter.export_pipeline(
+        nodes=nodes,
+        edges=edges,
+        pipeline_name=model.name,
+        description=model.description,
+        include_cli=True
+    )
+    
+    return jsonify(result)
+
+
+@bp.route('/models/<int:model_id>/export/notebook', methods=['POST'])
+@login_required
+def export_notebook(model_id):
+    """Export pipeline as Jupyter notebook"""
+    from app.utils.exporters.notebook_exporter import NotebookExporter
+    
+    model = SavedModel.query.get_or_404(model_id)
+    if model.user_id != current_user.id:
+        return jsonify({'error': 'Unauthorized'}), 403
+    
+    nodes = json.loads(model.nodes)
+    edges = json.loads(model.edges)
+    
+    result = NotebookExporter.export_notebook(
+        nodes=nodes,
+        edges=edges,
+        pipeline_name=model.name,
+        description=model.description
+    )
+    
+    return jsonify(result)
+
+
+@bp.route('/models/<int:model_id>/export/docker', methods=['POST'])
+@login_required
+def export_docker(model_id):
+    """Export pipeline as Docker container"""
+    from app.utils.exporters.docker_exporter import DockerExporter
+    
+    model = SavedModel.query.get_or_404(model_id)
+    if model.user_id != current_user.id:
+        return jsonify({'error': 'Unauthorized'}), 403
+    
+    data = request.get_json() or {}
+    nodes = json.loads(model.nodes)
+    edges = json.loads(model.edges)
+    
+    result = DockerExporter.export_docker(
+        nodes=nodes,
+        edges=edges,
+        pipeline_name=model.name,
+        description=model.description,
+        python_version=data.get('python_version', '3.10')
+    )
+    
+    return jsonify(result)
+
+
+@bp.route('/models/<int:model_id>/export/requirements', methods=['POST'])
+@login_required
+def export_requirements(model_id):
+    """Export pipeline requirements.txt"""
+    from app.utils.exporters.requirements_builder import RequirementsBuilder
+    
+    model = SavedModel.query.get_or_404(model_id)
+    if model.user_id != current_user.id:
+        return jsonify({'error': 'Unauthorized'}), 403
+    
+    nodes = json.loads(model.nodes)
+    
+    requirements = RequirementsBuilder.from_nodes(nodes, pinned=True)
+    
+    return jsonify({
+        'requirements': requirements,
+        'filename': 'requirements.txt'
+    })
+
