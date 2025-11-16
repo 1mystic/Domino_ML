@@ -5,7 +5,7 @@
 
 A Flask-based visual machine learning pipeline builder that enables users to create ML workflows through an intuitive drag-and-drop interface. Build complete custom ML pipelines visually and generate production-ready Python code automatically.
 
-## 📋 Table of Contents
+## Table of Contents
 
 - [Features](#-features)
 - [Prerequisites](#-prerequisites)
@@ -19,7 +19,7 @@ A Flask-based visual machine learning pipeline builder that enables users to cre
 - [Troubleshooting](#-troubleshooting)
 - [License](#-license)
 
-## 🚀 Features
+## Features
 
 ### Core Features
 - **Drag & Drop Interface**: Visual pipeline builder with vanilla JavaScript
@@ -38,7 +38,7 @@ A Flask-based visual machine learning pipeline builder that enables users to cre
 
 ### ✨ NEW - Phase 1 & 2 Features
 
-#### 🔄 Undo/Redo System (Phase 1)
+#### Undo/Redo System (Phase 1)
 - **History Management**: Track up to 50 canvas operations with smart state management
 - **Keyboard Shortcuts**: 
   - `Ctrl+Z` / `Cmd+Z` - Undo last action
@@ -48,7 +48,7 @@ A Flask-based visual machine learning pipeline builder that enables users to cre
 - **Visual Feedback**: Dynamic toolbar buttons with action descriptions
 - **Supported Actions**: Node add/delete, edge add/delete, parameter updates, template loads
 
-#### 📦 Pipeline Versioning (Phase 2)
+#### Pipeline Versioning (Phase 2)
 - **Version Control**: Full version tracking for ML pipelines with parent-child lineage
 - **Version Management**:
   - Create new versions with descriptions and tags
@@ -64,7 +64,7 @@ A Flask-based visual machine learning pipeline builder that enables users to cre
 - **Version Timeline**: Visual timeline showing version history
 - **Code Snapshots**: Automatically generate and store Python code for each version
 
-#### 🚀 Export Runnable Artifacts (Phase 3)
+#### Export Runnable Artifacts (Phase 3)
 - **Python Scripts**: Export as standalone executable Python scripts
   - Command-line interface with argparse
   - Logging and error handling
@@ -82,13 +82,13 @@ A Flask-based visual machine learning pipeline builder that enables users to cre
   - GPU support templates
 - **Requirements**: Auto-generated dependency lists with pinned versions
 
-## 📋 Prerequisites
+## Prerequisites
 
 - Python 3.8 or higher
 - pip (Python package manager)
 - Modern web browser (Chrome, Firefox, Edge, Safari)
 
-## 🛠️ Installation
+## Installation
 
 ### 1. Clone the repository
 
@@ -154,7 +154,7 @@ python run.py
 
 The application will be available at `http://localhost:5000`
 
-## 📁 Project Structure
+## Project Structure
 
 For detailed project structure, see [PROJECT_STRUCTURE.md](../docs/PROJECT_STRUCTURE.md)
 
@@ -176,7 +176,7 @@ Domino_ML/
 └── requirements.txt             # Dependencies
 ```
 
-## 💻 Technology Stack
+## Technology Stack
 
 ### Backend
 - **Framework**: Flask 3.0
@@ -190,7 +190,7 @@ Domino_ML/
 - **JavaScript**: Vanilla JS (no frameworks)
 - **Icons**: Lucide Icons (via CDN)
 
-## 🎨 Design System
+## Design System
 
 The application uses a custom CSS design system that replicates the original Tailwind-based design:
 
@@ -208,7 +208,7 @@ The application uses a custom CSS design system that replicates the original Tai
 - Tablet: 768px - 1024px
 - Desktop: > 1024px
 
-## 📚 Usage Guide
+## Usage Guide
 
 ### Authentication
 1. **Sign Up**: Create a new account with username, email, and password
@@ -266,7 +266,7 @@ The application uses a custom CSS design system that replicates the original Tai
    - Track experiment results
    - Compare performance across versions
 
-## 🔧 Development
+## Development
 
 ### Running in Development Mode
 
@@ -300,14 +300,14 @@ with app.app_context():
 2. Add your template following the existing structure
 3. Restart the application
 
-## 🔐 Security
+## Security
 
 - Passwords are hashed using Werkzeug's security functions
 - CSRF protection enabled via Flask-WTF
 - Session-based authentication with Flask-Login
 - SQL injection prevention through SQLAlchemy ORM
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Database Issues
 ```bash
@@ -329,25 +329,8 @@ app.run(debug=True, host='0.0.0.0', port=5001)
 ### Static Files Not Loading
 Clear browser cache and hard refresh (Ctrl+Shift+R or Cmd+Shift+R)
 
-## 📝 Migration Notes
 
-This application was migrated from React+TypeScript to Flask+Jinja2+Vanilla JS:
-
-### Key Changes
-- **React components → Jinja templates**: All React components converted to Jinja templates
-- **Tailwind CSS → Custom CSS**: Design system replicated with custom CSS
-- **ReactFlow → Vanilla JS**: Drag-and-drop functionality implemented with vanilla JavaScript
-- **Firebase → SQLite**: Cloud storage replaced with local SQLite database
-- **React state → Server-side sessions**: State management moved to server-side
-
-### Preserved Features
-- Exact same visual design and user experience
-- All ML components and templates
-- Code generation functionality
-- Authentication and user management
-- Model save/load capabilities
-
-## 📚 Documentation
+## Documentation
 
 Comprehensive documentation is available in the `docs/` directory:
 
@@ -357,15 +340,15 @@ Comprehensive documentation is available in the `docs/` directory:
 - **[API_DOCS.md](../docs/API_DOCS.md)** - REST API documentation
 - **[QUICKSTART.md](../docs/QUICKSTART.md)** - Quick start guide
 
-## 📄 License
+## License
 
-This project maintains the same license as the original React implementation.
+Not yet licensed
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-## 📞 Support
+## Support
 
 For issues and questions, please open an issue on the GitHub repository.
 
