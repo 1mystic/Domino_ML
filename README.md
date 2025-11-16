@@ -1,6 +1,23 @@
-# DominoML - Flask Edition
+# DominoML - Visual Machine Learning Pipeline Builder
 
-A Flask-based visual ML pipeline builder. This application allows users to quickly build visual flows of classical ML models through drag-and-drop components, creating complete custom ML pipelines and generating Python code.
+**Version:** 1.0  
+**Last Updated:** 2025-01-27
+
+A Flask-based visual machine learning pipeline builder that enables users to create ML workflows through an intuitive drag-and-drop interface. Build complete custom ML pipelines visually and generate production-ready Python code automatically.
+
+## 📋 Table of Contents
+
+- [Features](#-features)
+- [Prerequisites](#-prerequisites)
+- [Installation](#-installation)
+- [Project Structure](#-project-structure)
+- [Technology Stack](#-technology-stack)
+- [Usage Guide](#-usage-guide)
+- [Development](#-development)
+- [Documentation](#-documentation)
+- [Security](#-security)
+- [Troubleshooting](#-troubleshooting)
+- [License](#-license)
 
 ## 🚀 Features
 
@@ -139,55 +156,24 @@ The application will be available at `http://localhost:5000`
 
 ## 📁 Project Structure
 
+For detailed project structure, see [PROJECT_STRUCTURE.md](../docs/PROJECT_STRUCTURE.md)
+
 ```
-dominoML-flask/
-├── app/
-│   ├── __init__.py              # Flask app factory
-│   ├── models.py                # Database models (User, SavedModel, PipelineVersion, etc.)
-│   ├── forms.py                 # WTForms for authentication
-│   ├── data/
-│   │   ├── ml_components.json   # ML component definitions
-│   │   └── ml_templates.json    # Pre-built pipeline templates
-│   ├── routes/
-│   │   ├── __init__.py
-│   │   ├── main.py              # Main routes (landing, builder)
-│   │   ├── auth.py              # Authentication routes
-│   │   └── api.py               # REST API endpoints (models, versions, metrics)
-│   ├── static/
-│   │   ├── css/
-│   │   │   ├── main.css         # Main styles
-│   │   │   ├── landing.css      # Landing page styles
-│   │   │   ├── builder.css      # Builder page styles
-│   │   │   └── components.css   # Component styles
-│   │   ├── js/
-│   │   │   ├── canvas.js        # Flow canvas logic
-│   │   │   ├── components.js    # Component library logic
-│   │   │   ├── properties.js    # Property panel logic
-│   │   │   ├── history.js       # ⭐ NEW: Undo/Redo system
-│   │   │   ├── versions.js      # ⭐ NEW: Version management UI
-│   │   │   ├── theme.js         # Theme toggle logic
-│   │   │   └── api.js           # API client (updated with version endpoints)
-│   │   └── images/
-│   ├── templates/
-│   │   ├── base.html            # Base template
-│   │   ├── landing.html         # Landing page
-│   │   ├── auth.html            # Login/signup page
-│   │   ├── builder.html         # ML builder interface (updated with history & version UI)
-│   │   └── 404.html             # 404 error page
-│   └── utils/
-│       ├── __init__.py
-│       ├── data_loader.py       # Load components and templates
-│       └── code_generator.py    # Generate Python code from pipeline
-├── migrations/                   # ⭐ NEW: Database migrations
-│   ├── README.md                # Migration documentation
-│   └── applied/                 # Applied migrations archive
-│       └── 2025-10-31_add_versioning.sql
-├── config.py                    # Application configuration
-├── run.py                       # Application entry point
-├── requirements.txt             # Python dependencies
-├── .env.example                 # Environment variables template
-├── .gitignore                   # Git ignore file
-└── README.md                    # This file
+Domino_ML/
+├── app/                          # Flask application package
+│   ├── __init__.py              # Application factory
+│   ├── models.py                # Database models
+│   ├── forms.py                 # WTForms
+│   ├── data/                    # Static data (components, templates)
+│   ├── routes/                  # Route handlers (Blueprints)
+│   ├── static/                  # Static assets (CSS, JS)
+│   ├── templates/               # Jinja2 templates
+│   └── utils/                   # Utility modules
+├── migrations/                  # Database migrations
+├── scripts/                     # Utility scripts
+├── config.py                    # Configuration
+├── run.py                       # Entry point
+└── requirements.txt             # Dependencies
 ```
 
 ## 💻 Technology Stack
@@ -360,6 +346,16 @@ This application was migrated from React+TypeScript to Flask+Jinja2+Vanilla JS:
 - Code generation functionality
 - Authentication and user management
 - Model save/load capabilities
+
+## 📚 Documentation
+
+Comprehensive documentation is available in the `docs/` directory:
+
+- **[SRS.md](../docs/SRS.md)** - System Requirements Specifications
+- **[SYSTEM_DESIGN_AND_ARCHITECTURE.md](../docs/SYSTEM_DESIGN_AND_ARCHITECTURE.md)** - System design, ER diagrams, DFDs, use cases
+- **[PROJECT_STRUCTURE.md](../docs/PROJECT_STRUCTURE.md)** - Detailed project structure
+- **[API_DOCS.md](../docs/API_DOCS.md)** - REST API documentation
+- **[QUICKSTART.md](../docs/QUICKSTART.md)** - Quick start guide
 
 ## 📄 License
 
