@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DominoML API Tester</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0d0d0d;
+            --bg-secondary: #1a1a1a;
+            --bg-tertiary: #262626;
+            --border-color: #333333;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --accent: #ffffff;
+            --accent-hover: #e0e0e0;
+            --success: #00ff88;
+            --error: #ff4444;
+            --warning: #ffaa00;
+            --code-bg: #1a1a1a;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            border-bottom: 1px solid var(--border-color);
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .auth-section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .auth-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        input {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 0.75rem;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: var(--bg-primary);
+        }
+
+        .btn {
+            background: var(--accent);
+            color: var(--bg-primary);
+            border: none;
+            border-radius: 6px;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--accent);
+        }
+
+        .btn-danger {
+            background: var(--error);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #cc3333;
+        }
+
+        .status {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            margin-top: 1rem;
+            display: inline-block;
+        }
+
+        .status.authenticated {
+            background: rgba(0, 255, 136, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+        }
+
+        .status.unauthenticated {
+            background: rgba(255, 68, 68, 0.1);
+            color: var(--error);
+            border: 1px solid rgba(255, 68, 68, 0.3);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
+            overflow-x: auto;
+        }
+
+        .tab {
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .tab:hover {
+            color: var(--text-primary);
+            background: var(--bg-secondary);
+        }
+
+        .tab.active {
+            color: var(--text-primary);
+            border-bottom-color: var(--accent);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .endpoint-group {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .endpoint-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .endpoint-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .method-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .method-get {
+            background: rgba(0, 255, 136, 0.2);
+            color: var(--success);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+        }
+
+        .method-post {
+            background: rgba(255, 170, 0, 0.2);
+            color: var(--warning);
+            border: 1px solid rgba(255, 170, 0, 0.3);
+        }
+
+        .method-put {
+            background: rgba(0, 150, 255, 0.2);
+            color: #0096ff;
+            border: 1px solid rgba(0, 150, 255, 0.3);
+        }
+
+        .method-delete {
+            background: rgba(255, 68, 68, 0.2);
+            color: var(--error);
+            border: 1px solid rgba(255, 68, 68, 0.3);
+        }
+
+        .endpoint-path {
+            font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            background: var(--bg-tertiary);
+            padding: 0.5rem 0.75rem;
+            border-radius: 4px;
+        }
+
+        .endpoint-controls {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .endpoint-controls input {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 150px;
+            background: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 1rem;
+            color: var(--text-primary);
+            font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+            font-size: 0.85rem;
+            resize: vertical;
+            margin-bottom: 1rem;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .response {
+            background: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 1rem;
+            margin-top: 1rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .response pre {
+            color: var(--text-primary);
+            font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+            font-size: 0.85rem;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .response.success pre {
+            color: var(--success);
+        }
+
+        .response.error pre {
+            color: var(--error);
+        }
+
+        .response-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .response-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .response-status.success {
+            background: rgba(0, 255, 136, 0.2);
+            color: var(--success);
+        }
+
+        .response-status.error {
+            background: rgba(255, 68, 68, 0.2);
+            color: var(--error);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .info-box {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 1rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .info-box strong {
+            color: var(--text-primary);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .auth-form {
+                grid-template-columns: 1fr;
+            }
+
+            .endpoint-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--text-secondary);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-left: 0.5rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>DominoML API Tester</h1>
+            <p class="subtitle">Test all API endpoints for the DominoML Flask application</p>
+        </header>
+
+        <!-- Authentication Section -->
+        <div class="auth-section">
+            <h2 style="margin-bottom: 1rem; font-size: 1.2rem;">Authentication</h2>
+            <div id="auth-status" class="status unauthenticated">Not Authenticated</div>
+            <div id="auth-forms" style="margin-top: 1rem;">
+                <div class="auth-form">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="login-email" placeholder="user@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="login-password" placeholder="••••••••">
+                    </div>
+                    <div class="form-group" style="justify-content: flex-end;">
+                        <label>&nbsp;</label>
+                        <button class="btn" onclick="handleLogin()">Login</button>
+                    </div>
+                </div>
+                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+                    <h3 style="font-size: 1rem; margin-bottom: 1rem;">Or Sign Up</h3>
+                    <div class="auth-form">
+                        <div class="form-group">
+                            <label>Username</label>
+                            <input type="text" id="signup-username" placeholder="username">
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="signup-email" placeholder="user@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" id="signup-password" placeholder="••••••••">
+                        </div>
+                        <div class="form-group">
+                            <label>Display Name</label>
+                            <input type="text" id="signup-display-name" placeholder="Display Name">
+                        </div>
+                        <div class="form-group" style="justify-content: flex-end;">
+                            <label>&nbsp;</label>
+                            <button class="btn" onclick="handleSignup()">Sign Up</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="logout-section" style="display: none; margin-top: 1rem;">
+                <button class="btn btn-danger" onclick="handleLogout()">Logout</button>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('models')">Pipeline Models</button>
+            <button class="tab" onclick="switchTab('templates')">Templates & Components</button>
+            <button class="tab" onclick="switchTab('code')">Code Generation</button>
+            <button class="tab" onclick="switchTab('versions')">Versions</button>
+            <button class="tab" onclick="switchTab('metrics')">Metrics</button>
+            <button class="tab" onclick="switchTab('export')">Export</button>
+        </div>
+
+        <!-- Pipeline Models Tab -->
+        <div id="models" class="tab-content active">
+            <!-- Get All Models -->
+            <div class="endpoint-group">
+                <div class="endpoint-header">
+                    <div class="endpoint-title">
+                        <span class="method-badge method-get">GET</span>
+                        <span>Get All Models</span>
+                    </div>
+                    <span class="endpoint-path">/api/models</span>
+                </div>
+                <button class="btn" onclick="testEndpoint('GET', '/api/models')">Test</button>
+                <div id="response-GET-/api/models" class="response" style="display: none;"></div>
+            </div>
+
+            <!-- Create Model -->
+            <div class="endpoint-group">
+                <div class="endpoint-header">
+                    <div class="endpoint-title">
+                        <span class="method-badge method-post">POST</span>
+                        <span>Create Model</span>
+                    </div>
+                    <span class="endpoint-path">/api/models</span>
+                </div>
+                <textarea id="body-POST-/api/models" placeholder='{"name": "Test Pipeline", "description": "Test description", "nodes": [], "edges": []}'>{"name": "Test Pipeline", "description": "Test description", "nodes": [{"id": "n1", "type": "data_source"}], "edges": []}</textarea>
+                <button class="btn" onclick="testEndpoint('POST', '/api/models', 'body-POST-/api/models')">Test</button>
+                <div id="response-POST-/api/models" class="response" style="display: none;"></div>
+            </div>
+
+            <!-- Get Model by ID -->
+            <div class="endpoint-group">
+                <div class="endpoint-header">
+                    <div class="endpoint-title">
+                        <span class="method-badge method-get">GET</span>
+                        <span>Get Model by ID</span>
+                    </div>
+                    <span class="endpoint-path">/api/models/{id}</span>
+                </div>
+                <div class="endpoint-controls">
+                    <input type="number" id="param-GET-/api/models" placeholder="Model ID" value="1">
+                    <button class="btn" onclick="testEndpoint('GET', '/api/models', null, 'param-GET-/api/models')">Test</button>
+                </div>
+                <div id="response-GET-/api/models-id" class="response" style="display: none;"></div>
+            </div>
+
+            <!-- Update Model -->
+            <div class="endpoint-group">
+                <div class="endpoint-header">
+                    <div class="endpoint-title">
+                        <span class="method-badge method-put">PUT</span>
+                        <span>Update Model</span>
+                    </div>
+                    <span class="endpoint-path">/api/models/{id}</span>
+                </div>
+                <div class="endpoint-controls">
+                    <input type="number" id="param-PUT-/api/models" placeholder="Model ID" value="1">
+                </div>
+                <textarea id="body-PUT-/api/models" placeholder='{"name": "Updated Pipeline", "description": "Updated description", "nodes": [], "edges": []}'>{"name": "Updated Pipeline", "description": "Updated description", "nodes": [{"id": "n1", "type": "data_source"}], "edges": []}</textarea>
+                <button class="btn" onclick="testEndpoint('PUT', '/api/models', 'body-PUT-/api/models', 'param-PUT-/api/models')">Test</button>
+                <div id="response-PUT-/api/models" class="response" style="display: none;"></div>
+            </div>
+
+            <!-- Delete Model -->
+            <div class="endpoint-group">
+                <div class="endpoint-header">
+                    <div class="endpoint-title">
+                        <span class="method-badge method-delete">DELETE</span>
+                        <span>Delete Model</span>
+                    </div>
+                    <span class="endpoint-path">/api/models/{id}</span>
+                </div>
+                <div class="endpoint-controls">
+                    <input type="number" id="param-DELETE-/api/models" placeholder="Model ID" value="1">
+                    <button class="btn btn-danger" onclick="testEndpoint('DELETE', '/api/models', null, 'param-DELETE-/api/models')">Test</button>
+                </div>
+                <div id="response-DELETE-/api/models" class="response" style="display: none;"></div>
+            </div>
+        </div>
+
+        <!-- Templates & Components Tab -->
+        <div id="templates" class="tab-content">
+            <!-- Get Templates -->
+            <div class="endpoint-group">
+                <div class="endpoint-header">
+                    <div class="endpoint-title">
+                        <span class="method-badge method-get">GET</span>
+                        <span>Get Templates</span>
+                    </div>
+                    <span class="endpoint-path">/api/templates</span>
+                </div>
+                <button class="btn" onclick="testEndpoint('GET', '/api/templates')">Test</button>
+                <div id="response-GET-/api/templates" class="response" style="display: none;"></div>
+            </div>
+
+            <!-- Get Components -->
+            <div class="endpoint-group">
+                <div class="endpoint-header">
+                    <div class="endpoint-title">
+                        <span class="method-badge method-get">GET</span>
+                        <span>Get Components</span>
+                    </div>
+                    <span class="endpoint-path">/api/components</span>
+                </div>
+                <button class="btn" onclick="testEndpoint('GET', '/api/components')">Test</button>
+                <div id="response-GET-/api/components" class="response" style="display: none;"></div>
+            </div>
+        </div>
+
+        <!-- Code Generation Tab -->
+        <div id="code" class="tab-content">
+            <!-- Generate Code -->
+            <div class="endpoint-group">
+                <div class="endpoint-header">
+                    <div class="endpoint-title">
+                        <span class="method-badge method-post">POST</span>
+                        <span>Generate Code</span>
+                    </div>
+                    <span class="endpoint-path">/api/generate-code</span>
+                </div>
+                <textarea id="body-POST-/api/generate-code" placeholder='{"nodes": [], "edges": [], "name": "ML Pipeline"}'>{"nodes": [{"id": "n1", "data": {"label": "Data Source", "componentId": "csv_loader"}}, {"id": "n2", "data": {"label": "Preprocessing", "componentId": "scaler"}}], "edges": [{"source": "n1", "target": "n2"}], "name": "Test Pipeline"}</textarea>
+                <button class="btn" onclick="testEndpoint('POST', '/api/generate-code', 'body-POST-/api/generate-code')">Test</button>
+                <div id="response-POST-/api/generate-code" class="response" style="display: none;"></div>
+            </div>
+        </div>
+
+        <!-- Versions Tab -->
+        <div id="versions" class="tab-content">
+            <!-- Create Version -->
+            <div class="endpoint-group">
+                <div class="endpoint-header">
+                    <div class="endpoint-title">
+                        <span class="method-badge method-post">POST</span>
+                        <span>Create Version</span>
+                    </div>
+                    <span class="endpoint-path">/api/models/{id}/versions</span>
+                </div>
+                <div class="endpoint-controls">
+                    <input type="number" id="param-POST-/api/models-versions" placeholder="Model ID" value="1">
+                </div>
+                <textarea id="body-POST-/api/models-versions" placeholder='{"name": "Version 1.0", "description": "Initial version", "nodes": [], "edges": []}'>{"name": "Version 1.0", "description": "Initial version", "version_tag": "v1.0", "nodes": [{"id": "n1", "type": "data_source"}], "edges": [], "generate_code": true}</textarea>
+                <button class="btn" onclick="testEndpoint('POST', '/api/models/{id}/versions', 'body-POST-/api/models-versions', 'param-POST-/api/models-versions')">Test</button>
+                <div id="response-POST-/api/models-versions" class="response" style="display: none;"></div>
+            </div>
+
+            <!-- List Versions -->
+            <div class="endpoint-group">
+                <div class="endpoint-header">
+                    <div class="endpoint-title">
+                        <span class="method-badge method-get">GET</span>
+                        <span>List Versions</span>
+                    </div>
+                    <span class="endpoint-path">/api/models/{id}/versions</span>
+                </div>
+                <div class="endpoint-controls">
+                    <input type="number" id="param-GET-/api/models-versions" placeholder="Model ID" value="1">
+                    <button class="btn" onclick="testEndpoint('GET', '/api/models/{id}/versions', null, 'param-GET-/api/models-versions')">Test</button>
+                </div>
+                <div id="response-GET-/api/models-versions" class="response" style="display: none;"></div>
+            </div>
+
+            <!-- Get Version -->
+            <div class="endpoint-group">
+                <div class="endpoint-header">
+                    <div class="endpoint-title">
+                        <span class="method-badge method-get">GET</span>
+                        <span>Get Version</span>
+                    </div>
+                    <span class="endpoint-path">/api/versions/{id}</span>
+                </div>
+                <div class="endpoint-controls">
+                    <input type="number" id="param-GET-/api/versions" placeholder="Version ID" value="1">
+                    <button class="btn" onclick="testEndpoint('GET', '/api/versions', null, 'param-GET-/api/versions')">Test</button>
+                </div>
+                <div id="response-GET-/api/versions" class="response" style="display: none;"></div>
+            </div>
+
+            <!-- Activate Version -->
+            <div class="endpoint-group">
+                <div class="endpoint-header">
+                    <div class="endpoint-title">
+                        <span class="method-badge method-post">POST</span>
+                        <span>Activate Version</span>
+                    </div>
+                    <span class="endpoint-path">/api/versions/{id}/activate</span>
+                </div>
+                <div class="endpoint-controls">
+                    <input type="number" id="param-POST-/api/versions-activate" placeholder="Version ID" value="1">
+                    <button class="btn" onclick="testEndpoint('POST', '/api/versions/{id}/activate', null, 'param-POST-/api/versions-activate')">Test</button>
+                </div>
+                <div id="response-POST-/api/versions-activate" class="response" style="display: none;"></div>
+            </div>
+
+            <!-- Delete Version -->
+            <div class="endpoint-group">
+                <div class="endpoint-header">
+                    <div class="endpoint-title">
+                        <span class="method-badge method-delete">DELETE</span>
+                        <span>Delete Version</span>
+                    </div>
+                    <span class="endpoint-path">/api/versions/{id}</span>
+                </div>
+                <div class="endpoint-controls">
+                    <input type="number" id="param-DELETE-/api/versions" placeholder="Version ID" value="1">
+                    <button class="btn btn-danger" onclick="testEndpoint('DELETE', '/api/versions', null, 'param-DELETE-/api/versions')">Test</button>
+                </div>
+                <div id="response-DELETE-/api/versions" class="response" style="display: none;"></div>
+            </div>
+
+            <!-- Compare Versions -->
+            <div class="endpoint-group">
+                <div class="endpoint-header">
+                    <div class="endpoint-title">
+                        <span class="method-badge method-post">POST</span>
+                        <span>Compare Versions</span>
+                    </div>
+                    <span class="endpoint-path">/api/versions/compare</span>
+                </div>
+                <textarea id="body-POST-/api/versions-compare" placeholder='{"version1_id": 1, "version2_id": 2}'>{"version1_id": 1, "version2_id": 2}</textarea>
+                <button class="btn" onclick="testEndpoint('POST', '/api/versions/compare', 'body-POST-/api/versions-compare')">Test</button>
+                <div id="response-POST-/api/versions-compare" class="response" style="display: none;"></div>
+            </div>
+        </div>
+
+        <!-- Metrics Tab -->
+        <div id="metrics" class="tab-content">
+            <!-- Add Metrics -->
+            <div class="endpoint-group">
+                <div class="endpoint-header">
+                    <div class="endpoint-title">
+                        <span class="method-badge method-post">POST</span>
+                        <span>Add Metrics</span>
+                    </div>
+                    <span class="endpoint-path">/api/versions/{id}/metrics</span>
+                </div>
+                <div class="endpoint-controls">
+                    <input type="number" id="param-POST-/api/versions-metrics" placeholder="Version ID" value="1">
+                </div>
+                <textarea id="body-POST-/api/versions-metrics" placeholder='{"metrics": [{"name": "accuracy", "value": 0.95, "type": "test"}]}'>{"metrics": [{"name": "accuracy", "value": 0.95, "type": "test", "epoch": null}]}</textarea>
+                <button class="btn" onclick="testEndpoint('POST', '/api/versions/{id}/metrics', 'body-POST-/api/versions-metrics', 'param-POST-/api/versions-metrics')">Test</button>
+                <div id="response-POST-/api/versions-metrics" class="response" style="display: none;"></div>
+            </div>
+
+            <!-- Get Metrics -->
+            <div class="endpoint-group">
+                <div class="endpoint-header">
+                    <div class="endpoint-title">
+                        <span class="method-badge method-get">GET</span>
+                        <span>Get Metrics</span>
+                    </div>
+                    <span class="endpoint-path">/api/versions/{id}/metrics</span>
+                </div>
+                <div class="endpoint-controls">
+                    <input type="number" id="param-GET-/api/versions-metrics" placeholder="Version ID" value="1">
+                    <button class="btn" onclick="testEndpoint('GET', '/api/versions/{id}/metrics', null, 'param-GET-/api/versions-metrics')">Test</button>
+                </div>
+                <div id="response-GET-/api/versions-metrics" class="response" style="display: none;"></div>
+            </div>
+        </div>
+
+        <!-- Export Tab -->
+        <div id="export" class="tab-content">
+            <!-- Export Python -->
+            <div class="endpoint-group">
+                <div class="endpoint-header">
+                    <div class="endpoint-title">
+                        <span class="method-badge method-post">POST</span>
+                        <span>Export as Python</span>
+                    </div>
+                    <span class="endpoint-path">/api/models/{id}/export/python</span>
+                </div>
+                <div class="endpoint-controls">
+                    <input type="number" id="param-POST-/api/models-export-python" placeholder="Model ID" value="1">
+                    <button class="btn" onclick="testEndpoint('POST', '/api/models/{id}/export/python', null, 'param-POST-/api/models-export-python')">Test</button>
+                </div>
+                <div id="response-POST-/api/models-export-python" class="response" style="display: none;"></div>
+            </div>
+
+            <!-- Export Notebook -->
+            <div class="endpoint-group">
+                <div class="endpoint-header">
+                    <div class="endpoint-title">
+                        <span class="method-badge method-post">POST</span>
+                        <span>Export as Notebook</span>
+                    </div>
+                    <span class="endpoint-path">/api/models/{id}/export/notebook</span>
+                </div>
+                <div class="endpoint-controls">
+                    <input type="number" id="param-POST-/api/models-export-notebook" placeholder="Model ID" value="1">
+                    <button class="btn" onclick="testEndpoint('POST', '/api/models/{id}/export/notebook', null, 'param-POST-/api/models-export-notebook')">Test</button>
+                </div>
+                <div id="response-POST-/api/models-export-notebook" class="response" style="display: none;"></div>
+            </div>
+
+            <!-- Export Docker -->
+            <div class="endpoint-group">
+                <div class="endpoint-header">
+                    <div class="endpoint-title">
+                        <span class="method-badge method-post">POST</span>
+                        <span>Export as Docker</span>
+                    </div>
+                    <span class="endpoint-path">/api/models/{id}/export/docker</span>
+                </div>
+                <div class="endpoint-controls">
+                    <input type="number" id="param-POST-/api/models-export-docker" placeholder="Model ID" value="1">
+                </div>
+                <textarea id="body-POST-/api/models-export-docker" placeholder='{"python_version": "3.10"}' style="min-height: 80px;">{"python_version": "3.10"}</textarea>
+                <button class="btn" onclick="testEndpoint('POST', '/api/models/{id}/export/docker', 'body-POST-/api/models-export-docker', 'param-POST-/api/models-export-docker')">Test</button>
+                <div id="response-POST-/api/models-export-docker" class="response" style="display: none;"></div>
+            </div>
+
+            <!-- Export Requirements -->
+            <div class="endpoint-group">
+                <div class="endpoint-header">
+                    <div class="endpoint-title">
+                        <span class="method-badge method-post">POST</span>
+                        <span>Export Requirements</span>
+                    </div>
+                    <span class="endpoint-path">/api/models/{id}/export/requirements</span>
+                </div>
+                <div class="endpoint-controls">
+                    <input type="number" id="param-POST-/api/models-export-requirements" placeholder="Model ID" value="1">
+                    <button class="btn" onclick="testEndpoint('POST', '/api/models/{id}/export/requirements', null, 'param-POST-/api/models-export-requirements')">Test</button>
+                </div>
+                <div id="response-POST-/api/models-export-requirements" class="response" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+
+        // Check authentication status on load
+        checkAuthStatus();
+
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        async function checkAuthStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/api/models`, {
+                    credentials: 'include'
+                });
+                if (response.ok) {
+                    updateAuthStatus(true);
+                } else {
+                    updateAuthStatus(false);
+                }
+            } catch (error) {
+                updateAuthStatus(false);
+            }
+        }
+
+        function updateAuthStatus(authenticated) {
+            const statusEl = document.getElementById('auth-status');
+            const authForms = document.getElementById('auth-forms');
+            const logoutSection = document.getElementById('logout-section');
+
+            if (authenticated) {
+                statusEl.textContent = 'Authenticated';
+                statusEl.className = 'status authenticated';
+                authForms.style.display = 'none';
+                logoutSection.style.display = 'block';
+            } else {
+                statusEl.textContent = 'Not Authenticated';
+                statusEl.className = 'status unauthenticated';
+                authForms.style.display = 'block';
+                logoutSection.style.display = 'none';
+            }
+        }
+
+        async function handleLogin() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            if (!email || !password) {
+                alert('Please enter email and password');
+                return;
+            }
+
+            try {
+                // Note: This assumes the login endpoint accepts JSON
+                // You may need to adjust based on your actual auth implementation
+                const formData = new FormData();
+                formData.append('email', email);
+                formData.append('password', password);
+
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'include'
+                });
+
+                if (response.ok || response.redirected) {
+                    await checkAuthStatus();
+                    alert('Login successful!');
+                } else {
+                    alert('Login failed. Please check your credentials.');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                alert('Login error: ' + error.message);
+            }
+        }
+
+        async function handleSignup() {
+            const username = document.getElementById('signup-username').value;
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            const displayName = document.getElementById('signup-display-name').value;
+
+            if (!username || !email || !password) {
+                alert('Please fill in all required fields');
+                return;
+            }
+
+            try {
+                const formData = new FormData();
+                formData.append('username', username);
+                formData.append('email', email);
+                formData.append('password', password);
+                if (displayName) formData.append('display_name', displayName);
+
+                const response = await fetch(`${API_BASE}/auth/signup`, {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'include'
+                });
+
+                if (response.ok || response.redirected) {
+                    await checkAuthStatus();
+                    alert('Signup successful!');
+                } else {
+                    const text = await response.text();
+                    alert('Signup failed: ' + text);
+                }
+            } catch (error) {
+                console.error('Signup error:', error);
+                alert('Signup error: ' + error.message);
+            }
+        }
+
+        async function handleLogout() {
+            try {
+                const response = await fetch(`${API_BASE}/auth/logout`, {
+                    credentials: 'include'
+                });
+                await checkAuthStatus();
+                alert('Logged out successfully!');
+            } catch (error) {
+                console.error('Logout error:', error);
+                alert('Logout error: ' + error.message);
+            }
+        }
+
+        async function testEndpoint(method, endpoint, bodyElementId = null, paramElementId = null) {
+            let url = `${API_BASE}${endpoint}`;
+            
+            // Replace {id} placeholder with actual ID if paramElementId is provided
+            if (paramElementId) {
+                const paramValue = document.getElementById(paramElementId).value;
+                if (paramValue) {
+                    url = url.replace('{id}', paramValue);
+                }
+            }
+
+            const options = {
+                method: method,
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+
+            if (bodyElementId && (method === 'POST' || method === 'PUT')) {
+                const bodyText = document.getElementById(bodyElementId).value;
+                try {
+                    options.body = bodyText;
+                } catch (e) {
+                    alert('Invalid JSON in request body');
+                    return;
+                }
+            }
+
+            // Show loading
+            const responseId = `response-${method}-${endpoint}`;
+            const responseEl = document.getElementById(responseId);
+            responseEl.style.display = 'block';
+            responseEl.innerHTML = '<div class="loading"></div>';
+
+            try {
+                const response = await fetch(url, options);
+                const responseText = await response.text();
+                let responseData;
+                
+                try {
+                    responseData = JSON.parse(responseText);
+                } catch (e) {
+                    responseData = responseText;
+                }
+
+                const isSuccess = response.status >= 200 && response.status < 300;
+                const statusClass = isSuccess ? 'success' : 'error';
+                const statusText = isSuccess ? 'SUCCESS' : 'ERROR';
+
+                responseEl.innerHTML = `
+                    <div class="response-header">
+                        <span>Response</span>
+                        <span class="response-status ${statusClass}">${response.status} ${statusText}</span>
+                    </div>
+                    <pre>${JSON.stringify(responseData, null, 2)}</pre>
+                `;
+                responseEl.className = `response ${statusClass}`;
+            } catch (error) {
+                responseEl.innerHTML = `
+                    <div class="response-header">
+                        <span>Error</span>
+                        <span class="response-status error">ERROR</span>
+                    </div>
+                    <pre>${error.message}</pre>
+                `;
+                responseEl.className = 'response error';
+            }
+        }
+    </script>
+</body>
+</html>
+
