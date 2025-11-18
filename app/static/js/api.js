@@ -129,11 +129,18 @@
 
     // Toast notifications
     window.showToast = function(message, type = 'info') {
+        const iconMap = {
+            success: 'check-circle',
+            error: 'alert-circle',
+            info: 'info',
+            warning: 'alert-triangle'
+        };
+        const iconName = iconMap[type] || iconMap.info;
         // Create toast element
         const toast = document.createElement('div');
         toast.className = `toast toast-${type}`;
         toast.innerHTML = `
-            <i data-lucide="${type === 'error' ? 'alert-circle' : 'check-circle'}"></i>
+            <i data-lucide="${iconName}"></i>
             <span>${message}</span>
         `;
 
@@ -155,6 +162,17 @@
         }, 3000);
     };
 
+    if (Array.isArray(window.__flashMessages) && window.__flashMessages.length) {
+        window.__flashMessages.forEach((flash) => {
+            const type = flash.type === 'error' ? 'error'
+                : flash.type === 'success' ? 'success'
+                : flash.type === 'warning' ? 'warning'
+                : 'info';
+            window.showToast(flash.message, type);
+        });
+        window.__flashMessages = [];
+    }
+
     // Export API (Phase 3)
     const exportAPI = {
         exportPython: (modelId) => apiCall(`/models/${modelId}/export/python`, { method: 'POST' }),
@@ -168,4 +186,5 @@
 
     // Export all APIs
     window.api.export = exportAPI;
+    window.api.showToast = window.showToast;
 })();

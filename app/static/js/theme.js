@@ -1,6 +1,6 @@
 // Theme Toggle Functionality
 (function() {
-    const THEME_KEY = 'glideml-theme';
+    const THEME_KEY = 'dominoml-theme';
     const DARK_THEME = 'dark';
     const LIGHT_THEME = 'light';
 
@@ -57,7 +57,7 @@
     }
 
     // Expose theme functions globally
-    window.glidemlTheme = {
+    window.dominomlTheme = {
         toggle: toggleTheme,
         set: applyTheme,
         get: getSavedTheme

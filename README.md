@@ -129,7 +129,7 @@ copy .env.example .env
 Edit `.env` and update the configuration:
 ```env
 SECRET_KEY=your-secret-key-here-change-this
-DATABASE_URL=sqlite:///glideml.db
+DATABASE_URL=sqlite:///dominoml.db
 FLASK_ENV=development
 FLASK_DEBUG=True
 ```
@@ -324,7 +324,7 @@ pytest
 ### Database Issues
 ```bash
 # Delete the database and recreate
-rm glideml.db
+rm dominoml.db
 python
 >>> from app import create_app, db
 >>> app = create_app()

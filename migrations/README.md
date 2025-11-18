@@ -1,6 +1,6 @@
 # Database Migrations
 
-This directory contains SQL migration scripts for the GlideML database.
+This directory contains SQL migration scripts for the DominoML database.
 
 ## Directory Structure
 
@@ -31,7 +31,7 @@ python apply_migration.py migrations/your_migration.sql
 
 ### Manual Application
 ```bash
-sqlite3 glideml.db < migrations/your_migration.sql
+sqlite3 dominoml.db < migrations/your_migration.sql
 ```
 
 ## Migration Best Practices
@@ -47,5 +47,5 @@ sqlite3 glideml.db < migrations/your_migration.sql
 
 If a migration causes issues, restore from backup:
 ```bash
-cp glideml.db.backup glideml.db
+cp dominoml.db.backup dominoml.db
 ```

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}ML Pipeline Builder - GlideML{% endblock %}
+{% block title %}ML Pipeline Builder - DominoML{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/builder.css') }}">
@@ -13,8 +13,10 @@
     <div class="toolbar">
         <div class="toolbar-left">
             <a href="{{ url_for('main.landing') }}" class="logo-link">
-                <div class="logo-box-small">🤖</div>
-                <span class="logo-text-small">GlideML</span>
+                <div class="logo-box-small">
+                    <img src="{{ url_for('static', filename='images/domino-icon.svg') }}" alt="DominoML logo" class="logo-icon-img logo-icon-img-small">
+                </div>
+                <span class="logo-text-small">DominoML</span>
             </a>
             
             <div class="toolbar-divider"></div>

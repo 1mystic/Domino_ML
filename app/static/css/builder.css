@@ -318,7 +318,16 @@
 }
 
 .node-icon {
-    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+}
+
+.node-icon i {
+    width: 20px;
+    height: 20px;
 }
 
 .node-label {
@@ -365,6 +374,16 @@
     box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
 }
 
+[data-theme="light"] .node-handle {
+    border-color: #0d0d0d;
+    background: hsl(var(--muted));
+}
+
+[data-theme="light"] .node-handle:hover {
+    background: #0d0d0d;
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.15);
+}
+
 .node-handle-input {
     left: -6px;
 }
@@ -380,6 +399,10 @@
     stroke-width: 2;
     pointer-events: none;
     transition: stroke 0.2s, stroke-width 0.2s;
+}
+
+[data-theme="light"] .edge {
+    stroke: #0d0d0d;
 }
 
 .edge-group {
@@ -407,6 +430,10 @@
     stroke-width: 2;
     opacity: 0.8;
     pointer-events: none;
+}
+
+[data-theme="light"] .edge-temp {
+    stroke: #4d4d4d;
 }
 
 /* Empty State */
@@ -639,8 +666,17 @@
 }
 
 .template-icon {
-    font-size: 2rem;
     margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+}
+
+.template-icon i {
+    width: 32px;
+    height: 32px;
 }
 
 .template-name {
@@ -730,6 +766,10 @@
 
 .toast-info {
     border-left: 4px solid var(--color-blue-500);
+}
+
+.toast-warning {
+    border-left: 4px solid var(--color-orange-500);
 }
 
 /* Mobile Responsiveness */

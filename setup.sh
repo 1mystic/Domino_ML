@@ -1,10 +1,10 @@
 #!/bin/bash
-# GlideML Flask - Setup Script for Linux/Mac
+# DominoML Flask - Setup Script for Linux/Mac
 # This script sets up the Flask application automatically
 
 echo ""
 echo "========================================"
-echo " GlideML Flask - Setup Script"
+echo " DominoML Flask - Setup Script"
 echo "========================================"
 echo ""
 

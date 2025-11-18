@@ -193,7 +193,7 @@ POST /api/models/<id>/export/requirements
 - `app/routes/api.py` - API endpoints
 
 **Database:**
-- Location: `glideml.db`
+- Location: `dominoml.db`
 - Tables: user, saved_model, pipeline_versions, model_metrics, version_tags, version_comments
 - Migration: `migrations/applied/2025-10-31_add_versioning.sql`
 

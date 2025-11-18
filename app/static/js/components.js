@@ -2,6 +2,40 @@
 (function() {
     let allComponents = [];
     let componentsByCategory = {};
+    const COMPONENT_ICON_MAP = {
+        'csv-loader': 'database',
+        'sample-data': 'database',
+        'standard-scaler': 'sliders',
+        'train-test-split': 'split-square-horizontal',
+        'min-max-scaler': 'sliders',
+        'pca': 'layers',
+        'random-forest-classifier': 'trees',
+        'svm-classifier': 'activity',
+        'logistic-regression': 'trending-up',
+        'knn-classifier': 'users',
+        'linear-regression': 'chart-line',
+        'random-forest-regressor': 'tree-deciduous',
+        'classification-metrics': 'bar-chart-3',
+        'regression-metrics': 'line-chart',
+        'kmeans-clustering': 'target'
+    };
+
+    const TEMPLATE_ICON_MAP = {
+        'iris-classification': 'flower-2',
+        'regression-pipeline': 'chart-line',
+        'clustering-pipeline': 'spline',
+    };
+
+    function getComponentIconName(componentId) {
+        return COMPONENT_ICON_MAP[componentId] || 'box';
+    }
+
+    function getTemplateIconName(templateId) {
+        return TEMPLATE_ICON_MAP[templateId] || 'layout-template';
+    }
+
+    window.getComponentIconName = getComponentIconName;
+    window.getTemplateIconName = getTemplateIconName;
 
     // Initialize components library
     window.componentsInit = async function() {
@@ -66,19 +100,24 @@
                     <span class="category-count">${filteredComponents.length}</span>
                 </div>
                 <div class="category-components">
-                    ${filteredComponents.map(component => `
+                    ${filteredComponents.map(component => {
+                        const iconName = getComponentIconName(component.id);
+                        return `
                         <div 
                             class="component-item" 
                             draggable="true"
                             data-component-id="${component.id}"
                         >
-                            <div class="component-icon">${component.icon}</div>
+                            <div class="component-icon">
+                                <i data-lucide="${iconName}"></i>
+                            </div>
                             <div class="component-info">
                                 <div class="component-name">${component.name}</div>
                                 <div class="component-description">${component.description}</div>
                             </div>
                         </div>
-                    `).join('')}
+                    `;
+                    }).join('')}
                 </div>
             `;
 
@@ -87,6 +126,10 @@
 
         // Setup drag handlers
         setupDragHandlers();
+
+        if (window.lucide) {
+            window.lucide.createIcons();
+        }
     }
 
     // Setup drag handlers for components

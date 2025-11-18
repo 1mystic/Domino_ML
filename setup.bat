@@ -1,10 +1,10 @@
 @echo off
-REM GlideML Flask - Setup Script for Windows
+REM DominoML Flask - Setup Script for Windows
 REM This script sets up the Flask application automatically
 
 echo.
 echo ========================================
-echo  GlideML Flask - Setup Script
+echo  DominoML Flask - Setup Script
 echo ========================================
 echo.
 

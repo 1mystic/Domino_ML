@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}GlideML - Visual ML Pipeline Builder{% endblock %}
+{% block title %}DominoML - Visual ML Pipeline Builder{% endblock %}
 {% block description %}Build powerful machine learning pipelines with our intuitive drag-and-drop interface. No coding required.{% endblock %}
 
 {% block extra_css %}
@@ -12,13 +12,13 @@
     <!-- Header -->
     <header class="header">
         <div class="container">
-            <div class="flex items-center justify-between py-4">
+            <div class=" navbar flex items-center justify-between py-4">
                 <div class="flex items-center gap-3">
                     <div class="logo-box">
-                        <span class="logo-icon">🤖</span>
+                        <img src="{{ url_for('static', filename='images/domino-icon.svg') }}" alt="DominoML logo" class="logo-icon-img">
                     </div>
                     <div class="flex items-center gap-2">
-                        <h1 class="logo-text">GlideML</h1>
+                        <h1 class="logo-text">DominoML</h1>
                         <span class="badge badge-secondary">Beta</span>
                     </div>
                 </div>
@@ -60,7 +60,7 @@
                     </div>
 
                     <!-- CTA Buttons -->
-                    <div class="cta-buttons">
+                    <div class="cta-buttons hero-buttons">
                         <a href="{{ url_for('main.builder') }}" class="btn btn-primary btn-lg">
                             <i data-lucide="play"></i>
                             Try It First
@@ -101,31 +101,9 @@
                     <div class="hero-card">
                         <div class="card-glow"></div>
                         <div class="card-content">
-                            <div class="demo-box">
-                                <div class="demo-header">
-                                    <span>Visual ML Pipeline Builder</span>
-                                </div>
-                                <div class="demo-canvas">
-                                    <!-- Sample nodes -->
-                                    <div class="demo-node" style="top: 20%; left: 10%;">
-                                        <div class="node-icon">📊</div>
-                                        <div class="node-label">Load Data</div>
-                                    </div>
-                                    <div class="demo-node" style="top: 20%; left: 40%;">
-                                        <div class="node-icon">📏</div>
-                                        <div class="node-label">Scale</div>
-                                    </div>
-                                    <div class="demo-node" style="top: 20%; left: 70%;">
-                                        <div class="node-icon">🌲</div>
-                                        <div class="node-label">Train</div>
-                                    </div>
-                                    <!-- Connection lines -->
-                                    <svg class="connection-lines">
-                                        <line x1="20%" y1="50%" x2="40%" y2="50%" stroke="#3b82f6" stroke-width="2"/>
-                                        <line x1="55%" y1="50%" x2="70%" y2="50%" stroke="#3b82f6" stroke-width="2"/>
-                                    </svg>
-                                </div>
-                            </div>
+                            <img src="{{ url_for('static', filename='images/hero.jpg') }}"
+                                 alt="DominoML pipeline preview"
+                                 class="hero-preview">
                         </div>
                     </div>
                     <div class="floating-element floating-1"></div>
@@ -248,12 +226,14 @@
         <div class="container">
             <div class="footer-content">
                 <div class="flex items-center gap-3">
-                    <div class="footer-logo">🤖</div>
-                    <span class="footer-brand">GlideML</span>
+                    <div class="footer-logo">
+                        <img src="{{ url_for('static', filename='images/domino-icon.svg') }}" alt="DominoML logo" class="logo-icon-img">
+                    </div>
+                    <span class="footer-brand">DominoML</span>
                 </div>
                 
                 <div class="footer-text">
-                    © 2025 GlideML. Built with ❤️ for the ML community.
+                    © 2025 DominoML. Built with ❤️ for the ML community.
                 </div>
             </div>
         </div>

@@ -290,7 +290,7 @@ email-validator          # Email validation
 Environment variables (not in repository):
 ```
 SECRET_KEY=your-secret-key-here
-DATABASE_URL=sqlite:///glideml.db
+DATABASE_URL=sqlite:///dominoml.db
 FLASK_ENV=development
 FLASK_DEBUG=True
 ```
@@ -339,7 +339,7 @@ Python package dependencies list
 Production Server:
 ├── Application code (Domino_ML/)
 ├── Virtual environment (venv/)
-├── Database file (glideml.db) or PostgreSQL
+├── Database file (dominoml.db) or PostgreSQL
 ├── Static files (served by Nginx)
 ├── WSGI server (Gunicorn/uWSGI)
 └── Reverse proxy (Nginx)

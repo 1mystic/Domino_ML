@@ -5,6 +5,20 @@
     console.log('Export Manager loaded');
 
     let currentModelId = null;
+    const SAVE_WARNING = 'You must save the model to use export features.';
+
+    function hasSavedModel() {
+        if (typeof window.getCurrentModelId === 'function') {
+            currentModelId = window.getCurrentModelId();
+        }
+        return Boolean(currentModelId);
+    }
+
+    function notifySaveRequired() {
+        if (window.showToast) {
+            window.showToast(SAVE_WARNING, 'warning');
+        }
+    }
 
     /**
      * Initialize export system
@@ -56,6 +70,11 @@
      * Open export dialog
      */
     function openExportDialog() {
+        if (!hasSavedModel()) {
+            notifySaveRequired();
+            return;
+        }
+
         console.log('Opening export dialog');
         const dialog = document.getElementById('export-formats-dialog');
         console.log('Dialog element:', dialog);
@@ -84,13 +103,8 @@
      * Export pipeline in specified format
      */
     async function exportPipeline(format) {
-        // Get current model ID from canvas
-        if (typeof window.getCurrentModelId === 'function') {
-            currentModelId = window.getCurrentModelId();
-        }
-        
-        if (!currentModelId) {
-            window.api.showToast('Please save the model first', 'error');
+        if (!hasSavedModel()) {
+            notifySaveRequired();
             return;
         }
 
@@ -106,26 +120,26 @@
                     downloadFile(result.script, result.filename, 'text/x-python');
                     // Also download requirements
                     downloadFile(result.requirements, 'requirements.txt', 'text/plain');
-                    window.api.showToast('Python script exported successfully!', 'success');
+                    window.showToast('Python script exported successfully!', 'success');
                     break;
 
                 case 'notebook':
                     result = await window.api.export.exportNotebook(currentModelId);
                     downloadFile(result.notebook, result.filename, 'application/json');
-                    window.api.showToast('Jupyter notebook exported successfully!', 'success');
+                    window.showToast('Jupyter notebook exported successfully!', 'success');
                     break;
 
                 case 'docker':
                     result = await window.api.export.exportDocker(currentModelId);
                     // Create a zip file with all Docker artifacts
                     await downloadDockerArtifacts(result);
-                    window.api.showToast('Docker files exported successfully!', 'success');
+                    window.showToast('Docker files exported successfully!', 'success');
                     break;
 
                 case 'requirements':
                     result = await window.api.export.exportRequirements(currentModelId);
                     downloadFile(result.requirements, result.filename, 'text/plain');
-                    window.api.showToast('Requirements.txt exported successfully!', 'success');
+                    window.showToast('Requirements.txt exported successfully!', 'success');
                     break;
 
                 default:
@@ -136,7 +150,7 @@
 
         } catch (error) {
             console.error('Export failed:', error);
-            window.api.showToast(`Export failed: ${error.message}`, 'error');
+            window.showToast(`Export failed: ${error.message}`, 'error');
         } finally {
             hideExportLoading(format);
         }
@@ -178,7 +192,7 @@
         }
 
         // Show instruction
-        window.api.showToast(
+        window.showToast(
             'Docker files downloaded. Check your downloads folder!',
             'success'
         );

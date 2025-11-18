@@ -120,7 +120,7 @@ Click the moon/sun icon in the header to switch between dark and light modes. Yo
 ### Database Error
 If you get a database error:
 ```bash
-rm instance/glideml.db  # Delete old database
+rm instance/dominoml.db  # Delete old database
 python
 >>> from app import create_app, db
 >>> app = create_app()

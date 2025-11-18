@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="{% block description %}GlideML - Build powerful machine learning pipelines with our intuitive drag-and-drop interface{% endblock %}">
-    <title>{% block title %}GlideML - Visual ML Pipeline Builder{% endblock %}</title>
+    <meta name="description" content="{% block description %}DominoML - Build powerful machine learning pipelines with our intuitive drag-and-drop interface{% endblock %}">
+    <title>{% block title %}DominoML - Visual ML Pipeline Builder{% endblock %}</title>
     
     <!-- Favicon -->
-    <!-- <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favicon.svg') }}"> -->
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/domino-icon.svg') }}">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='images/domino-icon.svg') }}">
     
     <!-- CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
@@ -17,21 +18,16 @@
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
-    <!-- Flash Messages -->
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
-            <div id="flash-messages" class="fixed top-4 right-4 z-50" style="max-width: 400px;">
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ 'success' if category == 'success' else 'error' }} fade-in mb-2">
-                        <div class="flex items-center justify-between">
-                            <span>{{ message }}</span>
-                            <button onclick="this.parentElement.parentElement.remove()" class="btn-ghost btn-sm ml-4">
-                                <i data-lucide="x" style="width: 16px; height: 16px;"></i>
-                            </button>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
+            <script>
+                window.__flashMessages = window.__flashMessages || [];
+                window.__flashMessages.push(
+                    {% for category, message in messages %}
+                        { message: {{ message|tojson }}, type: {{ category|tojson }} }{{ "," if not loop.last else "" }}
+                    {% endfor %}
+                );
+            </script>
         {% endif %}
     {% endwith %}
     
@@ -42,16 +38,6 @@
     <script>
         // Initialize Lucide icons
         lucide.createIcons();
-        
-        // Auto-dismiss flash messages after 5 seconds
-        setTimeout(() => {
-            const flashMessages = document.getElementById('flash-messages');
-            if (flashMessages) {
-                flashMessages.style.opacity = '0';
-                flashMessages.style.transition = 'opacity 0.3s ease';
-                setTimeout(() => flashMessages.remove(), 300);
-            }
-        }, 5000);
     </script>
     
     {% block extra_js %}{% endblock %}

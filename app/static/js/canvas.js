@@ -80,6 +80,10 @@
             if (e.target === canvas || e.target === canvasNodes || e.target === canvasSvg) {
                 selectNode(null);
             }
+
+            if (window.lucide) {
+                window.lucide.createIcons();
+            }
         });
     }
 
@@ -183,6 +187,10 @@
 
     // Add node to canvas
     function addNode(component, x, y) {
+        const iconName = window.getComponentIconName
+            ? window.getComponentIconName(component.id)
+            : null;
+
         const node = {
             id: `node-${++nodeIdCounter}`,
             type: component.type,
@@ -191,6 +199,7 @@
                 componentId: component.id,
                 label: component.name,
                 icon: component.icon,
+                iconName: iconName,
                 parameters: {},
             },
         };
@@ -379,9 +388,16 @@
             const paramCount = component?.parameters?.length || 0;
             const paramText = paramCount > 0 ? `${paramCount} parameter${paramCount !== 1 ? 's' : ''}` : 'No parameters';
             
+            if (!node.data.iconName && window.getComponentIconName && node.data.componentId) {
+                node.data.iconName = window.getComponentIconName(node.data.componentId);
+            }
+
+            const iconName = node.data.iconName || 'box';
+            const iconMarkup = `<i data-lucide="${iconName}"></i>`;
+
             nodeEl.innerHTML = `
                 <div class="node-header">
-                    <span class="node-icon">${node.data.icon || '📦'}</span>
+                    <span class="node-icon">${iconMarkup}</span>
                     <span class="node-label">${node.data.label}</span>
                 </div>
                 <div class="node-body">
@@ -416,6 +432,10 @@
 
             canvasNodes.appendChild(nodeEl);
         });
+
+        if (window.lucide) {
+            window.lucide.createIcons();
+        }
     }
 
     // Handle node drag
@@ -624,7 +644,8 @@
                 isHovering = false;
                 setTimeout(() => {
                     if (!isHovering) {
-                        line.setAttribute('stroke', '#3b82f6');
+                        const defaultStroke = line.dataset.defaultStroke || getComputedStyle(line).stroke;
+                        line.setAttribute('stroke', defaultStroke);
                         line.setAttribute('stroke-width', '2');
                         deleteButton.style.display = 'none';
                     }
@@ -648,6 +669,7 @@
             // Assemble the group
             group.appendChild(hitArea);
             group.appendChild(line);
+            line.dataset.defaultStroke = getComputedStyle(line).stroke;
             group.appendChild(deleteButton);
             
             canvasSvg.appendChild(group);
@@ -861,14 +883,25 @@
             if (templates.length === 0) {
                 container.innerHTML = '<div class="empty-state-small">No templates available</div>';
             } else {
-                container.innerHTML = templates.map(template => `
+                container.innerHTML = templates.map(template => {
+                    const iconName = window.getTemplateIconName
+                        ? window.getTemplateIconName(template.id)
+                        : 'layout-template';
+                    return `
                     <div class="template-card" onclick="window.loadTemplate('${template.id}')">
-                        <div class="template-icon">${template.icon || '📊'}</div>
+                        <div class="template-icon">
+                            <i data-lucide="${iconName}"></i>
+                        </div>
                         <h4 class="template-name">${template.name}</h4>
                         <p class="template-description">${template.description}</p>
                         <div class="template-meta">${template.pipeline?.nodes?.length || 0} components</div>
                     </div>
-                `).join('');
+                `;
+                }).join('');
+
+                if (window.lucide) {
+                    window.lucide.createIcons();
+                }
             }
             
             openDialog('templates-dialog');
@@ -914,6 +947,10 @@
                     };
                 }
                 
+                const iconName = window.getComponentIconName
+                    ? window.getComponentIconName(component.id)
+                    : 'box';
+                
                 return {
                     id: node.id,
                     type: node.type,
@@ -922,6 +959,7 @@
                         componentId: component.id,
                         label: node.data?.label || component.name,
                         icon: node.data?.icon || component.icon || '📦',
+                        iconName: iconName,
                         parameters: node.data?.parameters || {},
                     }
                 };
