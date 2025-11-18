@@ -401,6 +401,37 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .auth-section h3 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        input:disabled,
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        button:disabled:hover {
+            transform: none;
+        }
     </style>
 </head>
 <body>
@@ -412,51 +443,70 @@
 
         <!-- Authentication Section -->
         <div class="auth-section">
-            <h2 style="margin-bottom: 1rem; font-size: 1.2rem;">Authentication</h2>
-            <div id="auth-status" class="status unauthenticated">Not Authenticated</div>
-            <div id="auth-forms" style="margin-top: 1rem;">
-                <div class="auth-form">
-                    <div class="form-group">
-                        <label>Email</label>
-                        <input type="email" id="login-email" placeholder="user@example.com">
-                    </div>
-                    <div class="form-group">
-                        <label>Password</label>
-                        <input type="password" id="login-password" placeholder="••••••••">
-                    </div>
-                    <div class="form-group" style="justify-content: flex-end;">
-                        <label>&nbsp;</label>
-                        <button class="btn" onclick="handleLogin()">Login</button>
-                    </div>
-                </div>
-                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
-                    <h3 style="font-size: 1rem; margin-bottom: 1rem;">Or Sign Up</h3>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                <h2 style="margin: 0; font-size: 1.2rem; font-weight: 600;">Authentication</h2>
+                <button class="btn btn-secondary btn-sm" onclick="checkAuthStatus()" style="padding: 0.5rem 1rem; font-size: 0.8rem;">
+                    Refresh Status
+                </button>
+            </div>
+            <div id="auth-status" class="status unauthenticated">
+                <span style="display: inline-flex; align-items: center; gap: 0.5rem;">
+                    <span style="width: 8px; height: 8px; background: var(--error); border-radius: 50%; display: inline-block;"></span>
+                    Not Authenticated
+                </span>
+            </div>
+            <div id="auth-forms" style="margin-top: 1.5rem;">
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="font-size: 0.95rem; font-weight: 600; margin-bottom: 1rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Login</h3>
                     <div class="auth-form">
                         <div class="form-group">
-                            <label>Username</label>
-                            <input type="text" id="signup-username" placeholder="username">
-                        </div>
-                        <div class="form-group">
                             <label>Email</label>
-                            <input type="email" id="signup-email" placeholder="user@example.com">
+                            <input type="email" id="login-email" placeholder="user@example.com" autocomplete="email">
                         </div>
                         <div class="form-group">
                             <label>Password</label>
-                            <input type="password" id="signup-password" placeholder="••••••••">
+                            <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password">
+                        </div>
+                        <div class="form-group" style="justify-content: flex-end; margin-top: 0.5rem;">
+                            <label>&nbsp;</label>
+                            <button class="btn" onclick="handleLogin()" id="login-btn">Login</button>
+                        </div>
+                    </div>
+                </div>
+                <div style="padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
+                    <h3 style="font-size: 0.95rem; font-weight: 600; margin-bottom: 1rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Sign Up</h3>
+                    <div class="auth-form">
+                        <div class="form-group">
+                            <label>Username</label>
+                            <input type="text" id="signup-username" placeholder="username" autocomplete="username">
                         </div>
                         <div class="form-group">
-                            <label>Display Name</label>
-                            <input type="text" id="signup-display-name" placeholder="Display Name">
+                            <label>Email</label>
+                            <input type="email" id="signup-email" placeholder="user@example.com" autocomplete="email">
                         </div>
-                        <div class="form-group" style="justify-content: flex-end;">
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" id="signup-password" placeholder="••••••••" autocomplete="new-password">
+                        </div>
+                        <div class="form-group">
+                            <label>Display Name <span style="color: var(--text-secondary); font-weight: normal;">(Optional)</span></label>
+                            <input type="text" id="signup-display-name" placeholder="Display Name" autocomplete="name">
+                        </div>
+                        <div class="form-group" style="justify-content: flex-end; margin-top: 0.5rem;">
                             <label>&nbsp;</label>
-                            <button class="btn" onclick="handleSignup()">Sign Up</button>
+                            <button class="btn" onclick="handleSignup()" id="signup-btn">Sign Up</button>
                         </div>
                     </div>
                 </div>
             </div>
-            <div id="logout-section" style="display: none; margin-top: 1rem;">
-                <button class="btn btn-danger" onclick="handleLogout()">Logout</button>
+            <div id="logout-section" style="display: none; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <div>
+                        <div style="font-size: 0.9rem; font-weight: 500; margin-bottom: 0.25rem;">You are logged in</div>
+                        <div style="font-size: 0.8rem; color: var(--text-secondary);" id="user-info">Ready to test APIs</div>
+                    </div>
+                    <button class="btn btn-danger" onclick="handleLogout()" id="logout-btn">Logout</button>
+                </div>
             </div>
         </div>
 
@@ -799,7 +849,7 @@
     </div>
 
     <script>
-        const API_BASE = window.location.origin;
+        const API_BASE = 'http://127.0.0.1:5001';
 
         // Check authentication status on load
         checkAuthStatus();
@@ -819,82 +869,257 @@
         }
 
         async function checkAuthStatus() {
+            const statusEl = document.getElementById('auth-status');
+            statusEl.textContent = 'Checking...';
+            statusEl.className = 'status';
+            
             try {
                 const response = await fetch(`${API_BASE}/api/models`, {
-                    credentials: 'include'
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
                 });
-                if (response.ok) {
-                    updateAuthStatus(true);
-                } else {
-                    updateAuthStatus(false);
+                
+                console.log('Auth check response:', {
+                    status: response.status,
+                    statusText: response.statusText,
+                    url: response.url,
+                    contentType: response.headers.get('content-type'),
+                    ok: response.ok
+                });
+                
+                // Check if we were redirected to login page
+                if (response.url && response.url.includes('/auth/login')) {
+                    console.log('Redirected to login page - not authenticated');
+                    await updateAuthStatus(false);
+                    return;
                 }
+                
+                // Check content type
+                const contentType = response.headers.get('content-type') || '';
+                console.log('Content-Type:', contentType);
+                
+                // Get response text
+                const text = await response.text();
+                console.log('Response text (first 200 chars):', text.substring(0, 200));
+                
+                // Check for explicit error status codes
+                if (response.status === 401 || response.status === 403) {
+                    console.log('Got 401/403 - not authenticated');
+                    await updateAuthStatus(false);
+                    return;
+                }
+                
+                // Check if response contains login message (HTML error page)
+                if (text.includes('Please log in') || text.includes('login') || text.trim().startsWith('<!') || text.trim().startsWith('<html')) {
+                    console.log('Response contains login message or HTML - not authenticated');
+                    await updateAuthStatus(false);
+                    return;
+                }
+                
+                // If response is HTML content type, not authenticated
+                if (contentType.includes('text/html')) {
+                    console.log('Content-Type is HTML - not authenticated');
+                    await updateAuthStatus(false);
+                    return;
+                }
+                
+                // For 200/201, try to parse as JSON
+                if (response.ok && (response.status === 200 || response.status === 201)) {
+                    try {
+                        const data = JSON.parse(text);
+                        console.log('Successfully parsed JSON:', Array.isArray(data) ? `Array with ${data.length} items` : 'Object');
+                        
+                        // If we got valid JSON array/object, user is authenticated
+                        if (Array.isArray(data) || (typeof data === 'object' && data !== null)) {
+                            console.log('User is authenticated!');
+                            await updateAuthStatus(true);
+                            return;
+                        }
+                    } catch (e) {
+                        console.log('JSON parse error:', e);
+                        // If JSON parsing fails, user is not authenticated
+                        await updateAuthStatus(false);
+                        return;
+                    }
+                }
+                
+                // If we get here, something unexpected happened
+                console.log('Unexpected response - defaulting to not authenticated');
+                await updateAuthStatus(false);
             } catch (error) {
-                updateAuthStatus(false);
+                console.error('Auth check error:', error);
+                await updateAuthStatus(false);
             }
         }
 
-        function updateAuthStatus(authenticated) {
+        async function updateAuthStatus(authenticated) {
             const statusEl = document.getElementById('auth-status');
             const authForms = document.getElementById('auth-forms');
             const logoutSection = document.getElementById('logout-section');
+            const userInfo = document.getElementById('user-info');
+
+            if (!statusEl) {
+                console.error('Auth status element not found');
+                return;
+            }
 
             if (authenticated) {
-                statusEl.textContent = 'Authenticated';
+                // Update UI immediately
+                statusEl.innerHTML = '<span style="display: inline-flex; align-items: center; gap: 0.5rem;"><span style="width: 8px; height: 8px; background: var(--success); border-radius: 50%; display: inline-block; animation: pulse 2s infinite;"></span>Authenticated</span>';
                 statusEl.className = 'status authenticated';
-                authForms.style.display = 'none';
-                logoutSection.style.display = 'block';
+                if (authForms) authForms.style.display = 'none';
+                if (logoutSection) logoutSection.style.display = 'block';
+                
+                // Try to get user info (non-blocking)
+                if (userInfo) {
+                    userInfo.textContent = 'Loading...';
+                    try {
+                        const response = await fetch(`${API_BASE}/api/models`, {
+                            method: 'GET',
+                            credentials: 'include',
+                            headers: {
+                                'Accept': 'application/json'
+                            },
+                            redirect: 'manual'
+                        });
+                        
+                        const contentType = response.headers.get('content-type') || '';
+                        if (response.ok && contentType.includes('application/json')) {
+                            const text = await response.text();
+                            if (!text.includes('Please log in') && !text.trim().startsWith('<')) {
+                                try {
+                                    const models = JSON.parse(text);
+                                    if (Array.isArray(models)) {
+                                        userInfo.textContent = `You have ${models.length} saved pipeline${models.length !== 1 ? 's' : ''}`;
+                                    } else {
+                                        userInfo.textContent = 'Ready to test APIs';
+                                    }
+                                } catch (e) {
+                                    userInfo.textContent = 'Ready to test APIs';
+                                }
+                            } else {
+                                userInfo.textContent = 'Ready to test APIs';
+                            }
+                        } else {
+                            userInfo.textContent = 'Ready to test APIs';
+                        }
+                    } catch (e) {
+                        console.error('Error fetching user info:', e);
+                        if (userInfo) {
+                            userInfo.textContent = 'Ready to test APIs';
+                        }
+                    }
+                }
             } else {
-                statusEl.textContent = 'Not Authenticated';
+                // Update UI immediately
+                statusEl.innerHTML = '<span style="display: inline-flex; align-items: center; gap: 0.5rem;"><span style="width: 8px; height: 8px; background: var(--error); border-radius: 50%; display: inline-block;"></span>Not Authenticated</span>';
                 statusEl.className = 'status unauthenticated';
-                authForms.style.display = 'block';
-                logoutSection.style.display = 'none';
+                if (authForms) authForms.style.display = 'block';
+                if (logoutSection) logoutSection.style.display = 'none';
             }
         }
 
         async function handleLogin() {
-            const email = document.getElementById('login-email').value;
+            const email = document.getElementById('login-email').value.trim();
             const password = document.getElementById('login-password').value;
+            const loginBtn = document.getElementById('login-btn');
 
             if (!email || !password) {
                 alert('Please enter email and password');
                 return;
             }
 
+            // Show loading state
+            const originalText = loginBtn.textContent;
+            loginBtn.disabled = true;
+            loginBtn.textContent = 'Logging in...';
+
             try {
-                // Note: This assumes the login endpoint accepts JSON
-                // You may need to adjust based on your actual auth implementation
                 const formData = new FormData();
                 formData.append('email', email);
                 formData.append('password', password);
 
+                // First, make the login request and follow redirects to get the session cookie
                 const response = await fetch(`${API_BASE}/auth/login`, {
                     method: 'POST',
                     body: formData,
-                    credentials: 'include'
+                    credentials: 'include' // This is crucial - allows cookies to be set and sent
                 });
 
-                if (response.ok || response.redirected) {
+                console.log('Login response:', {
+                    status: response.status,
+                    url: response.url,
+                    redirected: response.redirected,
+                    type: response.type
+                });
+
+                // Check if login was successful - Flask redirects to /builder on success
+                // If we got redirected or got a 200/302, login likely succeeded
+                if (response.ok || response.status === 302 || response.redirected || response.url.includes('/builder')) {
+                    console.log('Login appears successful, checking auth status...');
+                    
+                    // Wait a bit for session cookie to be fully set
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    
+                    // Now check auth status
                     await checkAuthStatus();
-                    alert('Login successful!');
+                    
+                    // Verify the status was updated
+                    const statusEl = document.getElementById('auth-status');
+                    if (statusEl && statusEl.className.includes('authenticated')) {
+                        alert('Login successful!');
+                        // Clear form
+                        document.getElementById('login-email').value = '';
+                        document.getElementById('login-password').value = '';
+                    } else {
+                        // Try one more time with a longer delay
+                        console.log('First check failed, retrying...');
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                        await checkAuthStatus();
+                        const statusEl2 = document.getElementById('auth-status');
+                        if (statusEl2 && statusEl2.className.includes('authenticated')) {
+                            alert('Login successful!');
+                            document.getElementById('login-email').value = '';
+                            document.getElementById('login-password').value = '';
+                        } else {
+                            console.error('Auth status check failed after login');
+                            alert('Login may have succeeded, but status check failed. Please refresh the page or try the refresh status button.');
+                        }
+                    }
                 } else {
+                    const text = await response.text();
+                    console.error('Login failed:', text);
                     alert('Login failed. Please check your credentials.');
                 }
             } catch (error) {
                 console.error('Login error:', error);
                 alert('Login error: ' + error.message);
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.textContent = originalText;
             }
         }
 
         async function handleSignup() {
-            const username = document.getElementById('signup-username').value;
-            const email = document.getElementById('signup-email').value;
+            const username = document.getElementById('signup-username').value.trim();
+            const email = document.getElementById('signup-email').value.trim();
             const password = document.getElementById('signup-password').value;
-            const displayName = document.getElementById('signup-display-name').value;
+            const displayName = document.getElementById('signup-display-name').value.trim();
+            const signupBtn = document.getElementById('signup-btn');
 
             if (!username || !email || !password) {
-                alert('Please fill in all required fields');
+                alert('Please fill in all required fields (Username, Email, Password)');
                 return;
             }
+
+            // Show loading state
+            const originalText = signupBtn.textContent;
+            signupBtn.disabled = true;
+            signupBtn.textContent = 'Signing up...';
 
             try {
                 const formData = new FormData();
@@ -903,35 +1128,100 @@
                 formData.append('password', password);
                 if (displayName) formData.append('display_name', displayName);
 
+                // Make the signup request and follow redirects to get the session cookie
                 const response = await fetch(`${API_BASE}/auth/signup`, {
                     method: 'POST',
                     body: formData,
-                    credentials: 'include'
+                    credentials: 'include' // This is crucial - allows cookies to be set and sent
                 });
 
-                if (response.ok || response.redirected) {
+                console.log('Signup response:', {
+                    status: response.status,
+                    url: response.url,
+                    redirected: response.redirected,
+                    type: response.type
+                });
+
+                // Check if signup was successful - Flask redirects to /builder on success
+                if (response.ok || response.status === 302 || response.redirected || response.url.includes('/builder')) {
+                    console.log('Signup appears successful, checking auth status...');
+                    
+                    // Wait a bit for session cookie to be fully set
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    
+                    // Now check auth status
                     await checkAuthStatus();
-                    alert('Signup successful!');
+                    
+                    // Verify the status was updated
+                    const statusEl = document.getElementById('auth-status');
+                    if (statusEl && statusEl.className.includes('authenticated')) {
+                        alert('Signup successful!');
+                        // Clear form
+                        document.getElementById('signup-username').value = '';
+                        document.getElementById('signup-email').value = '';
+                        document.getElementById('signup-password').value = '';
+                        document.getElementById('signup-display-name').value = '';
+                    } else {
+                        // Try one more time with a longer delay
+                        console.log('First check failed, retrying...');
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                        await checkAuthStatus();
+                        const statusEl2 = document.getElementById('auth-status');
+                        if (statusEl2 && statusEl2.className.includes('authenticated')) {
+                            alert('Signup successful!');
+                            document.getElementById('signup-username').value = '';
+                            document.getElementById('signup-email').value = '';
+                            document.getElementById('signup-password').value = '';
+                            document.getElementById('signup-display-name').value = '';
+                        } else {
+                            console.error('Auth status check failed after signup');
+                            alert('Signup may have succeeded, but status check failed. Please refresh the page or try the refresh status button.');
+                        }
+                    }
                 } else {
                     const text = await response.text();
-                    alert('Signup failed: ' + text);
+                    console.error('Signup failed:', text);
+                    alert('Signup failed: ' + (text || 'Please check your input'));
                 }
             } catch (error) {
                 console.error('Signup error:', error);
                 alert('Signup error: ' + error.message);
+            } finally {
+                signupBtn.disabled = false;
+                signupBtn.textContent = originalText;
             }
         }
 
         async function handleLogout() {
             try {
                 const response = await fetch(`${API_BASE}/auth/logout`, {
-                    credentials: 'include'
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
                 });
-                await checkAuthStatus();
-                alert('Logged out successfully!');
+                
+                if (response.ok) {
+                    const data = await response.json().catch(() => ({}));
+                    await checkAuthStatus();
+                    alert('Logged out successfully!');
+                } else {
+                    // Even if response is not ok, logout might have succeeded
+                    await checkAuthStatus();
+                    alert('Logged out successfully!');
+                }
             } catch (error) {
                 console.error('Logout error:', error);
-                alert('Logout error: ' + error.message);
+                // Try to check auth status anyway - logout might have succeeded server-side
+                await checkAuthStatus();
+                const statusEl = document.getElementById('auth-status');
+                if (statusEl.className.includes('unauthenticated')) {
+                    alert('Logged out successfully!');
+                } else {
+                    alert('Logout error: ' + error.message);
+                }
             }
         }
 
@@ -1007,4 +1297,6 @@
     </script>
 </body>
 </html>
+
+
 

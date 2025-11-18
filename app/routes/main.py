@@ -1,5 +1,6 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, send_from_directory
 from flask_login import login_required, current_user
+import os
 
 bp = Blueprint('main', __name__)
 
@@ -14,3 +15,11 @@ def builder():
 @bp.route('/notfound')
 def not_found():
     return render_template('404.html'), 404
+
+@bp.route('/api-tester')
+def api_tester():
+    """Serve the API tester HTML page"""
+    # Get the base directory (Domino_ML)
+    base_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+    api_test_dir = os.path.join(base_dir, 'API-Test')
+    return send_from_directory(api_test_dir, 'api-tester.html')

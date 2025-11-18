@@ -300,6 +300,18 @@ with app.app_context():
 2. Add your template following the existing structure
 3. Restart the application
 
+### Running Tests
+
+Beginner-friendly smoke tests live in the `tests/` folder. They verify that
+the primary routes render, authentication flows work, and API endpoints
+enforce authentication.
+
+```bash
+cd Domino_ML
+pip install -r requirements.txt
+pytest
+```
+
 ## Security
 
 - Passwords are hashed using Werkzeug's security functions

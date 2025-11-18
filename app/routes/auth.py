@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, flash
+from flask import Blueprint, render_template, redirect, url_for, flash, jsonify, request
 from flask_login import login_user, logout_user, current_user
 from app import db
 from app.models import User
@@ -43,8 +43,21 @@ def signup():
     
     return render_template('auth.html', form=form, signup=True)
 
-@bp.route('/logout')
+@bp.route('/logout', methods=['GET', 'POST'])
 def logout():
     logout_user()
+    
+    # Only return JSON for explicit API requests (not regular browser navigation)
+    # Check for explicit API indicators:
+    is_api_request = (
+        request.headers.get('X-Requested-With') == 'XMLHttpRequest' or  # AJAX request
+        (request.method == 'POST' and request.headers.get('Content-Type') == 'application/json') or  # POST with JSON
+        (request.method == 'POST' and request.headers.get('Accept') == 'application/json')  # POST explicitly requesting JSON
+    )
+    
+    if is_api_request:
+        return jsonify({'message': 'Logged out successfully'}), 200
+    
+    # For regular web requests (GET from links, form submissions), always redirect
     flash('Logged out successfully!', 'success')
     return redirect(url_for('main.landing'))

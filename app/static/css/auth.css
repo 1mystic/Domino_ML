@@ -14,13 +14,19 @@
 /* Branding Side */
 .auth-branding {
     flex: 1;
-    background: linear-gradient(135deg, var(--color-blue-600), var(--color-purple-600));
+    background: #0d0d0d;
     position: relative;
     padding: 3rem;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    border-right: 1px solid #333333;
+}
+
+[data-theme="light"] .auth-branding {
+    background: #f5f5f5;
+    border-right-color: #e0e0e0;
 }
 
 .branding-content {
@@ -40,7 +46,11 @@
 .brand-name {
     font-size: 1.5rem;
     font-weight: 700;
-    color: white;
+    color: #ffffff;
+}
+
+[data-theme="light"] .brand-name {
+    color: #0d0d0d;
 }
 
 .branding-text {
@@ -50,15 +60,23 @@
 .branding-title {
     font-size: 3rem;
     font-weight: 800;
-    color: white;
+    color: #ffffff;
     line-height: 1.2;
     margin-bottom: 1.5rem;
 }
 
+[data-theme="light"] .branding-title {
+    color: #0d0d0d;
+}
+
 .branding-description {
     font-size: 1.125rem;
-    color: rgba(255, 255, 255, 0.9);
+    color: #a0a0a0;
     line-height: 1.6;
+}
+
+[data-theme="light"] .branding-description {
+    color: #666666;
 }
 
 .features-list {
@@ -71,13 +89,21 @@
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    color: white;
+    color: #ffffff;
+}
+
+[data-theme="light"] .feature-item {
+    color: #0d0d0d;
 }
 
 .feature-icon {
     width: 24px;
     height: 24px;
-    color: rgba(255, 255, 255, 0.9);
+    color: #a0a0a0;
+}
+
+[data-theme="light"] .feature-icon {
+    color: #666666;
 }
 
 .auth-glow {
