@@ -144,7 +144,6 @@
 }
 
 .auth-card-header {
-    margin-bottom: 2rem;
     text-align: center;
 }
 
@@ -162,7 +161,6 @@
 .auth-form {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
 }
 
 .auth-footer {

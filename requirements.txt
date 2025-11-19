@@ -9,3 +9,5 @@ WTForms
 python-dotenv
 Werkzeug
 email-validator
+gunicorn
+requests
