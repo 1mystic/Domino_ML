@@ -32,7 +32,8 @@ def signup():
         user = User(
             username=form.username.data,
             email=form.email.data,
-            display_name=form.display_name.data or form.username.data
+            display_name=form.display_name.data or form.username.data,
+            role=form.role.data
         )
         user.set_password(form.password.data)
         db.session.add(user)

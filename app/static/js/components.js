@@ -17,7 +17,12 @@
         'random-forest-regressor': 'tree-deciduous',
         'classification-metrics': 'bar-chart-3',
         'regression-metrics': 'line-chart',
-        'kmeans-clustering': 'target'
+        'kmeans-clustering': 'target',
+        'one-hot-encoder': 'binary',
+        'tfidf-vectorizer': 'file-text',
+        'gradient-boosting-classifier': 'zap',
+        'mlp-classifier': 'brain-circuit',
+        'confusion-matrix': 'grid-3x3'
     };
 
     const TEMPLATE_ICON_MAP = {

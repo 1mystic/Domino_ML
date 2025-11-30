@@ -13,6 +13,7 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False, index=True)
     email = db.Column(db.String(120), unique=True, nullable=False, index=True)
     display_name = db.Column(db.String(120))
+    role = db.Column(db.String(20), default='student')  # 'student' or 'instructor'
     password_hash = db.Column(db.String(255))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     models = db.relationship('SavedModel', backref='user', lazy='dynamic', cascade='all, delete-orphan')

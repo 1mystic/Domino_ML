@@ -12,6 +12,11 @@ def landing():
 def builder():
     return render_template('builder.html')
 
+@bp.route('/presentation')
+@bp.route('/presentation/<int:model_id>')
+def presentation(model_id=None):
+    return render_template('presentation.html', model_id=model_id)
+
 @bp.route('/notfound')
 def not_found():
     return render_template('404.html'), 404

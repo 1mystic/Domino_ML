@@ -1,5 +1,5 @@
 // API Service - Handles all backend communication
-(function() {
+(function () {
     const API_BASE = '/api';
 
     // Helper function for API calls
@@ -31,8 +31,8 @@
             }
 
             if (!response.ok) {
-                const error = await response.json().catch(() => ({ 
-                    error: `Request failed with status ${response.status}` 
+                const error = await response.json().catch(() => ({
+                    error: `Request failed with status ${response.status}`
                 }));
                 throw new Error(error.error || `HTTP ${response.status}`);
             }
@@ -50,19 +50,19 @@
     // Models API
     const modelsAPI = {
         getAll: () => apiCall('/models'),
-        
+
         get: (id) => apiCall(`/models/${id}`),
-        
+
         create: (data) => apiCall('/models', {
             method: 'POST',
             body: JSON.stringify(data),
         }),
-        
+
         update: (id, data) => apiCall(`/models/${id}`, {
             method: 'PUT',
             body: JSON.stringify(data),
         }),
-        
+
         delete: (id) => apiCall(`/models/${id}`, {
             method: 'DELETE',
         }),
@@ -84,6 +84,10 @@
             method: 'POST',
             body: JSON.stringify(pipeline),
         }),
+        validate: (pipeline) => apiCall('/validate', {
+            method: 'POST',
+            body: JSON.stringify(pipeline),
+        }),
     };
 
     // Versions API
@@ -92,29 +96,29 @@
             method: 'POST',
             body: JSON.stringify(data),
         }),
-        
+
         list: (modelId) => apiCall(`/models/${modelId}/versions`),
-        
+
         get: (versionId) => apiCall(`/versions/${versionId}`),
-        
+
         activate: (versionId) => apiCall(`/versions/${versionId}/activate`, {
             method: 'POST',
         }),
-        
+
         delete: (versionId) => apiCall(`/versions/${versionId}`, {
             method: 'DELETE',
         }),
-        
+
         compare: (version1Id, version2Id) => apiCall('/versions/compare', {
             method: 'POST',
             body: JSON.stringify({ version1_id: version1Id, version2_id: version2Id }),
         }),
-        
+
         addMetrics: (versionId, metrics) => apiCall(`/versions/${versionId}/metrics`, {
             method: 'POST',
             body: JSON.stringify({ metrics }),
         }),
-        
+
         getMetrics: (versionId) => apiCall(`/versions/${versionId}/metrics`),
     };
 
@@ -128,7 +132,7 @@
     };
 
     // Toast notifications
-    window.showToast = function(message, type = 'info') {
+    window.showToast = function (message, type = 'info') {
         const iconMap = {
             success: 'check-circle',
             error: 'alert-circle',
@@ -166,8 +170,8 @@
         window.__flashMessages.forEach((flash) => {
             const type = flash.type === 'error' ? 'error'
                 : flash.type === 'success' ? 'success'
-                : flash.type === 'warning' ? 'warning'
-                : 'info';
+                    : flash.type === 'warning' ? 'warning'
+                        : 'info';
             window.showToast(flash.message, type);
         });
         window.__flashMessages = [];

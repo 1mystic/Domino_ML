@@ -1141,3 +1141,96 @@
     }
 }
 
+
+/* --- Presentation Mode Styles --- */
+
+/* Hide elements in presentation mode */
+body.presentation-mode-active .toolbar,
+body.presentation-mode-active .component-sidebar,
+body.presentation-mode-active .expand-sidebar-btn,
+body.presentation-mode-active .property-panel {
+    display: none !important;
+}
+
+/* Adjust builder container for full height */
+body.presentation-mode-active .builder-container {
+    height: 100vh;
+}
+
+/* Code Panel */
+.presentation-code-panel {
+    background: #1e1e1e; /* Dark background for code */
+    border-right: 1px solid #333;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-width: 0; /* Prevent flex overflow */
+}
+
+.presentation-code-panel .panel-header {
+    background: #252526;
+    border-bottom: 1px solid #333;
+    padding: 0.5rem 1rem;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.presentation-code-panel .panel-title {
+    color: #d4d4d4;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.presentation-code-panel .panel-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.presentation-code-panel .btn-ghost {
+    color: #d4d4d4;
+}
+
+.presentation-code-panel .btn-ghost:hover {
+    background: #333;
+    color: #fff;
+}
+
+.presentation-code-panel .panel-content {
+    flex: 1;
+    overflow: auto;
+    padding: 0;
+    position: relative;
+}
+
+.presentation-code-panel pre {
+    margin: 0;
+    padding: 1rem;
+    height: 100%;
+    font-family: 'Fira Code', 'Consolas', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* Split.js Gutter */
+.gutter {
+    background-color: #333;
+    background-repeat: no-repeat;
+    background-position: 50%;
+    cursor: col-resize;
+}
+
+.gutter:hover {
+    background-color: #007fd4; /* VS Code blue */
+}
+
+.gutter.gutter-horizontal {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');
+    cursor: col-resize;
+}
+
+/* Ensure canvas area flows horizontally in presentation mode */
+body.presentation-mode-active .canvas-area {
+    flex-direction: row !important;
+}

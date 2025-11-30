@@ -14,70 +14,70 @@
         <div class="toolbar-left">
             <a href="{{ url_for('main.landing') }}" class="logo-link">
                 <div class="logo-box-small">
-                    <img src="{{ url_for('static', filename='images/domino-icon.svg') }}" alt="DominoML logo" class="logo-icon-img logo-icon-img-small">
+                    <img src="{{ url_for('static', filename='images/domino-icon.svg') }}" alt="DominoML logo"
+                        class="logo-icon-img logo-icon-img-small">
                 </div>
                 <span class="logo-text-small">DominoML</span>
             </a>
-            
+
             <div class="toolbar-divider"></div>
-            
+
             <button id="new-model-btn" class="btn btn-ghost btn-sm" title="New Model">
                 <i data-lucide="file-plus"></i>
                 <span class="hide-mobile">New</span>
             </button>
-            
+
             <button id="save-model-btn" class="btn btn-ghost btn-sm" title="Save Model">
                 <i data-lucide="save"></i>
                 <span class="hide-mobile">Save</span>
             </button>
-            
+
             <button id="load-model-btn" class="btn btn-ghost btn-sm" title="Load Model">
                 <i data-lucide="folder-open"></i>
                 <span class="hide-mobile">Open</span>
             </button>
-            
+
             <button id="versions-btn" class="btn btn-ghost btn-sm hide-mobile" title="Version History">
                 <i data-lucide="git-branch"></i>
                 <span>Versions</span>
             </button>
-            
-            <button id="import-model-btn" class="btn btn-ghost btn-sm hide-mobile" title="Import JSON">
-                <i data-lucide="upload"></i>
-                <span>Import</span>
-            </button>
-            
+
+
+
             <div class="toolbar-divider"></div>
-            
+
             <button id="undo-btn" class="btn btn-ghost btn-sm" title="Undo" disabled>
                 <i data-lucide="undo"></i>
                 <span class="hide-mobile">Undo</span>
             </button>
-            
+
             <button id="redo-btn" class="btn btn-ghost btn-sm" title="Redo" disabled>
                 <i data-lucide="redo"></i>
                 <span class="hide-mobile">Redo</span>
             </button>
-            
+
             <div class="toolbar-divider hide-mobile"></div>
-            
+
             <button id="templates-btn" class="btn btn-ghost btn-sm hide-mobile" title="Templates">
                 <i data-lucide="layout-template"></i>
                 Templates
             </button>
-            
+
             <button id="validate-btn" class="btn btn-ghost btn-sm hide-mobile" title="Validate Pipeline">
                 <i data-lucide="check-circle"></i>
                 Validate
             </button>
-            
+
+            <button id="present-btn" class="btn btn-ghost btn-sm hide-mobile" title="Presentation View">
+                <i data-lucide="presentation"></i>
+                Present
+            </button>
+
         </div>
 
         <div class="toolbar-right">
-            <button id="export-model-btn" class="btn btn-ghost btn-sm hide-mobile">
-                <i data-lucide="download"></i>
-                <span>Export JSON</span>
-            </button>
-            
+
+
             <button id="export-code-btn" class="btn btn-primary btn-sm">
                 <i data-lucide="code" style="margin-right: 3px;"></i>
                 <span> Code</span>
@@ -87,40 +87,40 @@
                 <i data-lucide="package"></i>
                 <span>Export</span>
             </button>
-            
+
             <div class="toolbar-divider"></div>
-            
+
             <button id="theme-toggle" class="btn btn-ghost btn-sm" aria-label="Toggle theme">
                 <i data-lucide="moon" class="theme-icon"></i>
             </button>
-            
+
             {% if current_user.is_authenticated %}
-                <div class="user-menu">
-                    <button id="user-menu-btn" class="btn btn-ghost btn-sm">
-                        <div class="avatar avatar-sm">
-                            <span>{{ current_user.username[0].upper() }}</span>
-                        </div>
-                        <span class="hide-mobile">{{ current_user.username }}</span>
-                        <i data-lucide="chevron-down"></i>
-                    </button>
-                    
-                    <div id="user-menu-dropdown" class="dropdown-menu" hidden>
-                        <div class="dropdown-item disabled">
-                            <i data-lucide="user"></i>
-                            <span>{{ current_user.email }}</span>
-                        </div>
-                        <div class="dropdown-divider"></div>
-                        <a href="{{ url_for('auth.logout') }}" class="dropdown-item">
-                            <i data-lucide="log-out"></i>
-                            <span>Sign Out</span>
-                        </a>
+            <div class="user-menu">
+                <button id="user-menu-btn" class="btn btn-ghost btn-sm">
+                    <div class="avatar avatar-sm">
+                        <span>{{ current_user.username[0].upper() }}</span>
                     </div>
+                    <span class="hide-mobile">{{ current_user.username }}</span>
+                    <i data-lucide="chevron-down"></i>
+                </button>
+
+                <div id="user-menu-dropdown" class="dropdown-menu" hidden>
+                    <div class="dropdown-item disabled">
+                        <i data-lucide="user"></i>
+                        <span>{{ current_user.email }}</span>
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <a href="{{ url_for('auth.logout') }}" class="dropdown-item">
+                        <i data-lucide="log-out"></i>
+                        <span>Sign Out</span>
+                    </a>
                 </div>
+            </div>
             {% else %}
-                <a href="{{ url_for('auth.login') }}" class="btn btn-outline btn-sm">
-                    <i data-lucide="log-in"></i>
-                    <span>Sign In</span>
-                </a>
+            <a href="{{ url_for('auth.login') }}" class="btn btn-outline btn-sm">
+                <i data-lucide="log-in"></i>
+                <span>Sign In</span>
+            </a>
             {% endif %}
         </div>
     </div>
@@ -131,7 +131,7 @@
         <button id="expand-sidebar-btn" class="expand-sidebar-btn" hidden>
             <i data-lucide="panel-left-open"></i>
         </button>
-        
+
         <!-- Component Library Sidebar -->
         <aside class="component-sidebar" id="component-sidebar">
             <div class="sidebar-header">
@@ -142,12 +142,8 @@
             </div>
 
             <div class="sidebar-search">
-                <input 
-                    type="text" 
-                    id="component-search" 
-                    class="form-input form-input-sm" 
-                    placeholder="Search components..."
-                >
+                <input type="text" id="component-search" class="form-input form-input-sm"
+                    placeholder="Search components...">
                 <i data-lucide="search" class="search-icon"></i>
             </div>
 
@@ -164,7 +160,7 @@
 
         <!-- Canvas Area -->
         <main class="canvas-area">
-            <div class="canvas-wrapper">
+            <div id="canvas-wrapper" class="canvas-wrapper">
                 <!-- Canvas Controls -->
                 <div class="canvas-controls">
                     <div class="canvas-zoom">
@@ -191,7 +187,7 @@
                         </defs>
                     </svg>
                     <div id="canvas-nodes" class="canvas-nodes"></div>
-                    
+
                     <!-- Empty State -->
                     <div id="empty-state" class="empty-state">
                         <div class="empty-icon">🎨</div>
@@ -204,6 +200,24 @@
                             Browse Templates
                         </button>
                     </div>
+                </div>
+            </div>
+
+            <!-- Presentation Code Panel (Hidden by default) -->
+            <div id="presentation-code-panel" class="presentation-code-panel" hidden>
+                <div class="panel-header">
+                    <h3 class="panel-title">Generated Python Code</h3>
+                    <div class="panel-actions">
+                        <button id="copy-presentation-code-btn" class="btn btn-ghost btn-xs" title="Copy Code">
+                            <i data-lucide="copy"></i>
+                        </button>
+                        <button id="exit-presentation-btn" class="btn btn-ghost btn-xs" title="Exit Presentation Mode">
+                            <i data-lucide="x"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="panel-content">
+                    <pre><code id="presentation-code-block" class="language-python"># Python code will appear here...</code></pre>
                 </div>
             </div>
         </main>
@@ -235,8 +249,10 @@
         </aside>
     </div>
 
+
+
     <!-- Modals -->
-    
+
     <!-- Save Model Dialog -->
     <div id="save-dialog" class="dialog-overlay" hidden>
         <div class="dialog">
@@ -249,13 +265,7 @@
             <div class="dialog-content">
                 <div class="form-group">
                     <label for="model-name" class="form-label">Model Name</label>
-                    <input 
-                        type="text" 
-                        id="model-name" 
-                        class="form-input" 
-                        placeholder="My ML Pipeline"
-                        required
-                    >
+                    <input type="text" id="model-name" class="form-input" placeholder="My ML Pipeline" required>
                 </div>
             </div>
             <div class="dialog-footer">
@@ -287,6 +297,10 @@
             </div>
             <div class="dialog-footer">
                 <button class="btn btn-ghost" data-close-dialog="load-dialog">Cancel</button>
+                <button id="open-import-dialog-btn" class="btn btn-outline btn-sm">
+                    <i data-lucide="upload"></i>
+                    Import from JSON
+                </button>
             </div>
         </div>
     </div>
@@ -349,7 +363,8 @@
             </div>
             <div class="dialog-content">
                 <p class="text-muted">Import a previously exported model or paste JSON data</p>
-                <textarea id="import-json-input" class="form-textarea" rows="10" placeholder='{"nodes": [...], "edges": [...]}'></textarea>
+                <textarea id="import-json-input" class="form-textarea" rows="10"
+                    placeholder='{"nodes": [...], "edges": [...]}'></textarea>
             </div>
             <div class="dialog-footer">
                 <button class="btn btn-ghost" data-close-dialog="import-dialog">Cancel</button>
@@ -372,15 +387,16 @@
             </div>
             <div class="dialog-content">
                 <p class="text-muted">Review your model's structure, statistics, and potential issues</p>
-                
+
                 <div class="validation-grid">
                     <div class="validation-section">
                         <h4 class="validation-section-title">Model Statistics</h4>
                         <div id="model-statistics"></div>
                     </div>
-                    
+
                     <div class="validation-section">
-                        <h4 class="validation-section-title">Validation Results <i data-lucide="check-circle" class="text-success"></i></h4>
+                        <h4 class="validation-section-title">Validation Results <i data-lucide="check-circle"
+                                class="text-success"></i></h4>
                         <div id="validation-results"></div>
                     </div>
                 </div>
@@ -407,7 +423,7 @@
                         Create New Version
                     </button>
                 </div>
-                
+
                 <div id="versions-list">
                     <div class="loading-state">
                         <i data-lucide="loader" class="spinner"></i>
@@ -432,7 +448,7 @@
             </div>
             <div class="dialog-content">
                 <p class="text-sm text-muted mb-4">Choose an export format for your ML pipeline:</p>
-                
+
                 <div class="export-options">
                     <!-- Python Script -->
                     <button class="export-option-card" data-export-format="python">
@@ -489,6 +505,20 @@
                             <i data-lucide="arrow-right"></i>
                         </div>
                     </button>
+
+                    <!-- JSON Export -->
+                    <button class="export-option-card" data-export-format="json">
+                        <div class="export-option-icon">
+                            <i data-lucide="file-json"></i>
+                        </div>
+                        <div class="export-option-content">
+                            <h4>JSON File</h4>
+                            <p>Raw pipeline data for backup or sharing</p>
+                        </div>
+                        <div class="export-option-arrow">
+                            <i data-lucide="arrow-right"></i>
+                        </div>
+                    </button>
                 </div>
             </div>
             <div class="dialog-footer">
@@ -500,47 +530,59 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="{{ url_for('static', filename='js/theme.js') }}"></script>
-<script src="{{ url_for('static', filename='js/history.js') }}"></script>
-<script src="{{ url_for('static', filename='js/api.js') }}"></script>
-<script src="{{ url_for('static', filename='js/components.js') }}"></script>
-<script src="{{ url_for('static', filename='js/properties.js') }}"></script>
-<script src="{{ url_for('static', filename='js/canvas.js') }}"></script>
-<script src="{{ url_for('static', filename='js/versions.js') }}"></script>
-<script src="{{ url_for('static', filename='js/export.js') }}"></script>
+<!-- Prism.js for syntax highlighting -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+
+<!-- Split.js for resizable panes -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/split.js/1.6.5/split.min.js"></script>
+
+<script src="{{ url_for('static', filename='js/theme.js') }}?v={{ range(1, 10000) | random }}"></script>
+<script src="{{ url_for('static', filename='js/history.js') }}?v={{ range(1, 10000) | random }}"></script>
+<script src="{{ url_for('static', filename='js/api.js') }}?v={{ range(1, 10000) | random }}"></script>
+<script src="{{ url_for('static', filename='js/components.js') }}?v={{ range(1, 10000) | random }}"></script>
+<script src="{{ url_for('static', filename='js/properties.js') }}?v={{ range(1, 10000) | random }}"></script>
+<script src="{{ url_for('static', filename='js/canvas.js') }}?v={{ range(1, 10000) | random }}"></script>
+<script src="{{ url_for('static', filename='js/versions.js') }}?v={{ range(1, 10000) | random }}"></script>
+<script src="{{ url_for('static', filename='js/export.js') }}?v={{ range(1, 10000) | random }}"></script>
+<script src="{{ url_for('static', filename='js/presentation_mode.js') }}?v={{ range(1, 10000) | random }}"></script>
 <script>
     // Initialize Lucide icons
     lucide.createIcons();
 
     // Initialize builder on page load
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         // Initialize all components
         window.canvasInit();
         window.componentsInit();
-        
+        if (window.presentationModeInit) {
+            window.presentationModeInit();
+        }
+
         // Initialize export manager
         if (window.ExportManager) {
             window.ExportManager.init();
         }
-        
+
         // User menu toggle
         const userMenuBtn = document.getElementById('user-menu-btn');
         const userMenuDropdown = document.getElementById('user-menu-dropdown');
-        
+
         if (userMenuBtn && userMenuDropdown) {
-            userMenuBtn.addEventListener('click', function(e) {
+            userMenuBtn.addEventListener('click', function (e) {
                 e.stopPropagation();
                 userMenuDropdown.hidden = !userMenuDropdown.hidden;
             });
-            
-            document.addEventListener('click', function() {
+
+            document.addEventListener('click', function () {
                 userMenuDropdown.hidden = true;
             });
         }
 
         // Dialog management
         document.querySelectorAll('[data-close-dialog]').forEach(btn => {
-            btn.addEventListener('click', function() {
+            btn.addEventListener('click', function () {
                 const dialogId = this.getAttribute('data-close-dialog');
                 const dialog = document.getElementById(dialogId);
                 if (dialog) dialog.hidden = true;
@@ -549,7 +591,7 @@
 
         // Close dialogs on overlay click
         document.querySelectorAll('.dialog-overlay').forEach(overlay => {
-            overlay.addEventListener('click', function(e) {
+            overlay.addEventListener('click', function (e) {
                 if (e.target === this) {
                     this.hidden = true;
                 }

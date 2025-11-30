@@ -20,11 +20,18 @@
         "type": "select",
         "label": "Separator",
         "defaultValue": ",",
-        "options": [",", ";", "\\t", "|"]
+        "options": [
+          ",",
+          ";",
+          "\\t",
+          "|"
+        ]
       }
     ],
     "inputs": [],
-    "outputs": ["data"],
+    "outputs": [
+      "data"
+    ],
     "pythonTemplate": "\nimport pandas as pd\n\n# Load data from CSV\ndata = pd.read_csv('{file_path}', sep='{separator}')\nprint(f\"Loaded dataset with shape: {data.shape}\")\n"
   },
   {
@@ -40,11 +47,18 @@
         "type": "select",
         "label": "Dataset",
         "defaultValue": "iris",
-        "options": ["iris", "wine", "breast_cancer", "digits"]
+        "options": [
+          "iris",
+          "wine",
+          "breast_cancer",
+          "digits"
+        ]
       }
     ],
     "inputs": [],
-    "outputs": ["data"],
+    "outputs": [
+      "data"
+    ],
     "pythonTemplate": "\nfrom sklearn.datasets import load_{dataset}\nimport pandas as pd\n\n# Load sample dataset\ndataset = load_{dataset}()\ndata = pd.DataFrame(dataset.data, columns=dataset.feature_names)\nif hasattr(dataset, 'target'):\n    data['target'] = dataset.target\nprint(f\"Loaded dataset with shape: {data.shape}\")\n"
   },
   {
@@ -68,8 +82,12 @@
         "defaultValue": true
       }
     ],
-    "inputs": ["data"],
-    "outputs": ["scaled_data"],
+    "inputs": [
+      "data"
+    ],
+    "outputs": [
+      "scaled_data"
+    ],
     "pythonTemplate": "\nfrom sklearn.preprocessing import StandardScaler\n\n# Initialize and fit the scaler\nscaler = StandardScaler(with_mean={with_mean}, with_std={with_std})\nscaled_data = scaler.fit_transform(data)\nprint(f\"Applied StandardScaler to data with shape: {scaled_data.shape}\")\n"
   },
   {
@@ -96,8 +114,15 @@
         "defaultValue": 42
       }
     ],
-    "inputs": ["data"],
-    "outputs": ["X_train", "X_test", "y_train", "y_test"],
+    "inputs": [
+      "data"
+    ],
+    "outputs": [
+      "X_train",
+      "X_test",
+      "y_train",
+      "y_test"
+    ],
     "pythonTemplate": "\nfrom sklearn.model_selection import train_test_split\n\n# Separate features and target\nX = data.drop('target', axis=1)\ny = data['target']\n\n# Split the data\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size={test_size}, random_state={random_state}\n)\nprint(f\"Training set size: {X_train.shape[0]}\")\nprint(f\"Test set size: {X_test.shape[0]}\")\n"
   },
   {
@@ -127,8 +152,12 @@
         "step": 0.1
       }
     ],
-    "inputs": ["data"],
-    "outputs": ["scaled_data"],
+    "inputs": [
+      "data"
+    ],
+    "outputs": [
+      "scaled_data"
+    ],
     "pythonTemplate": "\nfrom sklearn.preprocessing import MinMaxScaler\n\n# Initialize and fit the scaler\nscaler = MinMaxScaler(feature_range=({feature_range_min}, {feature_range_max}))\nscaled_data = scaler.fit_transform(data)\nprint(f\"Applied MinMaxScaler to data with shape: {scaled_data.shape}\")\n"
   },
   {
@@ -154,8 +183,12 @@
         "defaultValue": false
       }
     ],
-    "inputs": ["data"],
-    "outputs": ["transformed_data"],
+    "inputs": [
+      "data"
+    ],
+    "outputs": [
+      "transformed_data"
+    ],
     "pythonTemplate": "\nfrom sklearn.decomposition import PCA\n\n# Initialize and fit PCA\npca = PCA(n_components={n_components}, whiten={whiten})\ntransformed_data = pca.fit_transform(data)\nprint(f\"PCA reduced data to {transformed_data.shape[1]} components\")\nprint(f\"Explained variance ratio: {pca.explained_variance_ratio_}\")\n"
   },
   {
@@ -189,8 +222,13 @@
         "defaultValue": 42
       }
     ],
-    "inputs": ["X_train", "y_train"],
-    "outputs": ["model"],
+    "inputs": [
+      "X_train",
+      "y_train"
+    ],
+    "outputs": [
+      "model"
+    ],
     "pythonTemplate": "\nfrom sklearn.ensemble import RandomForestClassifier\n\n# Initialize and train the model\nmodel = RandomForestClassifier(\n    n_estimators={n_estimators},\n    max_depth={max_depth},\n    random_state={random_state}\n)\nmodel.fit(X_train, y_train)\nprint(\"Random Forest Classifier trained successfully\")\n"
   },
   {
@@ -206,7 +244,12 @@
         "type": "select",
         "label": "Kernel",
         "defaultValue": "rbf",
-        "options": ["linear", "poly", "rbf", "sigmoid"]
+        "options": [
+          "linear",
+          "poly",
+          "rbf",
+          "sigmoid"
+        ]
       },
       {
         "name": "C",
@@ -218,8 +261,13 @@
         "step": 0.01
       }
     ],
-    "inputs": ["X_train", "y_train"],
-    "outputs": ["model"],
+    "inputs": [
+      "X_train",
+      "y_train"
+    ],
+    "outputs": [
+      "model"
+    ],
     "pythonTemplate": "\nfrom sklearn.svm import SVC\n\n# Initialize and train the model\nmodel = SVC(kernel='{kernel}', C={C}, random_state=42)\nmodel.fit(X_train, y_train)\nprint(\"SVM Classifier trained successfully\")\n"
   },
   {
@@ -249,8 +297,13 @@
         "step": 100
       }
     ],
-    "inputs": ["X_train", "y_train"],
-    "outputs": ["model"],
+    "inputs": [
+      "X_train",
+      "y_train"
+    ],
+    "outputs": [
+      "model"
+    ],
     "pythonTemplate": "\nfrom sklearn.linear_model import LogisticRegression\n\n# Initialize and train the model\nmodel = LogisticRegression(C={C}, max_iter={max_iter}, random_state=42)\nmodel.fit(X_train, y_train)\nprint(\"Logistic Regression model trained successfully\")\n"
   },
   {
@@ -274,11 +327,19 @@
         "type": "select",
         "label": "Weights",
         "defaultValue": "uniform",
-        "options": ["uniform", "distance"]
+        "options": [
+          "uniform",
+          "distance"
+        ]
       }
     ],
-    "inputs": ["X_train", "y_train"],
-    "outputs": ["model"],
+    "inputs": [
+      "X_train",
+      "y_train"
+    ],
+    "outputs": [
+      "model"
+    ],
     "pythonTemplate": "\nfrom sklearn.neighbors import KNeighborsClassifier\n\n# Initialize and train the model\nmodel = KNeighborsClassifier(\n    n_neighbors={n_neighbors},\n    weights='{weights}'\n)\nmodel.fit(X_train, y_train)\nprint(\"K-Nearest Neighbors Classifier trained successfully\")\n"
   },
   {
@@ -296,8 +357,13 @@
         "defaultValue": true
       }
     ],
-    "inputs": ["X_train", "y_train"],
-    "outputs": ["model"],
+    "inputs": [
+      "X_train",
+      "y_train"
+    ],
+    "outputs": [
+      "model"
+    ],
     "pythonTemplate": "\nfrom sklearn.linear_model import LinearRegression\n\n# Initialize and train the model\nmodel = LinearRegression(fit_intercept={fit_intercept})\nmodel.fit(X_train, y_train)\nprint(\"Linear Regression model trained successfully\")\n"
   },
   {
@@ -325,8 +391,13 @@
         "max": 50
       }
     ],
-    "inputs": ["X_train", "y_train"],
-    "outputs": ["model"],
+    "inputs": [
+      "X_train",
+      "y_train"
+    ],
+    "outputs": [
+      "model"
+    ],
     "pythonTemplate": "\nfrom sklearn.ensemble import RandomForestRegressor\n\n# Initialize and train the model\nmodel = RandomForestRegressor(\n    n_estimators={n_estimators},\n    max_depth={max_depth},\n    random_state=42\n)\nmodel.fit(X_train, y_train)\nprint(\"Random Forest Regressor trained successfully\")\n"
   },
   {
@@ -337,8 +408,14 @@
     "description": "Calculate classification performance metrics",
     "icon": "📊",
     "parameters": [],
-    "inputs": ["model", "X_test", "y_test"],
-    "outputs": ["metrics"],
+    "inputs": [
+      "model",
+      "X_test",
+      "y_test"
+    ],
+    "outputs": [
+      "metrics"
+    ],
     "pythonTemplate": "\nfrom sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, classification_report\n\n# Make predictions\ny_pred = model.predict(X_test)\n\n# Calculate metrics\naccuracy = accuracy_score(y_test, y_pred)\nprecision = precision_score(y_test, y_pred, average='weighted')\nrecall = recall_score(y_test, y_pred, average='weighted')\nf1 = f1_score(y_test, y_pred, average='weighted')\n\nprint(f\"Accuracy: {accuracy:.4f}\")\nprint(f\"Precision: {precision:.4f}\")\nprint(f\"Recall: {recall:.4f}\")\nprint(f\"F1-Score: {f1:.4f}\")\nprint(\"\\nDetailed Classification Report:\")\nprint(classification_report(y_test, y_pred))\n"
   },
   {
@@ -349,8 +426,14 @@
     "description": "Calculate regression performance metrics",
     "icon": "📈",
     "parameters": [],
-    "inputs": ["model", "X_test", "y_test"],
-    "outputs": ["metrics"],
+    "inputs": [
+      "model",
+      "X_test",
+      "y_test"
+    ],
+    "outputs": [
+      "metrics"
+    ],
     "pythonTemplate": "\nfrom sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score\nimport numpy as np\n\n# Make predictions\ny_pred = model.predict(X_test)\n\n# Calculate metrics\nmse = mean_squared_error(y_test, y_pred)\nrmse = np.sqrt(mse)\nmae = mean_absolute_error(y_test, y_pred)\nr2 = r2_score(y_test, y_pred)\n\nprint(f\"Mean Squared Error: {mse:.4f}\")\nprint(f\"Root Mean Squared Error: {rmse:.4f}\")\nprint(f\"Mean Absolute Error: {mae:.4f}\")\nprint(f\"R² Score: {r2:.4f}\")\n"
   },
   {
@@ -370,8 +453,188 @@
         "max": 20
       }
     ],
-    "inputs": ["data"],
-    "outputs": ["labels", "model"],
+    "inputs": [
+      "data"
+    ],
+    "outputs": [
+      "labels",
+      "model"
+    ],
     "pythonTemplate": "\nfrom sklearn.cluster import KMeans\n\n# Initialize and fit the model\nmodel = KMeans(n_clusters={n_clusters}, random_state=42)\nlabels = model.fit_predict(data)\nprint(f\"K-Means clustering completed with {len(set(labels))} clusters\")\n"
+  },
+  {
+    "id": "one-hot-encoder",
+    "name": "One-Hot Encoder",
+    "category": "Preprocessing",
+    "type": "preprocessing",
+    "description": "Encode categorical features as a one-hot numeric array",
+    "icon": "🔢",
+    "parameters": [
+      {
+        "name": "handle_unknown",
+        "type": "select",
+        "label": "Handle Unknown",
+        "defaultValue": "error",
+        "options": [
+          "error",
+          "ignore"
+        ]
+      },
+      {
+        "name": "sparse",
+        "type": "boolean",
+        "label": "Sparse Output",
+        "defaultValue": true
+      }
+    ],
+    "inputs": [
+      "data"
+    ],
+    "outputs": [
+      "encoded_data"
+    ],
+    "pythonTemplate": "\nfrom sklearn.preprocessing import OneHotEncoder\n\n# Initialize and fit the encoder\nencoder = OneHotEncoder(handle_unknown='{handle_unknown}', sparse={sparse})\nencoded_data = encoder.fit_transform(data)\nprint(f\"One-Hot Encoded data shape: {encoded_data.shape}\")\n"
+  },
+  {
+    "id": "tfidf-vectorizer",
+    "name": "TF-IDF Vectorizer",
+    "category": "Preprocessing",
+    "type": "preprocessing",
+    "description": "Convert a collection of raw documents to a matrix of TF-IDF features",
+    "icon": "📝",
+    "parameters": [
+      {
+        "name": "max_features",
+        "type": "number",
+        "label": "Max Features",
+        "defaultValue": 1000,
+        "min": 100,
+        "max": 10000,
+        "step": 100
+      },
+      {
+        "name": "stop_words",
+        "type": "select",
+        "label": "Stop Words",
+        "defaultValue": "english",
+        "options": [
+          "english",
+          "none"
+        ]
+      }
+    ],
+    "inputs": [
+      "data"
+    ],
+    "outputs": [
+      "tfidf_matrix"
+    ],
+    "pythonTemplate": "\nfrom sklearn.feature_extraction.text import TfidfVectorizer\n\n# Initialize and fit the vectorizer\nstop_words = '{stop_words}' if '{stop_words}' != 'none' else None\nvectorizer = TfidfVectorizer(max_features={max_features}, stop_words=stop_words)\ntfidf_matrix = vectorizer.fit_transform(data)\nprint(f\"TF-IDF Matrix shape: {tfidf_matrix.shape}\")\n"
+  },
+  {
+    "id": "gradient-boosting-classifier",
+    "name": "Gradient Boosting Classifier",
+    "category": "Classification",
+    "type": "model",
+    "description": "Gradient Boosting for classification",
+    "icon": "🚀",
+    "parameters": [
+      {
+        "name": "n_estimators",
+        "type": "number",
+        "label": "Number of Trees",
+        "defaultValue": 100,
+        "min": 10,
+        "max": 1000
+      },
+      {
+        "name": "learning_rate",
+        "type": "number",
+        "label": "Learning Rate",
+        "defaultValue": 0.1,
+        "min": 0.001,
+        "max": 1.0,
+        "step": 0.01
+      },
+      {
+        "name": "max_depth",
+        "type": "number",
+        "label": "Max Depth",
+        "defaultValue": 3,
+        "min": 1,
+        "max": 20
+      }
+    ],
+    "inputs": [
+      "X_train",
+      "y_train"
+    ],
+    "outputs": [
+      "model"
+    ],
+    "pythonTemplate": "\nfrom sklearn.ensemble import GradientBoostingClassifier\n\n# Initialize and train the model\nmodel = GradientBoostingClassifier(\n    n_estimators={n_estimators},\n    learning_rate={learning_rate},\n    max_depth={max_depth},\n    random_state=42\n)\nmodel.fit(X_train, y_train)\nprint(\"Gradient Boosting Classifier trained successfully\")\n"
+  },
+  {
+    "id": "mlp-classifier",
+    "name": "MLP Neural Network",
+    "category": "Classification",
+    "type": "model",
+    "description": "Multi-layer Perceptron classifier",
+    "icon": "🧠",
+    "parameters": [
+      {
+        "name": "hidden_layer_sizes",
+        "type": "string",
+        "label": "Hidden Layers (e.g. 100,50)",
+        "defaultValue": "100",
+        "description": "Comma-separated list of neuron counts"
+      },
+      {
+        "name": "activation",
+        "type": "select",
+        "label": "Activation",
+        "defaultValue": "relu",
+        "options": [
+          "identity",
+          "logistic",
+          "tanh",
+          "relu"
+        ]
+      },
+      {
+        "name": "max_iter",
+        "type": "number",
+        "label": "Max Iterations",
+        "defaultValue": 200,
+        "min": 50,
+        "max": 2000
+      }
+    ],
+    "inputs": [
+      "X_train",
+      "y_train"
+    ],
+    "outputs": [
+      "model"
+    ],
+    "pythonTemplate": "\nfrom sklearn.neural_network import MLPClassifier\n\n# Parse hidden layers\nhidden_layers = tuple(map(int, '{hidden_layer_sizes}'.split(',')))\n\n# Initialize and train the model\nmodel = MLPClassifier(\n    hidden_layer_sizes=hidden_layers,\n    activation='{activation}',\n    max_iter={max_iter},\n    random_state=42\n)\nmodel.fit(X_train, y_train)\nprint(\"MLP Classifier trained successfully\")\n"
+  },
+  {
+    "id": "confusion-matrix",
+    "name": "Confusion Matrix",
+    "category": "Evaluation",
+    "type": "evaluation",
+    "description": "Compute confusion matrix to evaluate the accuracy of a classification",
+    "icon": "⬛",
+    "parameters": [],
+    "inputs": [
+      "model",
+      "X_test",
+      "y_test"
+    ],
+    "outputs": [
+      "matrix_plot"
+    ],
+    "pythonTemplate": "\nfrom sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay\nimport matplotlib.pyplot as plt\n\n# Make predictions\ny_pred = model.predict(X_test)\n\n# Compute confusion matrix\ncm = confusion_matrix(y_test, y_pred)\ndisp = ConfusionMatrixDisplay(confusion_matrix=cm)\ndisp.plot()\nplt.title(\"Confusion Matrix\")\nplt.show()\n"
   }
 ]

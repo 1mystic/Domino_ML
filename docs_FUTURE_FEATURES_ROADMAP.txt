@@ -1,0 +1,1688 @@
+# 🚀 DominoML Future Features Roadmap
+
+**Document Version:** 1.0  
+**Last Updated:** 2025-11-30  
+**Status:** Planned Features for Phases 4-10
+
+---
+
+## 📋 Table of Contents
+
+1. [Executive Summary](#-executive-summary)
+2. [Phase 4: Split Canvas with Live Code Preview](#-phase-4-split-canvas-with-live-code-preview)
+3. [Phase 5: RAG-Powered AI Assistant](#-phase-5-rag-powered-ai-assistant)
+4. [Phase 6: Presentation Mode for Educators](#-phase-6-presentation-mode-for-educators)
+5. [Phase 7: Real-time Collaboration](#-phase-7-real-time-collaboration)
+6. [Phase 8: Learning Management System (LMS)](#-phase-8-learning-management-system-lms)
+7. [Phase 9: In-Browser Execution & Visualization](#-phase-9-in-browser-execution--visualization)
+8. [Phase 10: Model Hub & Community Marketplace](#-phase-10-model-hub--community-marketplace)
+9. [Additional Features](#-additional-features)
+10. [Technical Architecture](#-technical-architecture)
+11. [Database Schema Updates](#-database-schema-updates)
+12. [API Endpoints](#-api-endpoints)
+13. [Monetization Strategy](#-monetization-strategy)
+14. [Implementation Timeline](#-implementation-timeline)
+
+---
+
+## 📊 Executive Summary
+
+This document outlines the comprehensive feature roadmap to transform DominoML from a visual ML pipeline builder into a full-fledged **educational platform** for machine learning.  The features are designed to serve three key user groups:
+
+| User Group | Key Features |
+|------------|--------------|
+| **Learners** | Interactive tutorials, RAG assistant, in-browser execution, certifications |
+| **Instructors** | Presentation mode, assignment creation, auto-grading, progress tracking |
+| **Professors** | LMS integration, course management, plagiarism detection, analytics |
+
+### Priority Matrix
+
+```
+Impact
+  ↑
+  │  ★ Split Canvas    ★ RAG Assistant
+  │  ★ Presentation    ★ Collaboration
+  │
+  │      ★ LMS          ★ Execution
+  │      ★ Model Hub    ★ Deep Learning
+  │
+  └────────────────────────────────→ Effort
+```
+
+---
+
+## 🖥️ Phase 4: Split Canvas with Live Code Preview
+
+### 4.1 Overview
+
+A revolutionary dual-pane interface where users can see their visual pipeline and the generated code side-by-side, with real-time synchronization. 
+
+### 4.2 User Interface
+
+```
+┌──────────────────────────────────────────────────────────────────────┐
+│  [📁 File] [✏️ Edit] [▶️ Run] [📤 Export]    [◀️│▶️] [⚙️]           │
+├────────────────────────────────┬─────────────────────────────────────┤
+│                                │  1  # Auto-generated Pipeline       │
+│    ┌─────────┐                │  2  import pandas as pd             │
+│    │ CSV     │───┐            │  3  from sklearn.preprocessing...    │
+│    │ Loader  │   │            │  4                                  │
+│    └─────────┘   │            │  5  # Load Data ← [Highlighted]     │
+│                  ▼            │  6  df = pd.read_csv('data.csv')    │
+│    ┌─────────┐   │            │  7                                  │
+│    │ Scaler  │◄──┘            │  8  # Preprocessing                 │
+│    │         │───┐            │  9  scaler = StandardScaler()       │
+│    └─────────┘   │            │ 10  X_scaled = scaler.fit_transform │
+│                  ▼            │ 11                                  │
+│    ┌─────────┐   │            │ 12  # Train Model                   │
+│    │ Random  │◄──┘            │ 13  model = RandomForestClassifier( │
+│    │ Forest  │                │ 14      n_estimators=100,           │
+│    └─────────┘                │ 15      max_depth=10                │
+│                                │ 16  )                              │
+│  [Visual Canvas]              │  [Code Panel]                       │
+├────────────────────────────────┴─────────────────────────────────────┤
+│  ✓ Pipeline valid │ 3 nodes │ 2 connections │ Last saved: 2 min ago │
+└──────────────────────────────────────────────────────────────────────┘
+```
+
+### 4.3 Features
+
+| Feature | Description |
+|---------|-------------|
+| **Bi-directional Sync** | Edit code → canvas updates; modify canvas → code updates |
+| **Node-to-Code Mapping** | Click a node to highlight corresponding code lines |
+| **Code-to-Node Mapping** | Click code section to highlight the generating node |
+| **Multiple Frameworks** | Toggle between scikit-learn, PyTorch, TensorFlow, JAX |
+| **Syntax Highlighting** | Language-aware highlighting with Prism. js or CodeMirror |
+| **Code Annotations** | Inline comments explaining what each block does |
+| **Diff View** | Show changes when modifying parameters |
+| **Split Orientation** | Horizontal/vertical split with adjustable divider |
+
+### 4.4 Implementation Details
+
+#### 4.4.1 New Files to Create
+
+```
+app/
+├── static/
+│   ├── js/
+│   │   ├── split-canvas.js          # Split pane controller
+│   │   ├── code-editor.js           # Code editor integration
+│   │   ├── code-sync.js             # Bi-directional sync logic
+│   │   └── code-highlighting.js     # Node-code mapping
+│   └── css/
+│       └── split-canvas.css         # Split view styles
+├── templates/
+│   └── partials/
+│       └── code_panel.html          # Code panel template
+└── utils/
+    └── code_generator_enhanced.py   # Enhanced code generator with line mapping
+```
+
+#### 4.4.2 Frontend Implementation
+
+```javascript
+// split-canvas.js
+class SplitCanvasManager {
+    constructor() {
+        this.splitRatio = 0.5;
+        this.orientation = 'horizontal'; // or 'vertical'
+        this. codeEditor = null;
+        this.nodeCodeMap = new Map(); // nodeId -> {startLine, endLine}
+    }
+
+    initialize() {
+        this.setupSplitPane();
+        this.initializeCodeEditor();
+        this. setupSyncListeners();
+    }
+
+    setupSplitPane() {
+        // Use Split. js for resizable panes
+        Split(['#canvas-container', '#code-container'], {
+            sizes: [50, 50],
+            minSize: [300, 300],
+            gutterSize: 8,
+            direction: this.orientation
+        });
+    }
+
+    initializeCodeEditor() {
+        // CodeMirror or Monaco Editor
+        this.codeEditor = CodeMirror(document.getElementById('code-container'), {
+            mode: 'python',
+            theme: 'dracula',
+            lineNumbers: true,
+            readOnly: false, // Allow editing
+            lineWrapping: true
+        });
+    }
+
+    // Sync canvas changes to code
+    onCanvasChange(event) {
+        const { nodeId, changeType, data } = event;
+        const code = this.generateCodeWithMapping();
+        this.codeEditor.setValue(code. content);
+        this.nodeCodeMap = code.mapping;
+        this.highlightNodeCode(nodeId);
+    }
+
+    // Sync code changes to canvas
+    onCodeChange(content) {
+        // Parse code to detect parameter changes
+        const changes = this.parseCodeChanges(content);
+        changes.forEach(change => {
+            canvasManager.updateNodeParameter(change.nodeId, change. param, change.value);
+        });
+    }
+
+    highlightNodeCode(nodeId) {
+        const mapping = this.nodeCodeMap.get(nodeId);
+        if (mapping) {
+            this.codeEditor.setSelection(
+                { line: mapping.startLine, ch: 0 },
+                { line: mapping.endLine, ch: 0 }
+            );
+        }
+    }
+
+    generateCodeWithMapping() {
+        // Returns { content: string, mapping: Map<nodeId, {startLine, endLine}> }
+        const nodes = canvasManager.getNodes();
+        const edges = canvasManager.getEdges();
+        
+        let code = '';
+        let lineNumber = 0;
+        const mapping = new Map();
+
+        // Generate imports
+        code += this.generateImports(nodes);
+        lineNumber = code.split('\n').length;
+
+        // Generate code for each node in topological order
+        const sortedNodes = this.topologicalSort(nodes, edges);
+        
+        sortedNodes.forEach(node => {
+            const startLine = lineNumber;
+            const nodeCode = this.generateNodeCode(node);
+            code += nodeCode;
+            const endLine = code.split('\n').length;
+            
+            mapping.set(node.id, { startLine, endLine });
+            lineNumber = endLine;
+        });
+
+        return { content: code, mapping };
+    }
+}
+```
+
+#### 4.4.3 Backend Enhancement
+
+```python
+# app/utils/code_generator_enhanced.py
+
+class EnhancedCodeGenerator:
+    """
+    Enhanced code generator that provides line-by-line mapping
+    between generated code and pipeline nodes.
+    """
+    
+    def __init__(self, nodes: list, edges: list):
+        self.nodes = nodes
+        self. edges = edges
+        self.node_code_map = {}  # node_id -> (start_line, end_line)
+        
+    def generate_with_mapping(self, framework: str = 'sklearn') -> dict:
+        """
+        Generate code with node-to-line mapping.
+        
+        Returns:
+            {
+                'code': str,
+                'mapping': {node_id: {'start': int, 'end': int, 'section': str}},
+                'framework': str,
+                'imports': list
+            }
+        """
+        code_lines = []
+        current_line = 0
+        mapping = {}
+        
+        # Generate imports
+        imports = self._generate_imports(framework)
+        code_lines.extend(imports)
+        current_line = len(imports)
+        
+        # Sort nodes topologically
+        sorted_nodes = self._topological_sort()
+        
+        for node in sorted_nodes:
+            start_line = current_line
+            node_code = self._generate_node_code(node, framework)
+            
+            code_lines.extend(node_code)
+            end_line = current_line + len(node_code)
+            
+            mapping[node['id']] = {
+                'start': start_line,
+                'end': end_line,
+                'section': node['type']
+            }
+            
+            current_line = end_line
+        
+        return {
+            'code': '\n'.join(code_lines),
+            'mapping': mapping,
+            'framework': framework,
+            'imports': imports
+        }
+    
+    def _generate_node_code(self, node: dict, framework: str) -> list:
+        """Generate code lines for a specific node."""
+        templates = {
+            'sklearn': self._sklearn_templates,
+            'pytorch': self._pytorch_templates,
+            'tensorflow': self._tensorflow_templates
+        }
+        
+        generator = templates.get(framework, self._sklearn_templates)
+        return generator(node)
+    
+    def _sklearn_templates(self, node: dict) -> list:
+        """scikit-learn code templates."""
+        node_type = node['type']
+        params = node.get('parameters', {})
+        
+        if node_type == 'csv_loader':
+            return [
+                f"# Load Data - {node. get('name', 'Data Source')}",
+                f"df = pd.read_csv('{params.get('file_path', 'data.csv')}')",
+                f"X = df.drop('{params.get('target_column', 'target')}', axis=1)",
+                f"y = df['{params.get('target_column', 'target')}']",
+                ""
+            ]
+        
+        elif node_type == 'standard_scaler':
+            return [
+                f"# Preprocessing - StandardScaler",
+                f"scaler = StandardScaler()",
+                f"X_scaled = scaler.fit_transform(X)",
+                ""
+            ]
+        
+        elif node_type == 'random_forest':
+            return [
+                f"# Model - Random Forest Classifier",
+                f"model = RandomForestClassifier(",
+                f"    n_estimators={params.get('n_estimators', 100)},",
+                f"    max_depth={params.get('max_depth', 'None')},",
+                f"    random_state={params.get('random_state', 42)}",
+                f")",
+                f"model.fit(X_train, y_train)",
+                ""
+            ]
+        
+        # Add more templates... 
+        return [f"# {node_type} - Not implemented"]
+
+
+# New API endpoint
+@api_bp.route('/api/generate-code-with-mapping', methods=['POST'])
+@login_required
+def generate_code_with_mapping():
+    """Generate code with line mapping for split canvas."""
+    data = request. get_json()
+    
+    nodes = data.get('nodes', [])
+    edges = data.get('edges', [])
+    framework = data.get('framework', 'sklearn')
+    
+    generator = EnhancedCodeGenerator(nodes, edges)
+    result = generator.generate_with_mapping(framework)
+    
+    return jsonify(result)
+```
+
+#### 4.4.4 CSS Styles
+
+```css
+/* split-canvas.css */
+
+.split-container {
+    display: flex;
+    height: calc(100vh - 60px);
+    overflow: hidden;
+}
+
+.split-container.horizontal {
+    flex-direction: row;
+}
+
+.split-container.vertical {
+    flex-direction: column;
+}
+
+#canvas-container {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+}
+
+#code-container {
+    flex: 1;
+    overflow: hidden;
+    background: var(--bg-secondary);
+    border-left: 1px solid var(--border-color);
+}
+
+. gutter {
+    background: var(--border-color);
+    cursor: col-resize;
+}
+
+.gutter:hover {
+    background: var(--primary-color);
+}
+
+/* Code editor styling */
+.CodeMirror {
+    height: 100%;
+    font-family: 'Fira Code', monospace;
+    font-size: 14px;
+}
+
+/* Node-code highlight */
+.code-highlight {
+    background: rgba(var(--primary-rgb), 0.2);
+    border-left: 3px solid var(--primary-color);
+}
+
+/* Framework selector */
+.framework-selector {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 100;
+}
+
+.framework-selector select {
+    padding: 8px 12px;
+    border-radius: 6px;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+```
+
+### 4.5 Testing Checklist
+
+- [ ] Split pane resizes correctly
+- [ ] Code updates when canvas changes
+- [ ] Canvas updates when code is edited (parameter changes)
+- [ ] Node highlighting works when clicking code
+- [ ] Code highlighting works when clicking nodes
+- [ ] Framework switching generates correct code
+- [ ] Dark/light theme compatible
+- [ ] Mobile responsive (stacked view)
+
+---
+
+## 🤖 Phase 5: RAG-Powered AI Assistant
+
+### 5.1 Overview
+
+An intelligent context-aware assistant that helps users understand ML concepts, suggests components, explains errors, and provides best practices—all powered by Retrieval-Augmented Generation (RAG).
+
+### 5. 2 User Interface
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  DominoML Assistant                                    [−] [×]  │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  🤖 Hi!  I'm your ML assistant. I can help with:                │
+│     • Explaining ML concepts                                    │
+│     • Suggesting pipeline improvements                          │
+│     • Debugging errors                                          │
+│     • Best practices                                            │
+│                                                                 │
+│  ─────────────────────────────────────────────────────────────  │
+│                                                                 │
+│  👤 Why should I use StandardScaler before PCA?                │
+│                                                                 │
+│  🤖 Great question! StandardScaler normalizes your features    │
+│     to have mean=0 and variance=1. This is important before    │
+│     PCA because:                                                │
+│                                                                 │
+│     1. **PCA is sensitive to scale** - Features with larger    │
+│        ranges would dominate the principal components          │
+│                                                                 │
+│     2. **Equal contribution** - Scaling ensures all features   │
+│        contribute equally to the variance                      │
+│                                                                 │
+│     📚 Sources:                                                 │
+│     - scikit-learn docs: preprocessing                         │
+│     - ML Best Practices Guide                                  │
+│                                                                 │
+│     💡 Tip: Your current pipeline has PCA without scaling.      │
+│        Would you like me to add a StandardScaler?               │
+│                                                                 │
+│     [Add StandardScaler] [Learn More]                          │
+│                                                                 │
+├─────────────────────────────────────────────────────────────────┤
+│  ┌─────────────────────────────────────────────────────┐ [Send] │
+│  │ Ask me anything about your pipeline...               │        │
+│  └─────────────────────────────────────────────────────┘        │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### 5.3 Features
+
+| Feature | Description |
+|---------|-------------|
+| **Context-Aware Responses** | Understands current pipeline state and provides relevant suggestions |
+| **Concept Explanations** | Explains ML algorithms, preprocessing steps, evaluation metrics |
+| **Error Diagnosis** | Analyzes errors and suggests fixes |
+| **Best Practice Suggestions** | Recommends improvements based on pipeline analysis |
+| **Component Recommendations** | Suggests next components based on current pipeline |
+| **Code Explanation** | Explains generated code line by line |
+| **Learning Resources** | Links to documentation and tutorials |
+| **Action Buttons** | One-click to implement suggestions |
+
+### 5.4 Implementation Details
+
+#### 5.4.1 Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      User Query                              │
+└─────────────────────┬───────────────────────────────────────┘
+                      │
+                      ▼
+┌─────────────────────────────────────────────────────────────┐
+│                  Context Collector                           │
+│  • Current pipeline state (nodes, edges, params)            │
+│  • Selected node information                                 │
+│  • Recent user actions                                       │
+│  • Validation errors                                         │
+└─────────────────────┬───────────────────────────────────────┘
+                      │
+                      ▼
+┌─────────────────────────────────────────────────────────────┐
+│                  RAG Pipeline                                │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
+│  │   Embed      │→ │   Retrieve   │→ │   Rerank     │      │
+│  │   Query      │  │   Documents  │  │   Results    │      │
+│  └──────────────┘  └──────────────┘  └──────────────┘      │
+└─────────────────────┬───────────────────────────────────────┘
+                      │
+                      ▼
+┌─────────────────────────────────────────────────────────────┐
+│                  LLM Generation                              │
+│  • Prompt with context + retrieved docs                      │
+│  • System prompt for DominoML assistant persona             │
+│  • Action suggestions with pipeline modifications            │
+└─────────────────────┬───────────────────────────────────────┘
+                      │
+                      ▼
+┌─────────────────────────────────────────────────────────────┐
+│                  Response Handler                            │
+│  • Parse actions (add node, modify param, etc.)             │
+│  • Format markdown response                                  │
+│  • Include source citations                                  │
+└─────────────────────────────────────────────────────────────┘
+```
+
+#### 5.4.2 New Files to Create
+
+```
+app/
+├── utils/
+│   ├── rag/
+│   │   ├── __init__.py
+│   │   ├── embeddings.py        # Embedding generation
+│   │   ├── vector_store.py      # ChromaDB/Pinecone interface
+│   │   ├── retriever.py         # Document retrieval
+│   │   ├── context_builder.py   # Pipeline context extraction
+│   │   └── llm_client.py        # LLM API client
+│   └── assistant. py             # Main assistant logic
+├── routes/
+│   └── assistant.py             # Assistant API endpoints
+├── static/
+│   ├── js/
+│   │   └── assistant.js         # Frontend chat interface
+│   └── css/
+│       └── assistant.css        # Chat UI styles
+├── templates/
+│   └── partials/
+│       └── assistant_panel.html # Chat panel template
+└── data/
+    └── knowledge_base/          # Documents to index
+        ├── sklearn_docs/
+        ├── ml_best_practices/
+        ├── component_guides/
+        └── error_solutions/
+```
+
+#### 5. 4.3 Backend Implementation
+
+```python
+# app/utils/rag/vector_store.py
+
+import chromadb
+from chromadb.config import Settings
+from sentence_transformers import SentenceTransformer
+
+class VectorStore:
+    """ChromaDB vector store for RAG."""
+    
+    def __init__(self, persist_directory: str = "./chroma_db"):
+        self.client = chromadb.Client(Settings(
+            chroma_db_impl="duckdb+parquet",
+            persist_directory=persist_directory
+        ))
+        self.collection = self.client.get_or_create_collection(
+            name="dominoml_knowledge",
+            metadata={"hnsw:space": "cosine"}
+        )
+        self.embedder = SentenceTransformer('all-MiniLM-L6-v2')
+    
+    def add_documents(self, documents: list, metadatas: list = None):
+        """Add documents to the vector store."""
+        embeddings = self.embedder.encode(documents). tolist()
+        ids = [f"doc_{i}" for i in range(len(documents))]
+        
+        self.collection.add(
+            embeddings=embeddings,
+            documents=documents,
+            metadatas=metadatas or [{}] * len(documents),
+            ids=ids
+        )
+    
+    def query(self, query_text: str, n_results: int = 5) -> list:
+        """Query the vector store for relevant documents."""
+        query_embedding = self.embedder.encode([query_text]).tolist()
+        
+        results = self.collection.query(
+            query_embeddings=query_embedding,
+            n_results=n_results
+        )
+        
+        return results
+
+
+# app/utils/rag/context_builder.py
+
+class PipelineContextBuilder:
+    """Extract context from current pipeline state."""
+    
+    def __init__(self, nodes: list, edges: list, selected_node: dict = None):
+        self.nodes = nodes
+        self.edges = edges
+        self.selected_node = selected_node
+    
+    def build_context(self) -> str:
+        """Build a text description of the pipeline context."""
+        context_parts = []
+        
+        # Pipeline overview
+        context_parts.append(f"Current pipeline has {len(self.nodes)} nodes and {len(self.edges)} connections.")
+        
+        # List components by category
+        categories = self._group_by_category()
+        for category, items in categories.items():
+            context_parts.append(f"{category}: {', '.join(items)}")
+        
+        # Selected node details
+        if self.selected_node:
+            context_parts.append(f"\nCurrently selected: {self.selected_node['type']}")
+            context_parts.append(f"Parameters: {self.selected_node. get('parameters', {})}")
+        
+        # Pipeline flow
+        flow = self._describe_flow()
+        context_parts.append(f"\nPipeline flow: {flow}")
+        
+        return "\n".join(context_parts)
+    
+    def _group_by_category(self) -> dict:
+        categories = {}
+        for node in self.nodes:
+            cat = node.get('category', 'Other')
+            if cat not in categories:
+                categories[cat] = []
+            categories[cat].append(node['type'])
+        return categories
+    
+    def _describe_flow(self) -> str:
+        # Simple topological description
+        if not self.nodes:
+            return "Empty pipeline"
+        
+        # Find root nodes (no incoming edges)
+        incoming = {edge['target'] for edge in self.edges}
+        roots = [n for n in self.nodes if n['id'] not in incoming]
+        
+        if roots:
+            return f"Starts with {roots[0]['type']} → ..."
+        return "Circular or complex flow"
+
+
+# app/utils/assistant.py
+
+import openai
+from . rag.vector_store import VectorStore
+from .rag. context_builder import PipelineContextBuilder
+
+class DominoMLAssistant:
+    """RAG-powered ML assistant."""
+    
+    SYSTEM_PROMPT = """You are DominoML Assistant, an expert AI helper for a visual machine learning pipeline builder. 
+
+Your role is to:
+1.  Explain ML concepts in simple terms
+2.  Suggest pipeline improvements
+3. Debug errors and provide solutions
+4. Recommend best practices
+5. Help users learn machine learning
+
+When suggesting actions, format them as:
+[ACTION:add_node:standard_scaler] - to add a component
+[ACTION:modify_param:node_id:param_name:value] - to modify a parameter
+[ACTION:connect:source_id:target_id] - to connect nodes
+
+Always cite your sources when referencing documentation. 
+Be encouraging and educational in your responses. 
+"""
+
+    def __init__(self):
+        self.vector_store = VectorStore()
+        self. client = openai.OpenAI()
+    
+    def chat(self, 
+             user_message: str, 
+             pipeline_context: dict,
+             chat_history: list = None) -> dict:
+        """
+        Process a user message and return an assistant response.
+        
+        Returns:
+            {
+                'response': str,
+                'actions': list,
+                'sources': list
+            }
+        """
+        # Build pipeline context
+        context_builder = PipelineContextBuilder(
+            nodes=pipeline_context. get('nodes', []),
+            edges=pipeline_context.get('edges', []),
+            selected_node=pipeline_context.get('selected_node')
+        )
+        pipeline_description = context_builder.build_context()
+        
+        # Retrieve relevant documents
+        retrieved_docs = self.vector_store.query(user_message, n_results=5)
+        doc_context = "\n\n".join(retrieved_docs. get('documents', [[]])[0])
+        
+        # Build messages
+        messages = [
+            {"role": "system", "content": self.SYSTEM_PROMPT},
+            {"role": "system", "content": f"Current Pipeline Context:\n{pipeline_description}"},
+            {"role": "system", "content": f"Relevant Documentation:\n{doc_context}"}
+        ]
+        
+        # Add chat history
+        if chat_history:
+            messages.extend(chat_history[-10:])  # Last 10 messages
+        
+        messages.append({"role": "user", "content": user_message})
+        
+        # Generate response
+        response = self.client.chat.completions.create(
+            model="gpt-4",
+            messages=messages,
+            temperature=0.7,
+            max_tokens=1000
+        )
+        
+        assistant_message = response.choices[0].message. content
+        
+        # Parse actions from response
+        actions = self._parse_actions(assistant_message)
+        
+        # Extract sources
+        sources = self._extract_sources(retrieved_docs)
+        
+        return {
+            'response': self._clean_response(assistant_message),
+            'actions': actions,
+            'sources': sources
+        }
+    
+    def _parse_actions(self, response: str) -> list:
+        """Extract action commands from response."""
+        import re
+        actions = []
+        
+        pattern = r'\[ACTION:(\w+):([^\]]+)\]'
+        matches = re.findall(pattern, response)
+        
+        for action_type, params in matches:
+            actions.append({
+                'type': action_type,
+                'params': params.split(':')
+            })
+        
+        return actions
+    
+    def _clean_response(self, response: str) -> str:
+        """Remove action tags from visible response."""
+        import re
+        return re.sub(r'\[ACTION:[^\]]+\]', '', response). strip()
+    
+    def _extract_sources(self, retrieved_docs: dict) -> list:
+        """Extract source citations."""
+        metadatas = retrieved_docs.get('metadatas', [[]])[0]
+        return [m.get('source', 'Unknown') for m in metadatas]
+
+
+# app/routes/assistant.py
+
+from flask import Blueprint, request, jsonify
+from flask_login import login_required, current_user
+from app.utils.assistant import DominoMLAssistant
+
+assistant_bp = Blueprint('assistant', __name__)
+assistant = DominoMLAssistant()
+
+@assistant_bp. route('/api/assistant/chat', methods=['POST'])
+@login_required
+def chat():
+    """Handle assistant chat messages."""
+    data = request.get_json()
+    
+    user_message = data.get('message', '')
+    pipeline_context = data.get('pipeline_context', {})
+    chat_history = data.get('chat_history', [])
+    
+    if not user_message:
+        return jsonify({'error': 'Message is required'}), 400
+    
+    try:
+        response = assistant.chat(
+            user_message=user_message,
+            pipeline_context=pipeline_context,
+            chat_history=chat_history
+        )
+        return jsonify(response)
+    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@assistant_bp.route('/api/assistant/suggest', methods=['POST'])
+@login_required
+def suggest_next_component():
+    """Suggest next component based on pipeline state."""
+    data = request.get_json()
+    
+    nodes = data.get('nodes', [])
+    edges = data.get('edges', [])
+    
+    # Simple rule-based suggestions (can be enhanced with ML)
+    suggestions = []
+    
+    node_types = [n['type'] for n in nodes]
+    
+    # Data source present but no preprocessing
+    if any('loader' in t for t in node_types) and not any('scaler' in t for t in node_types):
+        suggestions.append({
+            'component': 'standard_scaler',
+            'reason': 'Add preprocessing to normalize your features'
+        })
+    
+    # Preprocessing but no model
+    if any('scaler' in t for t in node_types) and not any(t in ['random_forest', 'svm', 'logistic_regression'] for t in node_types):
+        suggestions.append({
+            'component': 'random_forest',
+            'reason': 'Add a model to train on your preprocessed data'
+        })
+    
+    # Model but no evaluation
+    if any(t in ['random_forest', 'svm'] for t in node_types) and not any('metrics' in t for t in node_types):
+        suggestions.append({
+            'component': 'classification_metrics',
+            'reason': 'Add evaluation metrics to assess model performance'
+        })
+    
+    return jsonify({'suggestions': suggestions})
+```
+
+#### 5.4.4 Frontend Implementation
+
+```javascript
+// app/static/js/assistant.js
+
+class DominoMLAssistant {
+    constructor() {
+        this.chatHistory = [];
+        this.isOpen = false;
+        this.isLoading = false;
+    }
+
+    initialize() {
+        this.container = document.getElementById('assistant-container');
+        this.messagesContainer = document.getElementById('assistant-messages');
+        this.input = document.getElementById('assistant-input');
+        this.sendButton = document.getElementById('assistant-send');
+        
+        this.setupEventListeners();
+        this.addWelcomeMessage();
+    }
+
+    setupEventListeners() {
+        this.sendButton. addEventListener('click', () => this. sendMessage());
+        this.input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                this.sendMessage();
+            }
+        });
+
+        // Toggle assistant panel
+        document.getElementById('assistant-toggle').addEventListener('click', () => {
+            this.toggle();
+        });
+    }
+
+    toggle() {
+        this.isOpen = !this.isOpen;
+        this.container.classList.toggle('open', this.isOpen);
+    }
+
+    addWelcomeMessage() {
+        this.addMessage('assistant', `
+            👋 Hi!  I'm your ML assistant. I can help with:
+            
+            • **Explaining ML concepts** - Ask me about algorithms, preprocessing, etc.
+            • **Pipeline suggestions** - I'll analyze your pipeline and suggest improvements
+            • **Error debugging** - Tell me about issues and I'll help fix them
+            • **Best practices** - Learn the right way to build ML pipelines
+            
+            What would you like to know? 
+        `);
+    }
+
+    async sendMessage() {
+        const message = this.input.value. trim();
+        if (!message || this.isLoading) return;
+
+        // Add user message
+        this.addMessage('user', message);
+        this.input.value = '';
+        
+        // Show loading
+        this. isLoading = true;
+        const loadingId = this.addLoadingMessage();
+
+        try {
+            // Get pipeline context
+            const pipelineContext = this.getPipelineContext();
+
+            // Send to API
+            const response = await fetch('/api/assistant/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    message,
+                    pipeline_context: pipelineContext,
+                    chat_history: this.chatHistory. slice(-10)
+                })
+            });
+
+            const data = await response.json();
+
+            // Remove loading message
+            this.removeMessage(loadingId);
+
+            // Add assistant response
+            this.addMessage('assistant', data.response, data.actions, data.sources);
+
+            // Update chat history
+            this.chatHistory.push(
+                { role: 'user', content: message },
+                { role: 'assistant', content: data.response }
+            );
+
+        } catch (error) {
+            this.removeMessage(loadingId);
+            this.addMessage('assistant', '❌ Sorry, I encountered an error. Please try again.');
+            console.error('Assistant error:', error);
+        } finally {
+            this.isLoading = false;
+        }
+    }
+
+    getPipelineContext() {
+        return {
+            nodes: canvasManager.getNodes(),
+            edges: canvasManager.getEdges(),
+            selected_node: canvasManager.getSelectedNode(),
+            validation_errors: canvasManager.getValidationErrors()
+        };
+    }
+
+    addMessage(role, content, actions = [], sources = []) {
+        const messageId = `msg-${Date.now()}`;
+        const messageEl = document.createElement('div');
+        messageEl.id = messageId;
+        messageEl.className = `assistant-message ${role}`;
+
+        const icon = role === 'user' ? '👤' : '🤖';
+        
+        messageEl.innerHTML = `
+            <div class="message-icon">${icon}</div>
+            <div class="message-content">
+                ${this.formatMarkdown(content)}
+                ${this.renderActions(actions)}
+                ${this.renderSources(sources)}
+            </div>
+        `;
+
+        this.messagesContainer. appendChild(messageEl);
+        this.messagesContainer.scrollTop = this.messagesContainer.scrollHeight;
+
+        return messageId;
+    }
+
+    renderActions(actions) {
+        if (!actions. length) return '';
+
+        const buttons = actions.map(action => {
+            const label = this.getActionLabel(action);
+            return `<button class="action-btn" onclick="assistant.executeAction('${JSON.stringify(action)}')">${label}</button>`;
+        }). join('');
+
+        return `<div class="message-actions">${buttons}</div>`;
+    }
+
+    getActionLabel(action) {
+        switch (action.type) {
+            case 'add_node': return `➕ Add ${action.params[0]}`;
+            case 'modify_param': return `✏️ Update ${action.params[1]}`;
+            case 'connect': return `🔗 Connect nodes`;
+            default: return `Execute ${action.type}`;
+        }
+    }
+
+    executeAction(actionJson) {
+        const action = JSON.parse(actionJson);
+        
+        switch (action.type) {
+            case 'add_node':
+                canvasManager.addNode(action. params[0]);
+                this.addMessage('assistant', `✅ Added ${action.params[0]} to your pipeline!`);
+                break;
+            case 'modify_param':
+                canvasManager.updateNodeParameter(action.params[0], action.params[1], action.params[2]);
+                this.addMessage('assistant', `✅ Updated ${action.params[1]}! `);
+                break;
+            case 'connect':
+                canvasManager.connectNodes(action. params[0], action.params[1]);
+                this.addMessage('assistant', `✅ Connected the nodes!`);
+                break;
+        }
+    }
+
+    renderSources(sources) {
+        if (!sources.length) return '';
+
+        const sourceLinks = sources.map(s => `<span class="source-tag">${s}</span>`).join('');
+        return `<div class="message-sources">📚 Sources: ${sourceLinks}</div>`;
+    }
+
+    formatMarkdown(content) {
+        // Simple markdown formatting
+        return content
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\*(.*?)\*/g, '<em>$1</em>')
+            .replace(/`(.*?)`/g, '<code>$1</code>')
+            .replace(/\n/g, '<br>');
+    }
+
+    addLoadingMessage() {
+        return this.addMessage('assistant', '<div class="typing-indicator"><span></span><span></span><span></span></div>');
+    }
+
+    removeMessage(messageId) {
+        const el = document.getElementById(messageId);
+        if (el) el. remove();
+    }
+}
+
+// Initialize
+const assistant = new DominoMLAssistant();
+document.addEventListener('DOMContentLoaded', () => assistant.initialize());
+```
+
+### 5.5 Knowledge Base Structure
+
+```
+data/knowledge_base/
+├── sklearn_docs/
+│   ├── preprocessing.md          # StandardScaler, MinMaxScaler, etc. 
+│   ├── classification.md         # RandomForest, SVM, LogisticRegression
+│   ├── regression.md             # LinearRegression, etc.
+│   ├── clustering.md             # KMeans, DBSCAN
+│   └── evaluation.md             # Metrics, cross-validation
+├── ml_best_practices/
+│   ├── data_preprocessing.md     # When to scale, encode, etc.
+│   ├── feature_engineering.md    # Feature selection, extraction
+│   ├── model_selection.md        # Choosing the right algorithm
+│   ├── hyperparameter_tuning.md  # Grid search, random search
+│   └── avoiding_overfitting.md   # Regularization, cross-validation
+├── component_guides/
+│   ├── csv_loader.md             # How to use CSV loader
+│   ├── standard_scaler.md        # How to use StandardScaler
+│   └── ...                        # One file per component
+├── error_solutions/
+│   ├── common_errors.md          # Frequent mistakes and fixes
+│   ├── validation_errors.md      # Pipeline validation issues
+│   └── runtime_errors.md         # Execution errors
+└── tutorials/
+    ├── beginner_classification.md
+    ├── regression_pipeline.md
+    └── advanced_techniques.md
+```
+
+### 5.6 Testing Checklist
+
+- [ ] Chat interface opens/closes correctly
+- [ ] Messages send and receive properly
+- [ ] Pipeline context is correctly extracted
+- [ ] RAG retrieves relevant documents
+- [ ] Action buttons execute correctly
+- [ ] Sources are displayed properly
+- [ ] Works without API key (fallback mode)
+- [ ] Chat history persists during session
+
+---
+
+## 🎓 Phase 6: Presentation Mode for Educators
+
+### 6.1 Overview
+
+A dedicated mode for instructors to teach ML concepts using pipelines as visual aids, with step-by-step animations, narration support, and export capabilities.
+
+### 6.2 User Interface
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│  📊 Presentation Mode                    [◀ Prev] [3/7] [Next ▶]    │
+│  "Introduction to Classification"                         [Exit]    │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│                          SLIDE 3: DATA PREPROCESSING               │
+│                                                                     │
+│    ┌─────────────────────────────────────────────────────────┐     │
+│    │                                                         │     │
+│    │     ┌──────────┐      ┌──────────┐                     │     │
+│    │     │ Raw Data │ ───▶ │ Scaler   │ ───▶ [Next Step]   │     │
+│    │     │  ✓       │      │  ●       │      (dimmed)       │     │
+│    │     └──────────┘      └──────────┘                     │     │
+│    │         ▲                  ▲                           │     │
+│    │         │                  │                           │     │
+│    │    [Completed]       [Current Step]                    │     │
+│    │                                                         │     │
+│    └─────────────────────────────────────────────────────────┘     │
+│                                                                     │
+│    ┌─────────────────────────────────────────────────────────┐     │
+│    │  📝 StandardScaler normalizes features to have:         │     │
+│    │     • Mean = 0                                          │     │
+│    │     • Standard Deviation = 1                            │     │
+│    │                                                          │     │
+│    │  This is important because many ML algorithms perform   │     │
+│    │  better when features are on similar scales.             │     │
+│    └─────────────────────────────────────────────────────────┘     │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│  [⏮] [⏪] [▶ Play] [⏩] [⏭]    🔊 Narration: ON    ⏱️ 2:30 / 15:00   │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### 6.3 Features
+
+| Feature | Description |
+|---------|-------------|
+| **Slide-based Navigation** | Break pipeline into teachable steps |
+| **Step Animation** | Animate data flow through nodes |
+| **Speaker Notes** | Hidden notes visible only to presenter |
+| **Narration Recording** | Record audio for each slide |
+| **Auto-play Mode** | Automatic progression with timing |
+| **Laser Pointer** | Virtual pointer for highlighting |
+| **Zoom Focus** | Zoom into specific nodes during explanation |
+| **Code Walkthrough** | Show corresponding code per step |
+| **Export Options** | PDF, PowerPoint, video recording |
+| **Classroom Mode** | Large fonts, high contrast |
+
+### 6.4 Implementation Details
+
+#### 6.4.1 New Files to Create
+
+```
+app/
+├── static/
+│   ├── js/
+│   │   ├── presentation/
+│   │   │   ├── presentation-mode.js    # Main presentation controller
+│   │   │   ├── slide-manager.js        # Slide navigation
+│   │   │   ├── animation-engine.js     # Node animations
+│   │   │   ├── narration. js           # Audio recording/playback
+│   │   │   └── export. js              # Export to PDF/PPTX
+│   └── css/
+│       └── presentation. css            # Presentation styles
+├── templates/
+│   ├── presentation. html               # Presentation view
+│   └── partials/
+│       ├── slide_editor.html          # Slide content editor
+│       └── presentation_controls.html # Playback controls
+├── routes/
+│   └── presentation. py                # Presentation API
+└── utils/
+    └── presentation_exporter.py       # Export utilities
+```
+
+#### 6.4.2 Data Model
+
+```python
+# app/models. py - Add to existing models
+
+class Presentation(db.Model):
+    """Presentation for teaching ML concepts."""
+    __tablename__ = 'presentations'
+    
+    id = db. Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    model_id = db.Column(db.Integer, db.ForeignKey('ml_models.id'), nullable=False)
+    
+    title = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text)
+    
+    # Presentation settings
+    theme = db.Column(db.String(50), default='default')  # default, dark, classroom
+    auto_play_speed = db.Column(db.Integer, default=5000)  # ms per slide
+    show_code = db.Column(db.Boolean, default=True)
+    
+    # Metadata
+    created_at = db. Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Relationships
+    slides = db.relationship('PresentationSlide', backref='presentation', lazy=True, order_by='PresentationSlide.order')
+
+
+class PresentationSlide(db.Model):
+    """Individual slide in a presentation."""
+    __tablename__ = 'presentation_slides'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    presentation_id = db.Column(db.Integer, db.ForeignKey('presentations.id'), nullable=False)
+    
+    order = db.Column(db.Integer, nullable=False)
+    title = db.Column(db.String(200))
+    content = db.Column(db.Text)  # Markdown content
+    speaker_notes = db.Column(db. Text)  # Notes for presenter
+    
+    # Visual settings
+    highlighted_nodes = db.Column(db. JSON)  # List of node IDs to highlight
+    zoom_target = db.Column(db.JSON)  # {x, y, scale} for zoom focus
+    animation_sequence = db.Column(db.JSON)  # Animation steps
+    
+    # Audio narration
+    narration_url = db.Column(db.String(500))  # URL to audio file
+    narration_duration = db.Column(db.Integer)  # Duration in seconds
+    
+    # Timing
+    duration = db.Column(db.Integer, default=5000)  # Display duration in ms
+```
+
+#### 6.4.3 Frontend Implementation
+
+```javascript
+// app/static/js/presentation/presentation-mode.js
+
+class PresentationMode {
+    constructor() {
+        this.slides = [];
+        this.currentSlide = 0;
+        this.isPlaying = false;
+        this. playbackTimer = null;
+        this.animationEngine = new AnimationEngine();
+        this. narration = new NarrationManager();
+    }
+
+    async initialize(presentationId) {
+        // Load presentation data
+        const response = await fetch(`/api/presentations/${presentationId}`);
+        const data = await response.json();
+        
+        this.slides = data.slides;
+        this.settings = data.settings;
+        
+        this.setupUI();
+        this.goToSlide(0);
+    }
+
+    setupUI() {
+        // Enter presentation mode (fullscreen-like)
+        document.body.classList.add('presentation-mode');
+        
+        // Hide normal UI elements
+        document.getElementById('sidebar').style.display = 'none';
+        document.getElementById('property-panel').style.display = 'none';
+        
+        // Show presentation controls
+        this.renderControls();
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => this.handleKeyboard(e));
+    }
+
+    renderControls() {
+        const controlsHtml = `
+            <div class="presentation-controls">
+                <div class="slide-navigation">
+                    <button onclick="presentation.previousSlide()" title="Previous (←)">
+                        <i data-lucide="chevron-left"></i>
+                    </button>
+                    <span class="slide-counter">${this.currentSlide + 1} / ${this.slides. length}</span>
+                    <button onclick="presentation.nextSlide()" title="Next (→)">
+                        <i data-lucide="chevron-right"></i>
+                    </button>
+                </div>
+                
+                <div class="playback-controls">
+                    <button onclick="presentation.togglePlay()" id="play-btn" title="Play/Pause (Space)">
+                        <i data-lucide="play"></i>
+                    </button>
+                    <span class="time-display">0:00 / ${this.getTotalDuration()}</span>
+                </div>
+                
+                <div class="presentation-tools">
+                    <button onclick="presentation.toggleNarration()" title="Toggle Narration">
+                        <i data-lucide="volume-2"></i>
+                    </button>
+                    <button onclick="presentation.toggleLaserPointer()" title="Laser Pointer (L)">
+                        <i data-lucide="target"></i>
+                    </button>
+                    <button onclick="presentation.exitPresentation()" title="Exit (Esc)">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        document.getElementById('presentation-overlay').innerHTML = controlsHtml;
+        lucide.createIcons();
+    }
+
+    goToSlide(index) {
+        if (index < 0 || index >= this. slides.length) return;
+        
+        this.currentSlide = index;
+        const slide = this.slides[index];
+        
+        // Update canvas view
+        this.applySlideState(slide);
+        
+        // Update content panel
+        this.renderSlideContent(slide);
+        
+        // Play narration if enabled
+        if (this.settings.narrationEnabled && slide.narration_url) {
+            this.narration.play(slide.narration_url);
+        }
+        
+        // Update navigation
+        this.updateNavigation();
+    }
+
+    applySlideState(slide) {
+        // Reset all nodes to dimmed state
+        canvasManager.getNodes().forEach(node => {
+            canvasManager.setNodeOpacity(node. id, 0.3);
+        });
+        
+        // Highlight specific nodes
+        if (slide.highlighted_nodes) {
+            slide.highlighted_nodes.forEach(nodeId => {
+                canvasManager.setNodeOpacity(nodeId, 1);
+                canvasManager.highlightNode(nodeId);
+            });
+        }
+        
+        // Apply zoom
+        if (slide.zoom_target) {
+            canvasManager. zoomTo(slide.zoom_target. x, slide.zoom_target. y, slide.zoom_target. scale);
+        }
+        
+        // Run animations
+        if (slide.animation_sequence) {
+            this.animationEngine.runSequence(slide.animation_sequence);
+        }
+    }
+
+    renderSlideContent(slide) {
+        const contentPanel = document.getElementById('presentation-content');
+        
+        contentPanel.innerHTML = `
+            <h2 class="slide-title">${slide.title}</h2>
+            <div class="slide-content">${this.renderMarkdown(slide.content)}</div>
+            ${this.settings.showCode ? this.renderCodeBlock(slide) : ''}
+        `;
+    }
+
+    renderCodeBlock(slide) {
+        // Get code for highlighted nodes
+        const highlightedNodes = slide.highlighted_nodes || [];
+        const code = this.generateCodeForNodes(highlightedNodes);
+        
+        return `
+            <div class="slide-code">
+                <div class="code-header">
+                    <span>Python Code</span>
+                    <button onclick="presentation.copyCode()">
+                        <i data-lucide="copy"></i>
+                    </button>
+                </div>
+                <pre><code class="language-python">${code}</code></pre>
+            </div>
+        `;
+    }
+
+    nextSlide() {
+        this.goToSlide(this. currentSlide + 1);
+    }
+
+    previousSlide() {
+        this.goToSlide(this.currentSlide - 1);
+    }
+
+    togglePlay() {
+        this.isPlaying = !this. isPlaying;
+        
+        const playBtn = document.getElementById('play-btn');
+        playBtn. innerHTML = this.isPlaying ? 
+            '<i data-lucide="pause"></i>' : 
+            '<i data-lucide="play"></i>';
+        lucide.createIcons();
+        
+        if (this.isPlaying) {
+            this.startAutoPlay();
+        } else {
+            this.stopAutoPlay();
+        }
+    }
+
+    startAutoPlay() {
+        const slide = this.slides[this.currentSlide];
+        const duration = slide.duration || this.settings.auto_play_speed;
+        
+        this.playbackTimer = setTimeout(() => {
+            if (this.currentSlide < this.slides.length - 1) {
+                this.nextSlide();
+                this.startAutoPlay();
+            } else {
+                this.togglePlay(); // Stop at end
+            }
+        }, duration);
+    }
+
+    stopAutoPlay() {
+        if (this. playbackTimer) {
+            clearTimeout(this.playbackTimer);
+            this.playbackTimer = null;
+        }
+    }
+
+    handleKeyboard(e) {
+        switch (e.key) {
+            case 'ArrowRight':
+            case 'PageDown':
+                this.nextSlide();
+                break;
+            case 'ArrowLeft':
+            case 'PageUp':
+                this.previousSlide();
+                break;
+            case ' ':
+                e.preventDefault();
+                this.togglePlay();
+                break;
+            case 'Escape':
+                this.exitPresentation();
+                break;
+            case 'l':
+            case 'L':
+                this.toggleLaserPointer();
+                break;
+        }
+    }
+
+    toggleLaserPointer() {
+        document.body.classList.toggle('laser-pointer-active');
+    }
+
+    exitPresentation() {
+        this.stopAutoPlay();
+        this.narration.stop();
+        
+        document.body.classList.remove('presentation-mode');
+        document.getElementById('sidebar').style.display = '';
+        document.getElementById('property-panel').style.display = '';
+        
+        // Reset node opacities
+        canvasManager. getNodes().forEach(node => {
+            canvasManager.setNodeOpacity(node.id, 1);
+        });
+    }
+
+    async exportToPDF() {
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('landscape', 'mm', 'a4');
+        
+        for (let i = 0; i < this.slides.length; i++) {
+            if (i > 0) pdf.addPage();
+            
+            const slide = this.slides[i];
+            
+            // Add title
+            pdf.setFontSize(24);
+            pdf.text(slide.title, 20, 30);
+            
+            // Add content
+            pdf.setFontSize(14);
+            const lines = pdf.splitTextToSize(slide.content, 250);
+            pdf.text(lines, 20, 50);
+            
+            // Add canvas screenshot
+            const canvas = await this.captureSlideCanvas(i);
+            pdf.addImage(canvas, 'PNG', 20, 80, 180, 100);
+        }
+        
+        pdf.save(`${this.settings.title}.pdf`);
+    }
+}
+
+
+// Animation Engine
+class AnimationEngine {
+    constructor() {
+        this. currentSequence = null;
+    }
+
+    async runSequence(sequence) {
+        this.currentSequence = sequence;
+        
+        for (const step of sequence) {
+            await this.executeStep(step);
+        }
+    }
+
+    async executeStep(step) {
+        return new Promise(resolve => {
+            switch (step.type) {
+                case 'highlight':
+                    this.animateHighlight(step.nodeId, step.duration);
+                    break;
+                case 'flow':
+                    this.animateDataFlow(step.fromId, step.toId, step.duration);
+                    break;
+                case 'zoom':
+                    this.animateZoom(step.target, step.duration);
+                    break;
+                case 'wait':
+                    // Just wait
+                    break;
+            }
+            
+            setTimeout(resolve, step.duration || 1000);
+        });
+    }
+
+    animateDataFlow(fromId, toId, duration) {
+        const fromNode = canvasManager.getNode(fromId);
+        const toNode = canvasManager.getNode(toId);
+        
+        // Create animated particle
+        const particle = document.createElement('div');
+        particle.className = 'data-flow-particle';
+        document.getElementById('canvas'). appendChild(particle);
+        
+        // Animate along the edge
+        particle.animate([
+            { left: `${fromNode.x}px`, top: `${fromNode.y}px` },
+            { left: `${toNode.x}px`, top: `${toNode.y}px` }
+        ], {
+            duration: duration,
+            easing: 'ease-in-out'
+        }). onfinish = () => particle.remove();
+    }
+}
+
+
+// Narration Manager
+class NarrationManager {
+    constructor() {
+        this.audio = new Audio();
+        this. isRecording = false;
+        this. mediaRecorder = null;
+    }
+
+    play(url) {
+        this. audio.src = url;
+        this.audio.play();
+    }
+
+    stop() {
+        this.audio. pause();
+        this.audio. currentTime = 0;
+    }
+
+    async startRecording() {
+        const stream = await navigator.mediaDevices. getUserMedia({ audio: true });
+        this. mediaRecorder = new MediaRecorder(stream);
+        
+        const chunks = [];
+        this.mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
+        this.mediaRecorder. onstop = () => {
+            const blob = new Blob(chunks, { type: 'audio/webm' });
+            this.uploadNarration(blob);
+        };
+        
+        this.mediaRecorder.start();
+        this. isRecording = true;
+    }
+
+    stopRecording() {
+        if (this.mediaRecorder && this. isRecording) {
+            this.mediaRecorder.stop();
+            this.isRecording = false;
+        }
+    }
+
+    async uploadNarration(blob) {
+        const formData = new FormData();
+        formData.append('audio', blob, 'narration.webm');
+        formData.append('slide_id', presentation.slides[presentation.currentSlide].id);
+        
+        const response = await fetch('/api/presentations/upload-narration', {
+            method: 'POST',
+            body: formData
+        });
+        
+        return response.json();
+    }
+}
+
+// Initialize
+const presentation = new PresentationMode();
+```
+
+#### 6.4.4 CSS Styles
+
+```css
+/* app/static/css/presentation. css */
+
+/* Presentation Mode */
+body.presentation-mode {
+    background: #0a0a0a;
+    overflow: hidden;
+}
+
+body.presentation-mode #main-content {
+    padding: 0;
+    margin: 0;
+}
+
+/* Slide Layout */
+.presentation-container {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    grid-template-rows: 1fr auto;
+    height: 100vh;
+    gap: 0;
+}
+
+.presentation-canvas {
+    grid-column: 1;
+    grid-row: 1;
+    background: #111;
+    position: relative;
+}
+
+#presentation-content {
+    grid-column: 2;
+    grid-row: 1;
+    background: #1a1a1a;
+    padding: 40px;
+    overflow-y: auto;
+    border-left: 1px solid #333;
+}
+
+.presentation-controls {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 32px;
+    background: #111;
+    border-top: 1px solid #333;
+}
+
+/* Slide Content */
+.slide-title {
+    font-

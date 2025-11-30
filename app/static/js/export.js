@@ -1,5 +1,5 @@
 // Export Manager - Handles pipeline export functionality
-(function() {
+(function () {
     'use strict';
 
     console.log('Export Manager loaded');
@@ -103,7 +103,8 @@
      * Export pipeline in specified format
      */
     async function exportPipeline(format) {
-        if (!hasSavedModel()) {
+        // JSON export doesn't require a saved model (it exports current canvas state)
+        if (format !== 'json' && !hasSavedModel()) {
             notifySaveRequired();
             return;
         }
@@ -113,7 +114,7 @@
 
         try {
             let result;
-            
+
             switch (format) {
                 case 'python':
                     result = await window.api.export.exportPython(currentModelId);
@@ -140,6 +141,27 @@
                     result = await window.api.export.exportRequirements(currentModelId);
                     downloadFile(result.requirements, result.filename, 'text/plain');
                     window.showToast('Requirements.txt exported successfully!', 'success');
+                    break;
+
+                case 'json':
+                    // Get current state from canvas
+                    const state = window.getCanvasState ? window.getCanvasState() : { nodes: [], edges: [] };
+
+                    if (state.nodes.length === 0) {
+                        throw new Error('Pipeline is empty');
+                    }
+
+                    const modelData = {
+                        version: '1.0',
+                        name: 'pipeline', // Default name, could be improved if we had access to model name
+                        nodes: state.nodes,
+                        edges: state.edges,
+                        exportedAt: new Date().toISOString()
+                    };
+
+                    const jsonStr = JSON.stringify(modelData, null, 2);
+                    downloadFile(jsonStr, 'pipeline.json', 'application/json');
+                    window.showToast('Model exported successfully', 'success');
                     break;
 
                 default:

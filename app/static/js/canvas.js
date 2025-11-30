@@ -1,5 +1,5 @@
 // Canvas Management - Drag & Drop ML Pipeline Builder
-(function() {
+(function () {
     // Canvas state
     const state = {
         nodes: [],
@@ -42,7 +42,7 @@
     }
 
     // Initialize canvas
-    window.canvasInit = function() {
+    window.canvasInit = function () {
         canvas = document.getElementById('canvas');
         canvasNodes = document.getElementById('canvas-nodes');
         canvasSvg = document.getElementById('canvas-svg');
@@ -58,6 +58,14 @@
         setupDialogHandlers();
         initializeHistory();
         render();
+    };
+
+    // Expose state for other modules (e.g., Presentation Mode)
+    window.getCanvasState = function () {
+        return {
+            nodes: state.nodes,
+            edges: state.edges
+        };
     };
 
     // Setup canvas event handlers
@@ -115,13 +123,7 @@
         const exportBtn = document.getElementById('export-code-btn');
         if (exportBtn) exportBtn.addEventListener('click', exportCode);
 
-        // Export model
-        const exportModelBtn = document.getElementById('export-model-btn');
-        if (exportModelBtn) exportModelBtn.addEventListener('click', exportModel);
 
-        // Import model
-        const importModelBtn = document.getElementById('import-model-btn');
-        if (importModelBtn) importModelBtn.addEventListener('click', () => openDialog('import-dialog'));
 
         // Undo/Redo
         const undoBtn = document.getElementById('undo-btn');
@@ -133,7 +135,7 @@
         const zoomIn = document.getElementById('zoom-in-btn');
         const zoomOut = document.getElementById('zoom-out-btn');
         const zoomFit = document.getElementById('zoom-fit-btn');
-        
+
         if (zoomIn) zoomIn.addEventListener('click', () => zoom(0.1));
         if (zoomOut) zoomOut.addEventListener('click', () => zoom(-0.1));
         if (zoomFit) zoomFit.addEventListener('click', fitView);
@@ -169,10 +171,10 @@
     // Handle drop on canvas
     function handleDrop(e) {
         e.preventDefault();
-        
+
         try {
             const componentData = JSON.parse(e.dataTransfer.getData('application/json'));
-            
+
             // Calculate position relative to canvas
             const rect = canvas.getBoundingClientRect();
             const x = (e.clientX - rect.left - state.transform.x) / state.transform.scale;
@@ -243,21 +245,21 @@
     // Zoom handler
     function handleZoom(e) {
         e.preventDefault();
-        
+
         const delta = e.deltaY > 0 ? -0.05 : 0.05;
         const newScale = Math.max(0.1, Math.min(2, state.transform.scale + delta));
-        
+
         // Zoom towards mouse position
         const rect = canvas.getBoundingClientRect();
         const mouseX = e.clientX - rect.left;
         const mouseY = e.clientY - rect.top;
-        
+
         const oldScale = state.transform.scale;
         state.transform.scale = newScale;
-        
+
         state.transform.x = mouseX - (mouseX - state.transform.x) * (newScale / oldScale);
         state.transform.y = mouseY - (mouseY - state.transform.y) * (newScale / oldScale);
-        
+
         updateTransform();
         updateZoomDisplay();
     }
@@ -275,15 +277,15 @@
 
         const padding = 50;
         const bounds = getNodesBounds();
-        
+
         const canvasRect = canvas.getBoundingClientRect();
         const scaleX = (canvasRect.width - padding * 2) / bounds.width;
         const scaleY = (canvasRect.height - padding * 2) / bounds.height;
-        
+
         state.transform.scale = Math.min(1, Math.min(scaleX, scaleY));
         state.transform.x = padding - bounds.left * state.transform.scale + (canvasRect.width - bounds.width * state.transform.scale) / 2;
         state.transform.y = padding - bounds.top * state.transform.scale + (canvasRect.height - bounds.height * state.transform.scale) / 2;
-        
+
         updateTransform();
         updateZoomDisplay();
     }
@@ -291,14 +293,14 @@
     // Get bounds of all nodes
     function getNodesBounds() {
         let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-        
+
         state.nodes.forEach(node => {
             minX = Math.min(minX, node.position.x);
             minY = Math.min(minY, node.position.y);
             maxX = Math.max(maxX, node.position.x + 200);
             maxY = Math.max(maxY, node.position.y + 80);
         });
-        
+
         return {
             left: minX,
             top: minY,
@@ -325,12 +327,12 @@
     // Select node
     function selectNode(node) {
         state.selectedNode = node;
-        
+
         // Update visual selection
         document.querySelectorAll('.node').forEach(el => {
             el.classList.remove('selected');
         });
-        
+
         if (node) {
             const nodeEl = document.querySelector(`[data-node-id="${node.id}"]`);
             if (nodeEl) nodeEl.classList.add('selected');
@@ -341,7 +343,7 @@
     }
 
     // Delete node
-    window.deleteNode = function(nodeId) {
+    window.deleteNode = function (nodeId) {
         const deletedNode = state.nodes.find(n => n.id === nodeId);
         state.nodes = state.nodes.filter(n => n.id !== nodeId);
         state.edges = state.edges.filter(e => e.source !== nodeId && e.target !== nodeId);
@@ -350,7 +352,7 @@
     };
 
     // Update node
-    window.updateNode = function(node) {
+    window.updateNode = function (node) {
         recordHistory('UPDATE_PARAMS', { nodeId: node.id, label: node.data.label });
         render();
     };
@@ -364,7 +366,7 @@
 
         // Render nodes
         renderNodes();
-        
+
         // Render edges
         renderEdges();
     }
@@ -382,12 +384,12 @@
             nodeEl.dataset.nodeId = node.id;
             nodeEl.style.left = `${node.position.x}px`;
             nodeEl.style.top = `${node.position.y}px`;
-            
+
             // Get component details for display
             const component = window.getComponentById?.(node.data.componentId);
             const paramCount = component?.parameters?.length || 0;
             const paramText = paramCount > 0 ? `${paramCount} parameter${paramCount !== 1 ? 's' : ''}` : 'No parameters';
-            
+
             if (!node.data.iconName && window.getComponentIconName && node.data.componentId) {
                 node.data.iconName = window.getComponentIconName(node.data.componentId);
             }
@@ -411,7 +413,7 @@
 
             // Make draggable
             nodeEl.addEventListener('mousedown', (e) => handleNodeDragStart(e, node));
-            
+
             // Click to select
             nodeEl.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -421,11 +423,11 @@
             // Handle connections
             const outputHandle = nodeEl.querySelector('.node-handle-output');
             const inputHandle = nodeEl.querySelector('.node-handle-input');
-            
+
             if (outputHandle) {
                 outputHandle.addEventListener('mousedown', (e) => handleConnectionStart(e, node, 'output'));
             }
-            
+
             if (inputHandle) {
                 inputHandle.addEventListener('mousedown', (e) => handleConnectionStart(e, node, 'input'));
             }
@@ -453,13 +455,13 @@
         const handleMouseMove = (e) => {
             const dx = (e.clientX - startX) / state.transform.scale;
             const dy = (e.clientY - startY) / state.transform.scale;
-            
+
             node.position.x = startPos.x + dx;
             node.position.y = startPos.y + dy;
-            
+
             nodeEl.style.left = `${node.position.x}px`;
             nodeEl.style.top = `${node.position.y}px`;
-            
+
             renderEdges();
         };
 
@@ -495,7 +497,7 @@
                 const rect = canvas.getBoundingClientRect();
                 const x = (e.clientX - rect.left) / state.transform.scale - state.transform.x / state.transform.scale;
                 const y = (e.clientY - rect.top) / state.transform.scale - state.transform.y / state.transform.scale;
-                
+
                 // Update temporary line
                 const x1 = node.position.x + 200;
                 const y1 = node.position.y + 40;
@@ -515,7 +517,7 @@
                 if (target?.classList.contains('node-handle-input')) {
                     const targetNodeId = target.dataset.nodeId;
                     const targetNode = state.nodes.find(n => n.id === targetNodeId);
-                    
+
                     if (targetNode && targetNode.id !== node.id) {
                         // Create edge
                         const edgeId = `edge-${state.edges.length + 1}`;
@@ -524,12 +526,12 @@
                             source: node.id,
                             target: targetNode.id,
                         };
-                        
+
                         // Check if edge already exists
-                        const exists = state.edges.some(e => 
+                        const exists = state.edges.some(e =>
                             e.source === edge.source && e.target === edge.target
                         );
-                        
+
                         if (!exists) {
                             state.edges.push(edge);
                             recordHistory('ADD_EDGE', { edgeId, source: edge.source, target: edge.target });
@@ -540,7 +542,7 @@
                         }
                     }
                 }
-                
+
                 state.connecting = null;
                 document.removeEventListener('mousemove', handleMouseMove);
                 document.removeEventListener('mouseup', handleMouseUp);
@@ -554,11 +556,11 @@
     // Render edges
     function renderEdges() {
         canvasSvg.innerHTML = '';
-        
+
         state.edges.forEach(edge => {
             const sourceNode = state.nodes.find(n => n.id === edge.source);
             const targetNode = state.nodes.find(n => n.id === edge.target);
-            
+
             if (!sourceNode || !targetNode) return;
 
             // Create edge group
@@ -572,9 +574,9 @@
             const y1 = sourceNode.position.y + 40;
             const x2 = targetNode.position.x;
             const y2 = targetNode.position.y + 40;
-            
+
             const path = `M ${x1} ${y1} C ${x1 + 50} ${y1}, ${x2 - 50} ${y2}, ${x2} ${y2}`;
-            
+
             hitArea.setAttribute('d', path);
             hitArea.setAttribute('class', 'edge-hitarea');
             hitArea.setAttribute('stroke', 'transparent');
@@ -590,16 +592,16 @@
             line.setAttribute('stroke-width', '2');
             line.setAttribute('fill', 'none');
             line.style.pointerEvents = 'none';
-            
+
             // Create delete button circle (hidden by default)
             const midX = (x1 + x2) / 2;
             const midY = (y1 + y2) / 2;
-            
+
             const deleteButton = document.createElementNS('http://www.w3.org/2000/svg', 'g');
             deleteButton.setAttribute('class', 'edge-delete-btn');
             deleteButton.style.display = 'none';
             deleteButton.style.cursor = 'pointer';
-            
+
             const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
             circle.setAttribute('cx', midX);
             circle.setAttribute('cy', midY);
@@ -607,7 +609,7 @@
             circle.setAttribute('fill', '#ef4444');
             circle.setAttribute('stroke', 'white');
             circle.setAttribute('stroke-width', '2');
-            
+
             const xLine1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
             xLine1.setAttribute('x1', midX - 4);
             xLine1.setAttribute('y1', midY - 4);
@@ -616,7 +618,7 @@
             xLine1.setAttribute('stroke', 'white');
             xLine1.setAttribute('stroke-width', '2');
             xLine1.setAttribute('stroke-linecap', 'round');
-            
+
             const xLine2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
             xLine2.setAttribute('x1', midX + 4);
             xLine2.setAttribute('y1', midY - 4);
@@ -625,21 +627,21 @@
             xLine2.setAttribute('stroke', 'white');
             xLine2.setAttribute('stroke-width', '2');
             xLine2.setAttribute('stroke-linecap', 'round');
-            
+
             deleteButton.appendChild(circle);
             deleteButton.appendChild(xLine1);
             deleteButton.appendChild(xLine2);
-            
+
             // Add hover effects
             let isHovering = false;
-            
+
             const showDeleteButton = () => {
                 isHovering = true;
                 line.setAttribute('stroke', '#ef4444');
                 line.setAttribute('stroke-width', '3');
                 deleteButton.style.display = 'block';
             };
-            
+
             const hideDeleteButton = () => {
                 isHovering = false;
                 setTimeout(() => {
@@ -651,27 +653,27 @@
                     }
                 }, 100);
             };
-            
+
             hitArea.addEventListener('mouseenter', showDeleteButton);
             hitArea.addEventListener('mouseleave', hideDeleteButton);
             deleteButton.addEventListener('mouseenter', showDeleteButton);
             deleteButton.addEventListener('mouseleave', hideDeleteButton);
-            
+
             // Delete on click
             const handleDelete = (e) => {
                 e.stopPropagation();
                 deleteEdge(edge.id);
             };
-            
+
             hitArea.addEventListener('click', handleDelete);
             deleteButton.addEventListener('click', handleDelete);
-            
+
             // Assemble the group
             group.appendChild(hitArea);
             group.appendChild(line);
             line.dataset.defaultStroke = getComputedStyle(line).stroke;
             group.appendChild(deleteButton);
-            
+
             canvasSvg.appendChild(group);
         });
     }
@@ -680,21 +682,21 @@
     function deleteEdge(edgeId) {
         const edge = state.edges.find(e => e.id === edgeId);
         if (!edge) return;
-        
+
         const sourceNode = state.nodes.find(n => n.id === edge.source);
         const targetNode = state.nodes.find(n => n.id === edge.target);
-        
+
         state.edges = state.edges.filter(e => e.id !== edgeId);
         recordHistory('DELETE_EDGE', { edgeId, source: edge.source, target: edge.target });
         renderEdges();
-        
+
         const sourceLabel = sourceNode?.data?.label || 'Unknown';
         const targetLabel = targetNode?.data?.label || 'Unknown';
         window.showToast(`Disconnected: ${sourceLabel} → ${targetLabel}`, 'success');
     }
 
     // Undo last action
-    window.canvasUndo = function() {
+    window.canvasUndo = function () {
         if (!window.historyManager) {
             window.showToast('History not available', 'error');
             return;
@@ -704,20 +706,20 @@
         if (previousState) {
             // Pause history while restoring
             window.historyManager.pause();
-            
+
             state.nodes = previousState.nodes || [];
             state.edges = previousState.edges || [];
-            
+
             // Update node counter
-            nodeIdCounter = Math.max(0, ...state.nodes.map(n => 
+            nodeIdCounter = Math.max(0, ...state.nodes.map(n =>
                 parseInt(n.id.replace(/\D/g, '')) || 0
             ));
-            
+
             render();
             selectNode(null);
-            
+
             window.historyManager.resume();
-            
+
             const action = window.historyManager.getLastAction();
             window.showToast(`Undo: ${action}`, 'success');
         } else {
@@ -726,7 +728,7 @@
     };
 
     // Redo last undone action
-    window.canvasRedo = function() {
+    window.canvasRedo = function () {
         if (!window.historyManager) {
             window.showToast('History not available', 'error');
             return;
@@ -736,20 +738,20 @@
         if (nextState) {
             // Pause history while restoring
             window.historyManager.pause();
-            
+
             state.nodes = nextState.nodes || [];
             state.edges = nextState.edges || [];
-            
+
             // Update node counter
-            nodeIdCounter = Math.max(0, ...state.nodes.map(n => 
+            nodeIdCounter = Math.max(0, ...state.nodes.map(n =>
                 parseInt(n.id.replace(/\D/g, '')) || 0
             ));
-            
+
             render();
             selectNode(null);
-            
+
             window.historyManager.resume();
-            
+
             const action = window.historyManager.getNextAction();
             window.showToast(`Redo: ${action}`, 'success');
         } else {
@@ -762,16 +764,16 @@
         if (state.nodes.length > 0) {
             if (!confirm('This will clear the current pipeline. Continue?')) return;
         }
-        
+
         state.nodes = [];
         state.edges = [];
         state.currentModelId = null;
         state.currentModelName = null;
         nodeIdCounter = 0;
-        
+
         selectNode(null);
         render();
-        
+
         window.showToast('New pipeline created', 'success');
     }
 
@@ -779,7 +781,7 @@
     async function saveModel() {
         const nameInput = document.getElementById('model-name');
         const name = nameInput?.value?.trim();
-        
+
         if (!name) {
             window.showToast('Please enter a model name', 'error');
             return;
@@ -823,7 +825,7 @@
         try {
             const models = await window.api.models.getAll();
             const container = document.getElementById('saved-models-list');
-            
+
             if (!models || models.length === 0) {
                 container.innerHTML = '<div class="empty-state-small">No saved models</div>';
             } else {
@@ -839,8 +841,21 @@
                     </div>
                 `).join('');
             }
-            
+
             openDialog('load-dialog');
+
+            // Wire up the "Import from JSON" button in the load dialog
+            const openImportBtn = document.getElementById('open-import-dialog-btn');
+            if (openImportBtn) {
+                // Remove existing listeners to avoid duplicates (simple way is to clone)
+                const newBtn = openImportBtn.cloneNode(true);
+                openImportBtn.parentNode.replaceChild(newBtn, openImportBtn);
+
+                newBtn.addEventListener('click', function () {
+                    closeDialog('load-dialog');
+                    openDialog('import-dialog');
+                });
+            }
         } catch (error) {
             console.error('Load error:', error);
             window.showToast('Failed to load models', 'error');
@@ -848,24 +863,24 @@
     }
 
     // Load model by ID
-    window.loadModelById = async function(id) {
+    window.loadModelById = async function (id) {
         try {
             const model = await window.api.models.get(id);
-            
+
             state.nodes = model.nodes || [];
             state.edges = model.edges || [];
             state.currentModelId = model.id;
             state.currentModelName = model.name;
-            
+
             // Update node counter
-            nodeIdCounter = Math.max(0, ...state.nodes.map(n => 
+            nodeIdCounter = Math.max(0, ...state.nodes.map(n =>
                 parseInt(n.id.replace('node-', '')) || 0
             ));
-            
+
             render();
             fitView();
             closeDialog('load-dialog');
-            
+
             window.showToast(`Loaded "${model.name}"`, 'success');
         } catch (error) {
             console.error('Load error:', error);
@@ -879,7 +894,7 @@
             const data = await window.api.templates.getAll();
             const templates = data.templates || [];
             const container = document.getElementById('templates-grid');
-            
+
             if (templates.length === 0) {
                 container.innerHTML = '<div class="empty-state-small">No templates available</div>';
             } else {
@@ -903,7 +918,7 @@
                     window.lucide.createIcons();
                 }
             }
-            
+
             openDialog('templates-dialog');
         } catch (error) {
             console.error('Templates error:', error);
@@ -912,30 +927,30 @@
     }
 
     // Load template
-    window.loadTemplate = async function(templateId) {
+    window.loadTemplate = async function (templateId) {
         try {
             const data = await window.api.templates.getAll();
             const template = data.templates.find(t => t.id === templateId);
-            
+
             if (!template) {
                 window.showToast('Template not found', 'error');
                 return;
             }
-            
+
             // Use the pipeline structure from the template
             const pipeline = template.pipeline || {};
             const templateNodes = pipeline.nodes || [];
-            
+
             // Transform template nodes to match canvas node format
             state.nodes = templateNodes.map(node => {
                 // Template nodes have data.type, we need to find matching component
                 const componentType = node.type || node.data?.type;
                 const componentName = node.name || node.data?.label;
-                
+
                 // Try to find component by name or type
                 const allComponents = window.getAllComponents?.() || [];
                 let component = allComponents.find(c => c.name === componentName);
-                
+
                 if (!component) {
                     // Fallback: create a basic component structure
                     component = {
@@ -946,11 +961,11 @@
                         parameters: []
                     };
                 }
-                
+
                 const iconName = window.getComponentIconName
                     ? window.getComponentIconName(component.id)
                     : 'box';
-                
+
                 return {
                     id: node.id,
                     type: node.type,
@@ -964,23 +979,23 @@
                     }
                 };
             });
-            
+
             state.edges = pipeline.edges || [];
             state.currentModelId = null;
             state.currentModelName = pipeline.name || template.name || null;
-            
+
             // Update node counter
-            nodeIdCounter = Math.max(0, ...state.nodes.map(n => 
+            nodeIdCounter = Math.max(0, ...state.nodes.map(n =>
                 parseInt(n.id.replace(/\D/g, '')) || 0
             ));
-            
+
             // Record as batch operation
             recordHistory('LOAD_TEMPLATE', { templateId, templateName: template.name, nodeCount: state.nodes.length });
-            
+
             render();
             fitView();
             closeDialog('templates-dialog');
-            
+
             window.showToast(`Loaded template "${template.name}"`, 'success');
         } catch (error) {
             console.error('Template load error:', error);
@@ -989,7 +1004,7 @@
     };
 
     // Validate pipeline
-    function validatePipeline() {
+    async function validatePipeline() {
         const errors = [];
         const warnings = [];
 
@@ -1002,7 +1017,7 @@
         state.nodes.forEach(node => {
             const hasInput = state.edges.some(e => e.target === node.id);
             const hasOutput = state.edges.some(e => e.source === node.id);
-            
+
             if (!hasInput && !hasOutput && state.nodes.length > 1) {
                 disconnectedNodes.push(node.data.label);
                 warnings.push(`Node "${node.data.label}" is not connected.`);
@@ -1015,13 +1030,27 @@
         state.nodes.forEach(node => {
             const type = node.type || 'unknown';
             componentTypes[type] = (componentTypes[type] || 0) + 1;
-            
+
             const component = window.getComponentById?.(node.data.componentId);
             if (component) {
                 const category = component.category || 'Other';
                 categories[category] = (categories[category] || 0) + 1;
             }
         });
+
+        // Server-side validation
+        try {
+            const serverResult = await window.api.code.validate({
+                nodes: state.nodes,
+                edges: state.edges
+            });
+
+            if (serverResult.errors) errors.push(...serverResult.errors);
+            if (serverResult.warnings) warnings.push(...serverResult.warnings);
+        } catch (error) {
+            console.error('Validation error:', error);
+            warnings.push('Could not perform server-side validation');
+        }
 
         // Calculate complexity score (simple heuristic)
         const complexityScore = Math.min(20, state.nodes.length + state.edges.length);
@@ -1043,18 +1072,18 @@
             <div class="stats-section">
                 <h5 class="stats-subtitle">Component Types</h5>
                 <div class="badge-list">
-                    ${Object.entries(componentTypes).map(([type, count]) => 
-                        `<span class="badge badge-secondary">${type}: ${count}</span>`
-                    ).join('')}
+                    ${Object.entries(componentTypes).map(([type, count]) =>
+            `<span class="badge badge-secondary">${type}: ${count}</span>`
+        ).join('')}
                 </div>
             </div>
             
             <div class="stats-section">
                 <h5 class="stats-subtitle">Categories</h5>
                 <div class="badge-list">
-                    ${Object.entries(categories).map(([cat, count]) => 
-                        `<span class="badge badge-primary">${cat}</span>`
-                    ).join(' ')}
+                    ${Object.entries(categories).map(([cat, count]) =>
+            `<span class="badge badge-primary">${cat}</span>`
+        ).join(' ')}
                 </div>
             </div>
             
@@ -1066,7 +1095,7 @@
                 <div class="complexity-value">${complexityScore}</div>
             </div>
         `;
-        
+
         statsContainer.innerHTML = statsHTML;
 
         // Build validation results HTML
@@ -1095,7 +1124,7 @@
                     </div>
                 `;
             }
-            
+
             if (warnings.length > 0) {
                 resultHTML += `
                     <div class="alert alert-warning">
@@ -1129,11 +1158,11 @@
 
             const result = await window.api.code.generate(pipeline);
             const codeDisplay = document.getElementById('export-code-display');
-            
+
             if (codeDisplay) {
                 codeDisplay.textContent = result.code;
             }
-            
+
             openDialog('export-dialog');
         } catch (error) {
             console.error('Export error:', error);
@@ -1155,34 +1184,7 @@
             });
     }
 
-    // Export model as JSON
-    function exportModel() {
-        if (state.nodes.length === 0) {
-            window.showToast('Pipeline is empty', 'error');
-            return;
-        }
 
-        const modelData = {
-            version: '1.0',
-            name: state.currentModelName || 'Untitled Pipeline',
-            nodes: state.nodes,
-            edges: state.edges,
-            exportedAt: new Date().toISOString()
-        };
-
-        const jsonStr = JSON.stringify(modelData, null, 2);
-        const blob = new Blob([jsonStr], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${state.currentModelName || 'pipeline'}.json`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-
-        window.showToast('Model exported successfully', 'success');
-    }
 
     // Import model from JSON
     function importModel() {
@@ -1194,7 +1196,7 @@
 
         try {
             const modelData = JSON.parse(input.value);
-            
+
             if (!modelData.nodes || !Array.isArray(modelData.nodes)) {
                 throw new Error('Invalid model format: missing nodes array');
             }
@@ -1205,7 +1207,7 @@
             state.currentModelName = modelData.name || null;
 
             // Update node counter
-            nodeIdCounter = Math.max(0, ...state.nodes.map(n => 
+            nodeIdCounter = Math.max(0, ...state.nodes.map(n =>
                 parseInt(n.id.replace(/\D/g, '')) || 0
             ));
 
@@ -1233,18 +1235,18 @@
     }
 
     // Public API for version management
-    window.getCurrentModelId = function() {
+    window.getCurrentModelId = function () {
         return state.currentModelId;
     };
 
-    window.getCanvasState = function() {
+    window.getCanvasState = function () {
         return {
             nodes: state.nodes,
             edges: state.edges
         };
     };
 
-    window.loadCanvasState = function(newState) {
+    window.loadCanvasState = function (newState) {
         // Pause history while loading
         if (window.historyManager) {
             window.historyManager.pause();
@@ -1254,7 +1256,7 @@
         state.edges = newState.edges || [];
 
         // Update node counter
-        nodeIdCounter = Math.max(0, ...state.nodes.map(n => 
+        nodeIdCounter = Math.max(0, ...state.nodes.map(n =>
             parseInt(n.id.replace(/\D/g, '')) || 0
         ));
 
@@ -1271,5 +1273,13 @@
             );
         }
     };
+    // Expose state for presentation mode
+    window.getCanvasState = function () {
+        return {
+            nodes: state.nodes,
+            edges: state.edges
+        };
+    };
+
 })();
 
