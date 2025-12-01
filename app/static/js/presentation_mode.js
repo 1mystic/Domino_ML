@@ -42,20 +42,69 @@
             copyBtn.addEventListener('click', copyCode);
         }
 
-        // Framework Selector
-        const frameworkSelect = document.getElementById('framework-selector');
-        if (frameworkSelect) {
-            frameworkSelect.addEventListener('change', (e) => {
-                state.currentFramework = e.target.value;
-                updateCode();
-            });
-        }
+        // Framework Selector (Custom Dropdown)
+        setupFrameworkDropdown();
 
         // Canvas Node Click Delegation
         const canvasNodes = document.getElementById('canvas-nodes');
         if (canvasNodes) {
             canvasNodes.addEventListener('click', handleNodeClick);
         }
+    }
+
+    // Custom Framework Dropdown Handler
+    function setupFrameworkDropdown() {
+        const dropdown = document.getElementById('framework-dropdown');
+        const toggle = document.getElementById('framework-selector');
+        const menu = document.getElementById('framework-dropdown-menu');
+        const selectedText = toggle?.querySelector('.framework-selected-text');
+
+        if (!dropdown || !toggle || !menu) return;
+
+        // Toggle dropdown on button click
+        toggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdown.classList.toggle('open');
+        });
+
+        // Handle item selection
+        menu.addEventListener('click', (e) => {
+            const item = e.target.closest('.framework-dropdown-item');
+            if (!item) return;
+
+            const value = item.dataset.value;
+            const text = item.textContent;
+
+            // Update selected state
+            menu.querySelectorAll('.framework-dropdown-item').forEach(i => i.classList.remove('active'));
+            item.classList.add('active');
+
+            // Update display text
+            if (selectedText) {
+                selectedText.textContent = text;
+            }
+
+            // Update state and regenerate code
+            state.currentFramework = value;
+            updateCode();
+
+            // Close dropdown
+            dropdown.classList.remove('open');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!dropdown.contains(e.target)) {
+                dropdown.classList.remove('open');
+            }
+        });
+
+        // Close on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                dropdown.classList.remove('open');
+            }
+        });
     }
 
     function togglePresentationMode() {

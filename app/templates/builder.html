@@ -208,11 +208,17 @@
                 <div class="panel-header">
                     <h3 class="panel-title">Generated Code</h3>
                     <div class="panel-actions">
-                        <select id="framework-selector" class="framework-select">
-                            <option value="sklearn">scikit-learn</option>
-                            <option value="pytorch">PyTorch</option>
-                            <option value="tensorflow">TensorFlow</option>
-                        </select>
+                        <div class="framework-dropdown" id="framework-dropdown">
+                            <button type="button" class="framework-dropdown-toggle" id="framework-selector">
+                                <span class="framework-selected-text">scikit-learn</span>
+                                <i data-lucide="chevron-down" class="framework-dropdown-arrow"></i>
+                            </button>
+                            <ul class="framework-dropdown-menu" id="framework-dropdown-menu">
+                                <li class="framework-dropdown-item active" data-value="sklearn">scikit-learn</li>
+                                <li class="framework-dropdown-item" data-value="pytorch">PyTorch</li>
+                                <li class="framework-dropdown-item" data-value="tensorflow">TensorFlow</li>
+                            </ul>
+                        </div>
                         <button id="copy-presentation-code-btn" class="btn btn-ghost btn-xs" title="Copy Code">
                             <i data-lucide="copy"></i>
                         </button>
