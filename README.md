@@ -14,9 +14,9 @@ A Flask-based visual machine learning pipeline builder that enables users to cre
 
 ---
 
-## VIDEOGRAPHIC DEMO
+## VIDEO DEMO
 
-[![Watch the Demo](Snaps/land.png)](https://www.youtube.com/watch?v=YOUR_VIDEO_ID_HERE)
+[![Watch the Demo](Snaps/yt.jpg)](https://youtu.be/FNp3avbL1t0)
 
 > *Click the image above to watch the walkthrough*
 
