@@ -265,7 +265,7 @@
     width: 100%;
     height: 100%;
     position: relative;
-    background: 
+    background:
         linear-gradient(90deg, var(--border) 1px, transparent 1px),
         linear-gradient(var(--border) 1px, transparent 1px);
     background-size: 20px 20px;
@@ -299,6 +299,27 @@
     transition: box-shadow 0.2s, border-color 0.2s;
 }
 
+/* Node Types Gradients */
+.node[data-type="data"] {
+    background: linear-gradient(145deg, hsl(var(--card)), rgba(59, 130, 246, 0.1));
+    border-top: 2px solid rgba(59, 130, 246, 0.5);
+}
+
+.node[data-type="preprocessing"] {
+    background: linear-gradient(145deg, hsl(var(--card)), rgba(168, 85, 247, 0.1));
+    border-top: 2px solid rgba(168, 85, 247, 0.5);
+}
+
+.node[data-type="model"] {
+    background: linear-gradient(145deg, hsl(var(--card)), rgba(16, 185, 129, 0.1));
+    border-top: 2px solid rgba(16, 185, 129, 0.5);
+}
+
+.node[data-type="evaluation"] {
+    background: linear-gradient(145deg, hsl(var(--card)), rgba(245, 158, 11, 0.1));
+    border-top: 2px solid rgba(245, 158, 11, 0.5);
+}
+
 .node:hover {
     box-shadow: var(--shadow-lg);
     border-color: #ffffff;
@@ -312,9 +333,28 @@
 .node-header {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 0.5rem;
     padding: 0.75rem;
     border-bottom: 1px solid hsl(var(--border));
+}
+
+.node-header-main {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    overflow: hidden;
+}
+
+.node-type-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 0.1rem 0.3rem;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    color: hsl(var(--muted-foreground));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
 }
 
 .node-icon {
@@ -323,6 +363,7 @@
     justify-content: center;
     width: 24px;
     height: 24px;
+    flex-shrink: 0;
 }
 
 .node-icon i {
@@ -341,6 +382,29 @@
 
 .node-body {
     padding: 0.5rem 0.75rem;
+}
+
+.node-params-preview {
+    font-size: 0.7rem;
+    margin-bottom: 0.4rem;
+    color: hsl(var(--foreground));
+    opacity: 0.9;
+}
+
+.node-params-preview>div {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2px;
+}
+
+.param-key {
+    color: hsl(var(--muted-foreground));
+    margin-right: 4px;
+}
+
+.param-val {
+    font-family: monospace;
+    font-weight: 500;
 }
 
 .node-meta {
@@ -399,6 +463,18 @@
     stroke-width: 2;
     pointer-events: none;
     transition: stroke 0.2s, stroke-width 0.2s;
+    stroke-dasharray: 8 4;
+    animation: flow 0.5s linear infinite;
+}
+
+@keyframes flow {
+    from {
+        stroke-dashoffset: 12;
+    }
+
+    to {
+        stroke-dashoffset: 0;
+    }
 }
 
 [data-theme="light"] .edge {
@@ -727,8 +803,13 @@
 }
 
 @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* Toast Notifications */
@@ -1121,21 +1202,21 @@
     .export-option-card {
         padding: 0.875rem;
     }
-    
+
     .export-option-icon {
         width: 40px;
         height: 40px;
     }
-    
+
     .export-option-icon svg {
         width: 20px;
         height: 20px;
     }
-    
+
     .export-option-content h4 {
         font-size: 0.875rem;
     }
-    
+
     .export-option-content p {
         font-size: 0.75rem;
     }
@@ -1159,12 +1240,14 @@ body.presentation-mode-active .builder-container {
 
 /* Code Panel */
 .presentation-code-panel {
-    background: #1e1e1e; /* Dark background for code */
+    background: #1e1e1e;
+    /* Dark background for code */
     border-right: 1px solid #333;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    min-width: 0; /* Prevent flex overflow */
+    min-width: 0;
+    /* Prevent flex overflow */
 }
 
 .presentation-code-panel .panel-header {
@@ -1222,7 +1305,8 @@ body.presentation-mode-active .builder-container {
 }
 
 .gutter:hover {
-    background-color: #007fd4; /* VS Code blue */
+    background-color: #007fd4;
+    /* VS Code blue */
 }
 
 .gutter.gutter-horizontal {
@@ -1234,7 +1318,8 @@ body.presentation-mode-active .builder-container {
 
 /* CodeMirror Highlight */
 .code-highlight {
-    background-color: rgba(59, 130, 246, 0.2); /* Blue tint */
+    background-color: rgba(59, 130, 246, 0.2);
+    /* Blue tint */
     border-left: 2px solid #3b82f6;
 }
 

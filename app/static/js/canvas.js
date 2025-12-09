@@ -387,8 +387,40 @@
 
             // Get component details for display
             const component = window.getComponentById?.(node.data.componentId);
+            let typeAbbr = '';
+
+            if (component?.type) {
+                nodeEl.dataset.type = component.type;
+                const typeMap = {
+                    'data': 'DATA',
+                    'preprocessing': 'PREP',
+                    'model': 'MOD',
+                    'evaluation': 'EVAL'
+                };
+                typeAbbr = typeMap[component.type] || component.type.substring(0, 3).toUpperCase();
+            }
+
+            // Get key parameters for preview
+            let paramPreview = '';
+            if (component?.parameters && node.data.parameters) {
+                // Filter out common/generic parameters to show only important ones
+                const keyParams = component.parameters
+                    .filter(p => !['random_state', 'verbose', 'n_jobs', 'shuffle'].includes(p.name))
+                    .slice(0, 2);
+
+                if (keyParams.length > 0) {
+                    paramPreview = keyParams.map(p => {
+                        let val = node.data.parameters[p.name];
+                        // Format value
+                        if (val === undefined || val === null || val === '') val = '-';
+                        if (String(val).length > 8) val = String(val).substring(0, 7) + '..';
+                        return `<div><span class="param-key">${p.label || p.name}:</span> <span class="param-val">${val}</span></div>`;
+                    }).join('');
+                }
+            }
+
             const paramCount = component?.parameters?.length || 0;
-            const paramText = paramCount > 0 ? `${paramCount} parameter${paramCount !== 1 ? 's' : ''}` : 'No parameters';
+            const paramText = paramCount > 0 ? `${paramCount} parameter${paramCount !== 1 ? 's' : ''}` : '';
 
             if (!node.data.iconName && window.getComponentIconName && node.data.componentId) {
                 node.data.iconName = window.getComponentIconName(node.data.componentId);
@@ -399,11 +431,15 @@
 
             nodeEl.innerHTML = `
                 <div class="node-header">
-                    <span class="node-icon">${iconMarkup}</span>
-                    <span class="node-label">${node.data.label}</span>
+                    <div class="node-header-main">
+                        <span class="node-icon">${iconMarkup}</span>
+                        <span class="node-label">${node.data.label}</span>
+                    </div>
+                    ${typeAbbr ? `<span class="node-type-badge">${typeAbbr}</span>` : ''}
                 </div>
                 <div class="node-body">
-                    <div class="node-meta">${paramText}</div>
+                    ${paramPreview ? `<div class="node-params-preview">${paramPreview}</div>` : ''}
+                    ${paramText ? `<div class="node-meta">${paramText}</div>` : ''}
                 </div>
                 <div class="node-handles">
                     <div class="node-handle node-handle-input" data-type="input" data-node-id="${node.id}"></div>
