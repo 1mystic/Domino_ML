@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 
 {% block title %}DominoML - Visual ML Pipeline Builder{% endblock %}
-{% block description %}Build powerful machine learning pipelines with our intuitive drag-and-drop interface. No coding required.{% endblock %}
+{% block description %}Build powerful machine learning pipelines with our intuitive drag-and-drop interface. No coding
+required.{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}">
@@ -15,7 +16,8 @@
             <div class=" navbar flex items-center justify-between py-4">
                 <div class="flex items-center gap-3">
                     <div class="logo-box">
-                        <img src="{{ url_for('static', filename='images/domino-icon.svg') }}" alt="DominoML logo" class="logo-icon-img">
+                        <img src="{{ url_for('static', filename='images/domino-icon.svg') }}" alt="DominoML logo"
+                            class="logo-icon-img">
                     </div>
                     <div class="flex items-center gap-2">
                         <h1 class="logo-text">DominoML</h1>
@@ -26,11 +28,13 @@
                     <button id="theme-toggle" class="btn btn-ghost btn-sm" aria-label="Toggle theme">
                         <i data-lucide="moon" class="theme-icon"></i>
                     </button>
+
                     {% if current_user.is_authenticated %}
-                        <a href="{{ url_for('main.builder') }}" class="btn btn-primary btn-sm">
-                            <i data-lucide="layout-dashboard"></i>
-                            <span class="hide-mobile">Dashboard</span>
-                        </a>
+                    <a href="{{ url_for('main.dashboard') }}" class="btn btn-primary btn-sm">
+                        <i data-lucide="layout-dashboard"></i>
+                        <span class="hide-mobile">Dashboard</span>
+                    </a>
+                    {% else %}
                     {% endif %}
                 </div>
             </div>
@@ -47,14 +51,14 @@
                         <div class="pulse-dot"></div>
                         <span>No-Code ML Platform</span>
                     </div>
-                    
+
                     <div class="hero-title-group">
                         <h1 class="hero-title">
                             Build ML Models
                             <span class="gradient-text">Visually</span>
                         </h1>
                         <p class="hero-description">
-                            Create powerful machine learning pipelines with our intuitive drag-and-drop interface. 
+                            Create powerful machine learning pipelines with our intuitive drag-and-drop interface.
                             No coding required.
                         </p>
                     </div>
@@ -66,7 +70,9 @@
                             Try It First
                             <i data-lucide="arrow-right"></i>
                         </a>
-                        
+
+
+
                         {% if not current_user.is_authenticated %}
                         <a href="{{ url_for('auth.signup') }}" class="btn btn-outline btn-lg">
                             <i data-lucide="user-plus"></i>
@@ -102,8 +108,7 @@
                         <div class="card-glow"></div>
                         <div class="card-content">
                             <img src="{{ url_for('static', filename='images/hero.jpg') }}"
-                                 alt="DominoML pipeline preview"
-                                 class="hero-preview">
+                                alt="DominoML pipeline preview" class="hero-preview">
                         </div>
                     </div>
                     <div class="floating-element floating-1"></div>
@@ -122,7 +127,7 @@
                     <span class="gradient-text">ML models</span>
                 </h2>
                 <p class="section-description">
-                    From data preprocessing to model deployment, our platform provides all the tools 
+                    From data preprocessing to model deployment, our platform provides all the tools
                     you need for your machine learning journey.
                 </p>
             </div>
@@ -199,16 +204,16 @@
                 <div class="cta-content">
                     <h2 class="cta-title">Ready to start building?</h2>
                     <p class="cta-description">
-                        Join thousands of developers and data scientists who are already building 
+                        Join thousands of developers and data scientists who are already building
                         amazing ML models with our platform.
                     </p>
-                    
+
                     <div class="cta-buttons">
                         <a href="{{ url_for('main.builder') }}" class="btn btn-lg cta-btn-white">
                             <i data-lucide="play"></i>
                             Start Building Now
                         </a>
-                        
+
                         {% if not current_user.is_authenticated %}
                         <a href="{{ url_for('auth.signup') }}" class="btn btn-outline btn-lg cta-btn-outline">
                             <i data-lucide="user-plus"></i>
@@ -227,11 +232,12 @@
             <div class="footer-content">
                 <div class="flex items-center gap-3">
                     <div class="footer-logo">
-                        <img src="{{ url_for('static', filename='images/domino-icon.svg') }}" alt="DominoML logo" class="logo-icon-img">
+                        <img src="{{ url_for('static', filename='images/domino-icon.svg') }}" alt="DominoML logo"
+                            class="logo-icon-img">
                     </div>
                     <span class="footer-brand">DominoML</span>
                 </div>
-                
+
                 <div class="footer-text">
                     © 2025 DominoML. Built with ❤️ for the ML community.
                 </div>

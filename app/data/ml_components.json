@@ -636,5 +636,125 @@
       "matrix_plot"
     ],
     "pythonTemplate": "\nfrom sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay\nimport matplotlib.pyplot as plt\n\n# Make predictions\ny_pred = model.predict(X_test)\n\n# Compute confusion matrix\ncm = confusion_matrix(y_test, y_pred)\ndisp = ConfusionMatrixDisplay(confusion_matrix=cm)\ndisp.plot()\nplt.title(\"Confusion Matrix\")\nplt.show()\n"
+  },
+  {
+    "id": "text-loader",
+    "name": "Text Loader",
+    "category": "Data Sources",
+    "type": "data",
+    "description": "Load text data from directory or file",
+    "icon": "📝",
+    "parameters": [
+      {
+        "name": "path",
+        "type": "string",
+        "label": "Data Location",
+        "description": "Path to text files",
+        "defaultValue": "./data/text",
+        "required": true
+      }
+    ],
+    "inputs": [],
+    "outputs": [
+      "data",
+      "target"
+    ],
+    "pythonTemplate": "\nfrom sklearn.datasets import load_files\n\n# Load text data\ndataset = load_files('{path}')\ndata, target = dataset.data, dataset.target\nprint(f\"Loaded {len(data)} text documents\")\n"
+  },
+  {
+    "id": "label-encoder",
+    "name": "Label Encoder",
+    "category": "Preprocessing",
+    "type": "preprocessing",
+    "description": "Encode target labels with value between 0 and n_classes-1",
+    "icon": "🏷️",
+    "parameters": [],
+    "inputs": [
+      "y"
+    ],
+    "outputs": [
+      "y_encoded"
+    ],
+    "pythonTemplate": "\nfrom sklearn.preprocessing import LabelEncoder\n\nle = LabelEncoder()\ny_encoded = le.fit_transform(y)\nprint(f\"Encoded {len(le.classes_)} classes\")\n"
+  },
+  {
+    "id": "decision-tree-classifier",
+    "name": "Decision Tree",
+    "category": "Classification",
+    "type": "model",
+    "description": "Decision Tree Classifier",
+    "icon": "🌳",
+    "parameters": [
+      {
+        "name": "max_depth",
+        "type": "number",
+        "label": "Max Depth",
+        "defaultValue": 5,
+        "min": 1,
+        "max": 50
+      },
+      {
+        "name": "criterion",
+        "type": "select",
+        "label": "Criterion",
+        "defaultValue": "gini",
+        "options": [
+          "gini",
+          "entropy"
+        ]
+      }
+    ],
+    "inputs": [
+      "X_train",
+      "y_train"
+    ],
+    "outputs": [
+      "model"
+    ],
+    "pythonTemplate": "\nfrom sklearn.tree import DecisionTreeClassifier\n\nmodel = DecisionTreeClassifier(max_depth={max_depth}, criterion='{criterion}', random_state=42)\nmodel.fit(X_train, y_train)\nprint(\"Decision Tree trained\")\n"
+  },
+  {
+    "id": "naive-bayes",
+    "name": "Naive Bayes",
+    "category": "Classification",
+    "type": "model",
+    "description": "Gaussian Naive Bayes",
+    "icon": "🔔",
+    "parameters": [],
+    "inputs": [
+      "X_train",
+      "y_train"
+    ],
+    "outputs": [
+      "model"
+    ],
+    "pythonTemplate": "\nfrom sklearn.naive_bayes import GaussianNB\n\nmodel = GaussianNB()\nmodel.fit(X_train, y_train)\nprint(\"Naive Bayes model trained\")\n"
+  },
+  {
+    "id": "cross-validation",
+    "name": "Cross Validation",
+    "category": "Evaluation",
+    "type": "evaluation",
+    "description": "Evaluate model using cross-validation",
+    "icon": "🔄",
+    "parameters": [
+      {
+        "name": "cv",
+        "type": "number",
+        "label": "Folds (K)",
+        "defaultValue": 5,
+        "min": 2,
+        "max": 10
+      }
+    ],
+    "inputs": [
+      "model",
+      "X",
+      "y"
+    ],
+    "outputs": [
+      "scores"
+    ],
+    "pythonTemplate": "\nfrom sklearn.model_selection import cross_val_score\n\nscores = cross_val_score(model, X, y, cv={cv})\nprint(f\"Cross-validation scores: {scores}\")\nprint(f\"Mean CV Score: {scores.mean():.4f}\")\n"
   }
 ]

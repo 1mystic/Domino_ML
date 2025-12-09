@@ -1,0 +1,227 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - DominoML{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container container">
+    <!-- Header/Navbar -->
+    <header class="header" style="margin-bottom: 2rem;">
+        <div class="navbar flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="{{ url_for('main.landing') }}" class="flex items-center gap-2" style="text-decoration:none;">
+                    <div class="logo-box" style="width:32px; height:32px;">
+                        <img src="{{ url_for('static', filename='images/domino-icon.svg') }}" alt="DominoML logo"
+                            class="logo-icon-img">
+                    </div>
+                    <h1 class="logo-text" style="font-size:1.25rem; margin:0;">DominoML</h1>
+                </a>
+            </div>
+            <div class="flex items-center gap-3">
+                <button id="theme-toggle" class="btn btn-ghost btn-sm" aria-label="Toggle theme">
+                    <i data-lucide="moon" class="theme-icon"></i>
+                </button>
+                <div class="flex items-center gap-2">
+                    <span class="text-sm text-muted hide-mobile">{{ current_user.display_name or current_user.username
+                        }}</span>
+                    <div class="avatar-placeholder"
+                        style="width:32px;height:32px;border-radius:50%;background:hsl(var(--primary));display:flex;align-items:center;justify-content:center;color:rgb(239, 170, 170);font-weight:600;">
+                        {{ (current_user.display_name or current_user.username)[0].upper() }}
+                    </div>
+                    <a href="{{ url_for('auth.logout') }}" class="signout-btn" title="Sign Out">
+                        <i data-lucide="log-out"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Header -->
+    <header class="dashboard-header">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1>Overview</h1>
+                <p class="welcome-text">Manage your pipelines and experiments</p>
+            </div>
+            <div class="quick-actions">
+                <a href="{{ url_for('main.gallery') }}" class="btn btn-outline">
+                    <i data-lucide="grid"></i>
+                    Browse Gallery
+                </a>
+                <a href="{{ url_for('main.builder') }}" class="btn btn-primary">
+                    <i data-lucide="plus"></i>
+                    New Project
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Stats Row -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i data-lucide="box"></i>
+            </div>
+            <div class="stat-content">
+                <h3>Total Models</h3>
+                <div class="stat-value">{{ current_user.models.count() }}</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i data-lucide="activity"></i>
+            </div>
+            <div class="stat-content">
+                <h3>Recent Activity</h3>
+                <div class="stat-value">Active</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i data-lucide="zap"></i>
+            </div>
+            <div class="stat-content">
+                <h3>Components Used</h3>
+                <div class="stat-value">-</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Models Grid -->
+    <section>
+        <div class="section-header">
+            <h2 class="section-title">Your Models</h2>
+        </div>
+
+        {% if current_user.models.count() > 0 %}
+        <div class="models-grid">
+            {% for model in current_user.models %}
+            <div class="model-card">
+                <div class="model-header">
+                    <div class="model-icon">
+                        <i data-lucide="workflow"></i>
+                    </div>
+                    <!-- Optional menu for delete/rename could go here -->
+                </div>
+
+                <a href="{{ url_for('main.builder', modelId=model.id) }}" class="model-name">{{ model.name }}</a>
+                <p class="model-desc">{{ model.description or "No description provided." }}</p>
+
+                <div class="model-stats">
+                    <div class="model-stat" title="Created">
+                        <i data-lucide="calendar"></i>
+                        {{ model.created_at.strftime('%b %d, %Y') }}
+                    </div>
+                    <!-- Nodes count if we parse JSON, otherwise just skip for now -->
+                </div>
+
+                <div class="model-footer">
+                    <a href="{{ url_for('main.builder', modelId=model.id) }}" class="model-action-btn btn-open">
+                        <i data-lucide="edit-3"></i>
+                        Open
+                    </a>
+                    <a href="{{ url_for('main.presentation', model_id=model.id) }}" class="model-action-btn btn-view"
+                        title="Presentation Mode">
+                        <i data-lucide="presentation"></i>
+                    </a>
+                    <button onclick="confirmDelete({{ model.id }}, '{{ model.name }}')"
+                        class="model-action-btn btn-delete" title="Delete Pipeline">
+                        <i data-lucide="trash-2"></i>
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="dashboard-empty">
+            <span class="empty-icon">📂</span>
+            <h3 class="empty-title">No Models Yet</h3>
+            <p class="empty-text">Create your first machine learning pipeline to get started.</p>
+            <a href="{{ url_for('main.builder') }}" class="btn btn-primary">
+                <i data-lucide="plus"></i>
+                Create Pipeline
+            </a>
+        </div>
+        {% endif %}
+    </section>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="delete-modal" class="dialog-overlay" hidden>
+    <div class="dialog">
+        <div class="dialog-header">
+            <h3>Delete Pipeline?</h3>
+            <button class="dialog-close" onclick="closeDeleteModal()">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+        <div class="dialog-content">
+            <p>Are you sure you want to delete <strong id="delete-model-name"></strong>?</p>
+            <p class="text-muted" style="margin-top: 0.5rem; font-size: 0.9rem;">This action cannot be undone.</p>
+        </div>
+        <div class="dialog-footer">
+            <button class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+            <button id="confirm-delete-btn" class="btn btn-danger">Delete</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Initialize icons
+    lucide.createIcons();
+
+    let modelToDeleteId = null;
+    const deleteModal = document.getElementById('delete-modal');
+    const deleteNameSpan = document.getElementById('delete-model-name');
+    const confirmBtn = document.getElementById('confirm-delete-btn');
+
+    function confirmDelete(id, name) {
+        modelToDeleteId = id;
+        deleteNameSpan.textContent = name;
+        deleteModal.hidden = false;
+    }
+
+    function closeDeleteModal() {
+        deleteModal.hidden = true;
+        modelToDeleteId = null;
+    }
+
+    confirmBtn.addEventListener('click', async () => {
+        if (!modelToDeleteId) return;
+
+        const originalText = confirmBtn.textContent;
+        confirmBtn.textContent = 'Deleting...';
+        confirmBtn.disabled = true;
+
+        try {
+            const res = await fetch(`/api/models/${modelToDeleteId}`, {
+                method: 'DELETE'
+            });
+
+            if (res.ok) {
+                window.location.reload();
+            } else {
+                alert('Failed to delete model');
+            }
+        } catch (error) {
+            console.error(error);
+            alert('Error deleting model');
+        } finally {
+            confirmBtn.textContent = originalText;
+            confirmBtn.disabled = false;
+            closeDeleteModal();
+        }
+    });
+
+    // Close on overlay click
+    deleteModal.addEventListener('click', (e) => {
+        if (e.target === deleteModal) closeDeleteModal();
+    });
+</script>
+<script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+{% endblock %}

@@ -8,6 +8,11 @@ bp = Blueprint('main', __name__)
 def landing():
     return render_template('landing.html')
 
+@bp.route('/dashboard')
+@login_required
+def dashboard():
+    return render_template('dashboard.html')
+
 @bp.route('/builder')
 def builder():
     return render_template('builder.html')
@@ -16,6 +21,10 @@ def builder():
 @bp.route('/presentation/<int:model_id>')
 def presentation(model_id=None):
     return render_template('presentation.html', model_id=model_id)
+
+@bp.route('/gallery')
+def gallery():
+    return render_template('gallery.html')
 
 @bp.route('/notfound')
 def not_found():

@@ -14,14 +14,22 @@
           "type": "data",
           "category": "Data Sources",
           "name": "Sample Dataset",
-          "position": {"x": 100, "y": 100},
+          "position": {
+            "x": 100,
+            "y": 100
+          },
           "data": {
             "label": "Iris Dataset",
+            "componentId": "sample-data",
             "description": "Load iris dataset",
             "type": "data",
-            "parameters": {"dataset": "iris"},
+            "parameters": {
+              "dataset": "iris"
+            },
             "inputs": [],
-            "outputs": ["data"]
+            "outputs": [
+              "data"
+            ]
           }
         },
         {
@@ -29,14 +37,28 @@
           "type": "preprocessing",
           "category": "Preprocessing",
           "name": "Train Test Split",
-          "position": {"x": 300, "y": 100},
+          "position": {
+            "x": 300,
+            "y": 100
+          },
           "data": {
             "label": "Split Data",
+            "componentId": "train-test-split",
             "description": "Split into train/test sets",
             "type": "preprocessing",
-            "parameters": {"test_size": 0.3, "random_state": 42},
-            "inputs": ["data"],
-            "outputs": ["X_train", "X_test", "y_train", "y_test"]
+            "parameters": {
+              "test_size": 0.3,
+              "random_state": 42
+            },
+            "inputs": [
+              "data"
+            ],
+            "outputs": [
+              "X_train",
+              "X_test",
+              "y_train",
+              "y_test"
+            ]
           }
         },
         {
@@ -44,14 +66,27 @@
           "type": "model",
           "category": "Classification",
           "name": "Random Forest Classifier",
-          "position": {"x": 500, "y": 100},
+          "position": {
+            "x": 500,
+            "y": 100
+          },
           "data": {
             "label": "RF Classifier",
+            "componentId": "random-forest-classifier",
             "description": "Train Random Forest model",
             "type": "model",
-            "parameters": {"n_estimators": 100, "max_depth": 10, "random_state": 42},
-            "inputs": ["X_train", "y_train"],
-            "outputs": ["model"]
+            "parameters": {
+              "n_estimators": 100,
+              "max_depth": 10,
+              "random_state": 42
+            },
+            "inputs": [
+              "X_train",
+              "y_train"
+            ],
+            "outputs": [
+              "model"
+            ]
           }
         },
         {
@@ -59,22 +94,48 @@
           "type": "evaluation",
           "category": "Evaluation",
           "name": "Classification Metrics",
-          "position": {"x": 700, "y": 100},
+          "position": {
+            "x": 700,
+            "y": 100
+          },
           "data": {
             "label": "Evaluate Model",
+            "componentId": "classification-metrics",
             "description": "Calculate performance metrics",
             "type": "evaluation",
             "parameters": {},
-            "inputs": ["model", "X_test", "y_test"],
-            "outputs": ["metrics"]
+            "inputs": [
+              "model",
+              "X_test",
+              "y_test"
+            ],
+            "outputs": [
+              "metrics"
+            ]
           }
         }
       ],
       "edges": [
-        {"id": "e1", "source": "data-1", "target": "split-1"},
-        {"id": "e2", "source": "split-1", "target": "model-1"},
-        {"id": "e3", "source": "model-1", "target": "eval-1"},
-        {"id": "e4", "source": "split-1", "target": "eval-1"}
+        {
+          "id": "e1",
+          "source": "data-1",
+          "target": "split-1"
+        },
+        {
+          "id": "e2",
+          "source": "split-1",
+          "target": "model-1"
+        },
+        {
+          "id": "e3",
+          "source": "model-1",
+          "target": "eval-1"
+        },
+        {
+          "id": "e4",
+          "source": "split-1",
+          "target": "eval-1"
+        }
       ]
     }
   },
@@ -93,14 +154,22 @@
           "type": "data",
           "category": "Data Sources",
           "name": "Sample Dataset",
-          "position": {"x": 100, "y": 100},
+          "position": {
+            "x": 100,
+            "y": 100
+          },
           "data": {
             "label": "Wine Dataset",
+            "componentId": "sample-data",
             "description": "Load wine dataset",
             "type": "data",
-            "parameters": {"dataset": "wine"},
+            "parameters": {
+              "dataset": "wine"
+            },
             "inputs": [],
-            "outputs": ["data"]
+            "outputs": [
+              "data"
+            ]
           }
         },
         {
@@ -108,14 +177,25 @@
           "type": "preprocessing",
           "category": "Preprocessing",
           "name": "Standard Scaler",
-          "position": {"x": 250, "y": 100},
+          "position": {
+            "x": 250,
+            "y": 100
+          },
           "data": {
             "label": "Scale Features",
+            "componentId": "standard-scaler",
             "description": "Standardize feature values",
             "type": "preprocessing",
-            "parameters": {"with_mean": true, "with_std": true},
-            "inputs": ["data"],
-            "outputs": ["scaled_data"]
+            "parameters": {
+              "with_mean": true,
+              "with_std": true
+            },
+            "inputs": [
+              "data"
+            ],
+            "outputs": [
+              "scaled_data"
+            ]
           }
         },
         {
@@ -123,14 +203,28 @@
           "type": "preprocessing",
           "category": "Preprocessing",
           "name": "Train Test Split",
-          "position": {"x": 400, "y": 100},
+          "position": {
+            "x": 400,
+            "y": 100
+          },
           "data": {
             "label": "Split Data",
+            "componentId": "train-test-split",
             "description": "Split into train/test sets",
             "type": "preprocessing",
-            "parameters": {"test_size": 0.2, "random_state": 42},
-            "inputs": ["data"],
-            "outputs": ["X_train", "X_test", "y_train", "y_test"]
+            "parameters": {
+              "test_size": 0.2,
+              "random_state": 42
+            },
+            "inputs": [
+              "data"
+            ],
+            "outputs": [
+              "X_train",
+              "X_test",
+              "y_train",
+              "y_test"
+            ]
           }
         },
         {
@@ -138,14 +232,25 @@
           "type": "model",
           "category": "Regression",
           "name": "Linear Regression",
-          "position": {"x": 550, "y": 100},
+          "position": {
+            "x": 550,
+            "y": 100
+          },
           "data": {
             "label": "Linear Model",
+            "componentId": "linear-regression",
             "description": "Train linear regression model",
             "type": "model",
-            "parameters": {"fit_intercept": true},
-            "inputs": ["X_train", "y_train"],
-            "outputs": ["model"]
+            "parameters": {
+              "fit_intercept": true
+            },
+            "inputs": [
+              "X_train",
+              "y_train"
+            ],
+            "outputs": [
+              "model"
+            ]
           }
         },
         {
@@ -153,23 +258,53 @@
           "type": "evaluation",
           "category": "Evaluation",
           "name": "Regression Metrics",
-          "position": {"x": 700, "y": 100},
+          "position": {
+            "x": 700,
+            "y": 100
+          },
           "data": {
             "label": "Evaluate Model",
+            "componentId": "regression-metrics",
             "description": "Calculate regression metrics",
             "type": "evaluation",
             "parameters": {},
-            "inputs": ["model", "X_test", "y_test"],
-            "outputs": ["metrics"]
+            "inputs": [
+              "model",
+              "X_test",
+              "y_test"
+            ],
+            "outputs": [
+              "metrics"
+            ]
           }
         }
       ],
       "edges": [
-        {"id": "e1", "source": "data-1", "target": "scaler-1"},
-        {"id": "e2", "source": "scaler-1", "target": "split-1"},
-        {"id": "e3", "source": "split-1", "target": "model-1"},
-        {"id": "e4", "source": "model-1", "target": "eval-1"},
-        {"id": "e5", "source": "split-1", "target": "eval-1"}
+        {
+          "id": "e1",
+          "source": "data-1",
+          "target": "scaler-1"
+        },
+        {
+          "id": "e2",
+          "source": "scaler-1",
+          "target": "split-1"
+        },
+        {
+          "id": "e3",
+          "source": "split-1",
+          "target": "model-1"
+        },
+        {
+          "id": "e4",
+          "source": "model-1",
+          "target": "eval-1"
+        },
+        {
+          "id": "e5",
+          "source": "split-1",
+          "target": "eval-1"
+        }
       ]
     }
   },
@@ -188,14 +323,22 @@
           "type": "data",
           "category": "Data Sources",
           "name": "Sample Dataset",
-          "position": {"x": 100, "y": 100},
+          "position": {
+            "x": 100,
+            "y": 100
+          },
           "data": {
             "label": "Iris Dataset",
+            "componentId": "sample-data",
             "description": "Load iris dataset",
             "type": "data",
-            "parameters": {"dataset": "iris"},
+            "parameters": {
+              "dataset": "iris"
+            },
             "inputs": [],
-            "outputs": ["data"]
+            "outputs": [
+              "data"
+            ]
           }
         },
         {
@@ -203,14 +346,25 @@
           "type": "preprocessing",
           "category": "Preprocessing",
           "name": "PCA Dimensionality Reduction",
-          "position": {"x": 300, "y": 100},
+          "position": {
+            "x": 300,
+            "y": 100
+          },
           "data": {
             "label": "Reduce Dimensions",
+            "componentId": "pca",
             "description": "Apply PCA",
             "type": "preprocessing",
-            "parameters": {"n_components": 2, "whiten": false},
-            "inputs": ["data"],
-            "outputs": ["transformed_data"]
+            "parameters": {
+              "n_components": 2,
+              "whiten": false
+            },
+            "inputs": [
+              "data"
+            ],
+            "outputs": [
+              "transformed_data"
+            ]
           }
         },
         {
@@ -218,20 +372,379 @@
           "type": "model",
           "category": "Clustering",
           "name": "K-Means Clustering",
-          "position": {"x": 500, "y": 100},
+          "position": {
+            "x": 500,
+            "y": 100
+          },
           "data": {
             "label": "Cluster Data",
+            "componentId": "kmeans-clustering",
             "description": "Apply K-Means",
             "type": "model",
-            "parameters": {"n_clusters": 3},
-            "inputs": ["data"],
-            "outputs": ["labels", "model"]
+            "parameters": {
+              "n_clusters": 3
+            },
+            "inputs": [
+              "data"
+            ],
+            "outputs": [
+              "labels",
+              "model"
+            ]
           }
         }
       ],
       "edges": [
-        {"id": "e1", "source": "data-1", "target": "pca-1"},
-        {"id": "e2", "source": "pca-1", "target": "model-1"}
+        {
+          "id": "e1",
+          "source": "data-1",
+          "target": "pca-1"
+        },
+        {
+          "id": "e2",
+          "source": "pca-1",
+          "target": "model-1"
+        }
+      ]
+    }
+  },
+  {
+    "id": "text-classification",
+    "name": "Text Classification",
+    "description": "Classify text documents using TF-IDF and Naive Bayes",
+    "category": "Classification",
+    "icon": "📝",
+    "pipeline": {
+      "name": "Text Classification Pipeline",
+      "description": "Text classification workflow",
+      "nodes": [
+        {
+          "id": "data-1",
+          "type": "data",
+          "category": "Data Sources",
+          "name": "Text Loader",
+          "position": {
+            "x": 100,
+            "y": 100
+          },
+          "data": {
+            "label": "Load Text",
+            "componentId": "text-loader",
+            "description": "Load text from path",
+            "type": "data",
+            "parameters": {
+              "path": "./data/text"
+            },
+            "inputs": [],
+            "outputs": [
+              "data",
+              "target"
+            ]
+          }
+        },
+        {
+          "id": "split-1",
+          "type": "preprocessing",
+          "category": "Preprocessing",
+          "name": "Train Test Split",
+          "position": {
+            "x": 300,
+            "y": 100
+          },
+          "data": {
+            "label": "Split Data",
+            "componentId": "train-test-split",
+            "description": "Split train/test",
+            "type": "preprocessing",
+            "parameters": {
+              "test_size": 0.2,
+              "random_state": 42
+            },
+            "inputs": [
+              "data"
+            ],
+            "outputs": [
+              "X_train",
+              "X_test",
+              "y_train",
+              "y_test"
+            ]
+          }
+        },
+        {
+          "id": "tfidf-1",
+          "type": "preprocessing",
+          "category": "Preprocessing",
+          "name": "TF-IDF Vectorizer",
+          "position": {
+            "x": 500,
+            "y": 50
+          },
+          "data": {
+            "label": "Vectorize Train",
+            "componentId": "tfidf-vectorizer",
+            "description": "TF-IDF on training set",
+            "type": "preprocessing",
+            "parameters": {
+              "max_features": 1000,
+              "stop_words": "english"
+            },
+            "inputs": [
+              "data"
+            ],
+            "outputs": [
+              "tfidf_matrix"
+            ]
+          }
+        },
+        {
+          "id": "model-1",
+          "type": "model",
+          "category": "Classification",
+          "name": "Naive Bayes",
+          "position": {
+            "x": 700,
+            "y": 100
+          },
+          "data": {
+            "label": "Naive Bayes",
+            "componentId": "naive-bayes",
+            "description": "Train NB model",
+            "type": "model",
+            "parameters": {},
+            "inputs": [
+              "X_train",
+              "y_train"
+            ],
+            "outputs": [
+              "model"
+            ]
+          }
+        },
+        {
+          "id": "eval-1",
+          "type": "evaluation",
+          "category": "Evaluation",
+          "name": "Classification Metrics",
+          "position": {
+            "x": 900,
+            "y": 100
+          },
+          "data": {
+            "label": "Evaluate",
+            "componentId": "classification-metrics",
+            "description": "Metrics",
+            "type": "evaluation",
+            "parameters": {},
+            "inputs": [
+              "model",
+              "X_test",
+              "y_test"
+            ],
+            "outputs": [
+              "metrics"
+            ]
+          }
+        }
+      ],
+      "edges": [
+        {
+          "id": "e1",
+          "source": "data-1",
+          "target": "split-1"
+        },
+        {
+          "id": "e2",
+          "source": "split-1",
+          "target": "tfidf-1"
+        },
+        {
+          "id": "e3",
+          "source": "tfidf-1",
+          "target": "model-1"
+        },
+        {
+          "id": "e4",
+          "source": "model-1",
+          "target": "eval-1"
+        },
+        {
+          "id": "e5",
+          "source": "split-1",
+          "target": "eval-1"
+        }
+      ]
+    }
+  },
+  {
+    "id": "advanced-classification",
+    "name": "Advanced Classification",
+    "description": "Gradient Boosting with Cross Validation",
+    "category": "Classification",
+    "icon": "🚀",
+    "pipeline": {
+      "name": "Advanced Boosting Pipeline",
+      "description": "Complex classification workflow",
+      "nodes": [
+        {
+          "id": "data-1",
+          "type": "data",
+          "category": "Data Sources",
+          "name": "Sample Dataset",
+          "position": {
+            "x": 100,
+            "y": 100
+          },
+          "data": {
+            "label": "Breast Cancer Data",
+            "componentId": "sample-data",
+            "description": "Load dataset",
+            "type": "data",
+            "parameters": {
+              "dataset": "breast_cancer"
+            },
+            "inputs": [],
+            "outputs": [
+              "data"
+            ]
+          }
+        },
+        {
+          "id": "split-1",
+          "type": "preprocessing",
+          "category": "Preprocessing",
+          "name": "Train Test Split",
+          "position": {
+            "x": 300,
+            "y": 100
+          },
+          "data": {
+            "label": "Split Data",
+            "componentId": "train-test-split",
+            "description": "Split train/test",
+            "type": "preprocessing",
+            "parameters": {
+              "test_size": 0.2,
+              "random_state": 42
+            },
+            "inputs": [
+              "data"
+            ],
+            "outputs": [
+              "X_train",
+              "X_test",
+              "y_train",
+              "y_test"
+            ]
+          }
+        },
+        {
+          "id": "model-1",
+          "type": "model",
+          "category": "Classification",
+          "name": "Gradient Boosting Classifier",
+          "position": {
+            "x": 500,
+            "y": 100
+          },
+          "data": {
+            "label": "XGBoost",
+            "componentId": "gradient-boosting-classifier",
+            "description": "Train Boosting model",
+            "type": "model",
+            "parameters": {
+              "n_estimators": 200,
+              "learning_rate": 0.05,
+              "max_depth": 5
+            },
+            "inputs": [
+              "X_train",
+              "y_train"
+            ],
+            "outputs": [
+              "model"
+            ]
+          }
+        },
+        {
+          "id": "eval-1",
+          "type": "evaluation",
+          "category": "Evaluation",
+          "name": "Cross Validation",
+          "position": {
+            "x": 700,
+            "y": 50
+          },
+          "data": {
+            "label": "Cross Val",
+            "componentId": "cross-validation",
+            "description": "5-Fold CV",
+            "type": "evaluation",
+            "parameters": {
+              "cv": 5
+            },
+            "inputs": [
+              "model",
+              "X",
+              "y"
+            ],
+            "outputs": [
+              "scores"
+            ]
+          }
+        },
+        {
+          "id": "eval-2",
+          "type": "evaluation",
+          "category": "Evaluation",
+          "name": "Confusion Matrix",
+          "position": {
+            "x": 700,
+            "y": 200
+          },
+          "data": {
+            "label": "Confusion Matrix",
+            "componentId": "confusion-matrix",
+            "description": "Plot Matrix",
+            "type": "evaluation",
+            "parameters": {},
+            "inputs": [
+              "model",
+              "X_test",
+              "y_test"
+            ],
+            "outputs": [
+              "matrix_plot"
+            ]
+          }
+        }
+      ],
+      "edges": [
+        {
+          "id": "e1",
+          "source": "data-1",
+          "target": "split-1"
+        },
+        {
+          "id": "e2",
+          "source": "split-1",
+          "target": "model-1"
+        },
+        {
+          "id": "e3",
+          "source": "model-1",
+          "target": "eval-1"
+        },
+        {
+          "id": "e4",
+          "source": "model-1",
+          "target": "eval-2"
+        },
+        {
+          "id": "e5",
+          "source": "split-1",
+          "target": "eval-2"
+        }
       ]
     }
   }

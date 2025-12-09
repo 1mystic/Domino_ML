@@ -63,6 +63,11 @@
                 Templates
             </button>
 
+            <a href="{{ url_for('main.gallery') }}" class="btn btn-ghost btn-sm hide-mobile" title="Component Gallery">
+                <i data-lucide="grid"></i>
+                Gallery
+            </a>
+
             <button id="validate-btn" class="btn btn-ghost btn-sm hide-mobile" title="Validate Pipeline">
                 <i data-lucide="check-circle"></i>
                 Validate
@@ -575,6 +580,21 @@
         // Initialize export manager
         if (window.ExportManager) {
             window.ExportManager.init();
+        }
+
+        // Check for modelId in URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const modelId = urlParams.get('modelId');
+        if (modelId) {
+            // Wait a bit for canvas to be ready or just call it
+            // Assuming loadModelById is globally available after canvasInit
+            setTimeout(() => {
+                if (window.loadModelById) {
+                    window.loadModelById(modelId);
+                    // Optional: Clean URL
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                }
+            }, 500);
         }
 
         // User menu toggle
