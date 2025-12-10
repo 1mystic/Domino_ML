@@ -1,18 +1,17 @@
 # DOMINO ML
+**VISUAL MACHINE LEARNING PIPELINE BUILDER**
 
 [![Deployed on Render](https://img.shields.io/badge/DEPLOYED_ON-RENDER-000000?style=for-the-badge&logo=render&logoColor=white)](https://domino-ml.onrender.com)
 [![Python](https://img.shields.io/badge/PYTHON-3.8+-000000?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![Flask](https://img.shields.io/badge/FLASK-3.0-000000?style=for-the-badge&logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
 
-**VISUAL MACHINE LEARNING PIPELINE BUILDER**
 
----
-
-### 🚀 [LAUNCH LIVE DEMO](https://domino-ml.onrender.com)
+### > [LAUNCH LIVE DEMO ↗](https://domino-ml.onrender.com)
 
 A Flask-based visual machine learning pipeline builder that enables users to create ML workflows through an intuitive drag-and-drop interface. Build complete custom ML pipelines visually and generate production-ready Python code automatically.
 
 ---
+
 
 ## VIDEO DEMO
 
@@ -80,7 +79,7 @@ A Flask-based visual machine learning pipeline builder that enables users to cre
 
 1. **CLONE**
    ```bash
-   git clone https://github.com/yourusername/dominoML-flask.git
+   git clone https://github.com/1mystic/dominoML-flask.git
    cd dominoML-flask
    ```
 
@@ -159,4 +158,4 @@ Not yet licensed.
 
 ---
 
-**BUILT WITH 🖤 FOR THE ML COMMUNITY**
+**BUILT WITH 🖤 FOR THE ML COMMUNITY** by @1mystic
