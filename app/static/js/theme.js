@@ -1,12 +1,12 @@
 // Theme Toggle Functionality
-(function() {
+(function () {
     const THEME_KEY = 'dominoml-theme';
     const DARK_THEME = 'dark';
     const LIGHT_THEME = 'light';
 
-    // Get saved theme or default to light
+    // Get saved theme or default to dark
     function getSavedTheme() {
-        return localStorage.getItem(THEME_KEY) || LIGHT_THEME;
+        return localStorage.getItem(THEME_KEY) || DARK_THEME;
     }
 
     // Apply theme to document
@@ -23,7 +23,7 @@
             const iconName = theme === DARK_THEME ? 'sun' : 'moon';
             icon.setAttribute('data-lucide', iconName);
         });
-        
+
         // Reinitialize lucide icons
         if (window.lucide) {
             lucide.createIcons();
