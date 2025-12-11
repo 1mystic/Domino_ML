@@ -1,5 +1,5 @@
 // Components Library Management
-(function() {
+(function () {
     let allComponents = [];
     let componentsByCategory = {};
     const COMPONENT_ICON_MAP = {
@@ -43,12 +43,12 @@
     window.getTemplateIconName = getTemplateIconName;
 
     // Initialize components library
-    window.componentsInit = async function() {
+    window.componentsInit = async function () {
         try {
             // Fetch components from API
             const data = await window.api.components.getAll();
             allComponents = data.components || [];
-            
+
             // Group by category
             componentsByCategory = allComponents.reduce((acc, component) => {
                 if (!acc[component.category]) {
@@ -58,12 +58,14 @@
                 return acc;
             }, {});
 
+            document.dispatchEvent(new CustomEvent('components-loaded'));
+
             // Render components
             renderComponents();
-            
+
             // Setup search
             setupSearch();
-            
+
             // Setup sidebar toggle
             setupSidebarToggle();
 
@@ -79,7 +81,7 @@
         container.innerHTML = '';
 
         const categories = Object.keys(componentsByCategory);
-        
+
         if (categories.length === 0) {
             container.innerHTML = '<div class="empty-state-small">No components available</div>';
             return;
@@ -87,18 +89,18 @@
 
         categories.forEach(category => {
             const components = componentsByCategory[category];
-            const filteredComponents = filter 
-                ? components.filter(c => 
+            const filteredComponents = filter
+                ? components.filter(c =>
                     c.name.toLowerCase().includes(filter.toLowerCase()) ||
                     c.description.toLowerCase().includes(filter.toLowerCase())
-                  )
+                )
                 : components;
 
             if (filteredComponents.length === 0) return;
 
             const categorySection = document.createElement('div');
             categorySection.className = 'component-category';
-            
+
             categorySection.innerHTML = `
                 <div class="category-header">
                     <span class="category-name">${category}</span>
@@ -106,8 +108,8 @@
                 </div>
                 <div class="category-components">
                     ${filteredComponents.map(component => {
-                        const iconName = getComponentIconName(component.id);
-                        return `
+                const iconName = getComponentIconName(component.id);
+                return `
                         <div 
                             class="component-item" 
                             draggable="true"
@@ -122,7 +124,7 @@
                             </div>
                         </div>
                     `;
-                    }).join('')}
+            }).join('')}
                 </div>
             `;
 
@@ -148,10 +150,10 @@
     function handleDragStart(e) {
         const componentId = e.target.closest('.component-item').dataset.componentId;
         const component = allComponents.find(c => c.id === componentId);
-        
+
         e.dataTransfer.effectAllowed = 'copy';
         e.dataTransfer.setData('application/json', JSON.stringify(component));
-        
+
         e.target.classList.add('dragging');
     }
 
@@ -174,7 +176,7 @@
         const toggleBtn = document.getElementById('toggle-sidebar-btn');
         const expandBtn = document.getElementById('expand-sidebar-btn');
         const sidebar = document.getElementById('component-sidebar');
-        
+
         if (!toggleBtn || !sidebar || !expandBtn) return;
 
         // Collapse sidebar
@@ -205,12 +207,12 @@
     }
 
     // Get component by ID
-    window.getComponentById = function(id) {
+    window.getComponentById = function (id) {
         return allComponents.find(c => c.id === id);
     };
 
     // Get all components
-    window.getAllComponents = function() {
+    window.getAllComponents = function () {
         return allComponents;
     };
 })();

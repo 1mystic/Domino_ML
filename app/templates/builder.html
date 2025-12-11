@@ -42,6 +42,14 @@
                 <span>Versions</span>
             </button>
 
+             <a id="templates-btn" 
+            href="{{ url_for('main.gallery') }}"
+            style="text-decoration: none;"
+            class="btn btn-ghost btn-sm hide-mobile" title="Templates">
+                <i data-lucide="layout-template"></i>
+                Gallery
+            </a>
+
 
 
             <div class="toolbar-divider"></div>
@@ -58,19 +66,19 @@
 
             <div class="toolbar-divider hide-mobile"></div>
 
-            <button id="templates-btn" class="btn btn-ghost btn-sm hide-mobile" title="Templates">
-                <i data-lucide="layout-template"></i>
-                Templates
-            </button>
+           
 
-            <a href="{{ url_for('main.gallery') }}" class="btn btn-ghost btn-sm hide-mobile" title="Component Gallery">
-                <i data-lucide="grid"></i>
-                Gallery
-            </a>
+            
+
 
             <button id="validate-btn" class="btn btn-ghost btn-sm hide-mobile" title="Validate Pipeline">
                 <i data-lucide="check-circle"></i>
                 Validate
+            </button>
+
+            <button id="simulate-run-btn" class="btn btn-ghost btn-sm hide-mobile text-primary" title="Run Simulation">
+                <i data-lucide="play-circle"></i>
+                Run
             </button>
 
             <button id="present-btn" class="btn btn-ghost btn-sm hide-mobile" title="Presentation View">
@@ -81,6 +89,7 @@
         </div>
 
         <div class="toolbar-right">
+
 
 
             <button id="export-code-btn" class="btn btn-primary btn-sm">
@@ -423,6 +432,35 @@
         </div>
     </div>
 
+    <!-- Simulation Results Dialog -->
+    <div id="simulation-dialog" class="dialog-overlay" hidden>
+        <div class="dialog dialog-wide">
+            <div class="dialog-header">
+                <h3 class="dialog-title">
+                    <i data-lucide="play-circle" class="text-primary mr-2"></i>
+                    Simulation Results
+                </h3>
+                <button class="dialog-close" data-close-dialog="simulation-dialog">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="dialog-content">
+                <div id="simulation-results-container" class="simulation-container">
+                    <div id="simulation-modal-content">
+                        <!-- Results injected here -->
+                        <div class="empty-state-small">
+                            <div class="spinner mb-2"></div>
+                            Running simulation...
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="dialog-footer">
+                <button class="btn btn-primary" data-close-dialog="simulation-dialog">Done</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Version History Dialog -->
     <div id="versions-dialog" class="dialog-overlay" hidden>
         <div class="dialog dialog-lg">
@@ -546,6 +584,57 @@
 {% endblock %}
 
 {% block extra_js %}
+<!-- Plotly for Charts -->
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+
+<!-- Simulation Scripts -->
+<script src="{{ url_for('static', filename='js/simulation_data.js') }}?v={{ range(1, 10000) | random }}"></script>
+<script src="{{ url_for('static', filename='js/simulator.js') }}?v={{ range(1, 10000) | random }}"></script>
+<script src="{{ url_for('static', filename='js/visualization.js') }}?v={{ range(1, 10000) | random }}"></script>
+<script>
+    // Initialize Simulation Button
+    document.addEventListener('DOMContentLoaded', function () {
+        const simBtn = document.getElementById('simulate-run-btn');
+        if (simBtn) {
+            simBtn.addEventListener('click', async () => {
+                // Get state using the exposed method
+                const canvasState = window.getCanvasState ? window.getCanvasState() : { nodes: [], edges: [] };
+                const nodes = canvasState.nodes || [];
+                const edges = canvasState.edges || [];
+
+                if (nodes.length === 0) {
+                    alert("Please add some nodes first!");
+                    return;
+                }
+
+                // Show modal
+                const modal = document.getElementById('simulation-dialog');
+                const content = document.getElementById('simulation-modal-content');
+                if (modal) {
+                    modal.hidden = false;
+                    content.innerHTML = '<div class="text-center p-8"><div class="spinner mb-4"></div><p>Simulating execution...</p></div>';
+                }
+
+                // Run Simulator
+                try {
+                    const results = await window.simulator.run(nodes, edges);
+
+                    // Show final node result by default? 
+                    // Or let user click nodes. For now, show the last computed result.
+                    const lastResult = Array.from(results.values()).pop();
+                    if (lastResult) {
+                        window.visualizer.renderResult(lastResult);
+                    } else {
+                        content.innerText = "Simulation complete. Click nodes to see details.";
+                    }
+
+                } catch (e) {
+                    content.innerHTML = `<div class="alert alert-error">Simulation Failed: ${e.message}</div>`;
+                }
+            });
+        }
+    });
+</script>
 <!-- CodeMirror for code editing -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css">

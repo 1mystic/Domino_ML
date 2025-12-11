@@ -42,11 +42,17 @@
 
     <div class="gallery-header">
         <div class="container">
+            <div class="mb-4">
+                <a href="{{ url_for('main.builder') }}"
+                    class="text-muted hover:text-primary flex items-center gap-2 inline-block">
+                    <i data-lucide="arrow-left" style="width:16px;height:16px;"></i> Back to Builder
+                </a>
+            </div>
             <h1>Component & Template Gallery</h1>
             <p class="subtitle">Explore all available ML components and pre-built templates</p>
 
             <div class="search-bar">
-                
+
                 <input type="text" id="gallery-search" placeholder="Search components, templates, models...">
             </div>
 

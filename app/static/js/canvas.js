@@ -1,5 +1,8 @@
 // Canvas Management - Drag & Drop ML Pipeline Builder
 (function () {
+    // session key
+    const CANVAS_SESSION_KEY = 'domino_canvas_state';
+
     // Canvas state
     const state = {
         nodes: [],
@@ -17,6 +20,47 @@
 
     let canvas, canvasNodes, canvasSvg, emptyState;
     let nodeIdCounter = 0;
+    const NODE_WIDTH = 240;
+
+    // Save current state to session storage
+    function saveToSession() {
+        try {
+            const sessionData = {
+                nodes: state.nodes,
+                edges: state.edges,
+                transform: state.transform,
+                timestamp: Date.now()
+            };
+            sessionStorage.setItem(CANVAS_SESSION_KEY, JSON.stringify(sessionData));
+        } catch (e) {
+            console.error('Failed to save to session storage:', e);
+        }
+    }
+
+    // Load state from session storage
+    function loadFromSession() {
+        try {
+            const saved = sessionStorage.getItem(CANVAS_SESSION_KEY);
+            if (saved) {
+                const data = JSON.parse(saved);
+                // Basic validation
+                if (Array.isArray(data.nodes) && Array.isArray(data.edges)) {
+                    state.nodes = data.nodes;
+                    state.edges = data.edges;
+                    if (data.transform) state.transform = data.transform;
+
+                    // Update counter
+                    nodeIdCounter = Math.max(0, ...state.nodes.map(n =>
+                        parseInt(n.id.replace(/\D/g, '')) || 0
+                    ));
+                    return true;
+                }
+            }
+        } catch (e) {
+            console.error('Failed to load from session storage:', e);
+        }
+        return false;
+    }
 
     // History helper function
     function recordHistory(action, metadata = {}) {
@@ -27,6 +71,8 @@
                 metadata
             );
         }
+        // Auto-save to session on every history record (which corresponds to state changes)
+        saveToSession();
     }
 
     // Initialize history on first state
@@ -56,8 +102,27 @@
         setupCanvasHandlers();
         setupToolbarHandlers();
         setupDialogHandlers();
-        initializeHistory();
-        render();
+        setupCanvasHandlers();
+        setupToolbarHandlers();
+        setupDialogHandlers();
+
+        // Try to load from session after components are ready
+        const initSession = () => {
+            if (loadFromSession()) {
+                window.showToast('Restored previous session', 'info');
+                // Force re-render to ensure styles are applied
+                render();
+            }
+            initializeHistory();
+            render();
+            updateTransform();
+        };
+
+        if (window.getAllComponents && window.getAllComponents().length > 0) {
+            initSession();
+        } else {
+            document.addEventListener('components-loaded', initSession);
+        }
     };
 
     // Expose state for other modules (e.g., Presentation Mode)
@@ -79,6 +144,11 @@
         canvas.addEventListener('mousemove', handlePanMove);
         canvas.addEventListener('mouseup', handlePanEnd);
         canvas.addEventListener('mouseleave', handlePanEnd);
+
+        // Touch Pan
+        canvas.addEventListener('touchstart', handlePanStart, { passive: false });
+        canvas.addEventListener('touchmove', handlePanMove, { passive: false });
+        canvas.addEventListener('touchend', handlePanEnd);
 
         // Zoom handler
         canvas.addEventListener('wheel', handleZoom, { passive: false });
@@ -216,24 +286,34 @@
         state.nodes.push(node);
         recordHistory('ADD_NODE', { nodeId: node.id, componentId: component.id });
         render();
-        selectNode(node);
+        recordHistory('ADD_NODE', { nodeId: node.id, componentId: component.id });
+        render();
+        selectNode(node, true); // Auto-open properties on new drop
     }
 
     // Pan handlers
     function handlePanStart(e) {
-        if (e.button !== 0) return; // Left button only
+        if (e.type === 'mousedown' && e.button !== 0) return; // Left button only
         if (e.target.classList.contains('node')) return; // Don't pan when clicking nodes
+        if (e.type === 'touchstart') e.preventDefault();
 
         state.isPanning = true;
-        state.panStart = { x: e.clientX - state.transform.x, y: e.clientY - state.transform.y };
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+        state.panStart = { x: clientX - state.transform.x, y: clientY - state.transform.y };
         canvas.style.cursor = 'grabbing';
     }
 
     function handlePanMove(e) {
         if (!state.isPanning) return;
+        if (e.type === 'touchmove') e.preventDefault();
 
-        state.transform.x = e.clientX - state.panStart.x;
-        state.transform.y = e.clientY - state.panStart.y;
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+        state.transform.x = clientX - state.panStart.x;
+        state.transform.y = clientY - state.panStart.y;
         updateTransform();
     }
 
@@ -297,7 +377,7 @@
         state.nodes.forEach(node => {
             minX = Math.min(minX, node.position.x);
             minY = Math.min(minY, node.position.y);
-            maxX = Math.max(maxX, node.position.x + 200);
+            maxX = Math.max(maxX, node.position.x + NODE_WIDTH);
             maxY = Math.max(maxY, node.position.y + 80);
         });
 
@@ -325,7 +405,7 @@
     }
 
     // Select node
-    function selectNode(node) {
+    function selectNode(node, showPanel = false) {
         state.selectedNode = node;
 
         // Update visual selection
@@ -336,7 +416,12 @@
         if (node) {
             const nodeEl = document.querySelector(`[data-node-id="${node.id}"]`);
             if (nodeEl) nodeEl.classList.add('selected');
-            window.showProperties(node);
+
+            if (showPanel) {
+                window.showProperties(node);
+            } else {
+                if (window.hideProperties) window.hideProperties();
+            }
         } else {
             window.hideProperties();
         }
@@ -435,7 +520,12 @@
                         <span class="node-icon">${iconMarkup}</span>
                         <span class="node-label">${node.data.label}</span>
                     </div>
-                    ${typeAbbr ? `<span class="node-type-badge">${typeAbbr}</span>` : ''}
+                     <div class="node-actions">
+                        <button class="node-action-btn edit-btn" title="Edit Properties">
+                            <i data-lucide="pencil"></i>
+                        </button>
+                        ${typeAbbr ? `<span class="node-type-badge">${typeAbbr}</span>` : ''}
+                    </div>
                 </div>
                 <div class="node-body">
                     ${paramPreview ? `<div class="node-params-preview">${paramPreview}</div>` : ''}
@@ -449,12 +539,25 @@
 
             // Make draggable
             nodeEl.addEventListener('mousedown', (e) => handleNodeDragStart(e, node));
+            nodeEl.addEventListener('touchstart', (e) => handleNodeDragStart(e, node), { passive: false });
 
-            // Click to select
+            // Click to select (without opening panel)
             nodeEl.addEventListener('click', (e) => {
                 e.stopPropagation();
-                selectNode(node);
+                selectNode(node, false);
             });
+
+            // Edit button handler
+            const editBtn = nodeEl.querySelector('.edit-btn');
+            if (editBtn) {
+                editBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    selectNode(node, true);
+                });
+
+                // Prevent drag start on button
+                editBtn.addEventListener('mousedown', (e) => e.stopPropagation());
+            }
 
             // Handle connections
             const outputHandle = nodeEl.querySelector('.node-handle-output');
@@ -462,10 +565,12 @@
 
             if (outputHandle) {
                 outputHandle.addEventListener('mousedown', (e) => handleConnectionStart(e, node, 'output'));
+                outputHandle.addEventListener('touchstart', (e) => handleConnectionStart(e, node, 'output'), { passive: false });
             }
 
             if (inputHandle) {
                 inputHandle.addEventListener('mousedown', (e) => handleConnectionStart(e, node, 'input'));
+                inputHandle.addEventListener('touchstart', (e) => handleConnectionStart(e, node, 'input'), { passive: false });
             }
 
             canvasNodes.appendChild(nodeEl);
@@ -479,18 +584,26 @@
     // Handle node drag
     function handleNodeDragStart(e, node) {
         if (e.target.classList.contains('node-handle')) return; // Don't drag when clicking handles
+        if (e.type === 'touchstart') e.preventDefault();
 
         e.stopPropagation();
-        selectNode(node);
+        selectNode(node, false); // Just select, don't open panel
 
         const nodeEl = e.currentTarget;
-        const startX = e.clientX;
-        const startY = e.clientY;
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+        const startX = clientX;
+        const startY = clientY;
         const startPos = { ...node.position };
 
         const handleMouseMove = (e) => {
-            const dx = (e.clientX - startX) / state.transform.scale;
-            const dy = (e.clientY - startY) / state.transform.scale;
+            if (e.type === 'touchmove') e.preventDefault();
+            const curX = e.touches ? e.touches[0].clientX : e.clientX;
+            const curY = e.touches ? e.touches[0].clientY : e.clientY;
+
+            const dx = (curX - startX) / state.transform.scale;
+            const dy = (curY - startY) / state.transform.scale;
 
             node.position.x = startPos.x + dx;
             node.position.y = startPos.y + dy;
@@ -504,16 +617,21 @@
         const handleMouseUp = () => {
             document.removeEventListener('mousemove', handleMouseMove);
             document.removeEventListener('mouseup', handleMouseUp);
+            document.removeEventListener('touchmove', handleMouseMove);
+            document.removeEventListener('touchend', handleMouseUp);
         };
 
         document.addEventListener('mousemove', handleMouseMove);
         document.addEventListener('mouseup', handleMouseUp);
+        document.addEventListener('touchmove', handleMouseMove, { passive: false });
+        document.addEventListener('touchend', handleMouseUp);
     }
 
     // Handle connection start
     function handleConnectionStart(e, node, handleType) {
         e.stopPropagation();
-        e.preventDefault();
+        if (e.type === 'touchstart') e.preventDefault();
+        else e.preventDefault();
 
         // Start connecting from output handle
         if (handleType === 'output') {
@@ -530,12 +648,16 @@
             canvasSvg.appendChild(tempLine);
 
             const handleMouseMove = (e) => {
+                if (e.type === 'touchmove') e.preventDefault();
+                const curX = e.touches ? e.touches[0].clientX : e.clientX;
+                const curY = e.touches ? e.touches[0].clientY : e.clientY;
+
                 const rect = canvas.getBoundingClientRect();
-                const x = (e.clientX - rect.left) / state.transform.scale - state.transform.x / state.transform.scale;
-                const y = (e.clientY - rect.top) / state.transform.scale - state.transform.y / state.transform.scale;
+                const x = (curX - rect.left) / state.transform.scale - state.transform.x / state.transform.scale;
+                const y = (curY - rect.top) / state.transform.scale - state.transform.y / state.transform.scale;
 
                 // Update temporary line
-                const x1 = node.position.x + 200;
+                const x1 = node.position.x + NODE_WIDTH;
                 const y1 = node.position.y + 40;
                 const cx1 = x1 + 50;
                 const cx2 = x - 50;
@@ -548,8 +670,11 @@
                 const tempEl = document.getElementById('temp-connection-line');
                 if (tempEl) tempEl.remove();
 
+                const curX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
+                const curY = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
+
                 // Check if dropped on an input handle
-                const target = document.elementFromPoint(e.clientX, e.clientY);
+                const target = document.elementFromPoint(curX, curY);
                 if (target?.classList.contains('node-handle-input')) {
                     const targetNodeId = target.dataset.nodeId;
                     const targetNode = state.nodes.find(n => n.id === targetNodeId);
@@ -582,10 +707,14 @@
                 state.connecting = null;
                 document.removeEventListener('mousemove', handleMouseMove);
                 document.removeEventListener('mouseup', handleMouseUp);
+                document.removeEventListener('touchmove', handleMouseMove);
+                document.removeEventListener('touchend', handleMouseUp);
             };
 
             document.addEventListener('mousemove', handleMouseMove);
             document.addEventListener('mouseup', handleMouseUp);
+            document.addEventListener('touchmove', handleMouseMove, { passive: false });
+            document.addEventListener('touchend', handleMouseUp);
         }
     }
 
@@ -606,7 +735,7 @@
 
             // Create invisible wider path for easier clicking
             const hitArea = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            const x1 = sourceNode.position.x + 200;
+            const x1 = sourceNode.position.x + NODE_WIDTH;
             const y1 = sourceNode.position.y + 40;
             const x2 = targetNode.position.x;
             const y2 = targetNode.position.y + 40;
@@ -624,7 +753,7 @@
             const line = document.createElementNS('http://www.w3.org/2000/svg', 'path');
             line.setAttribute('d', path);
             line.setAttribute('class', 'edge');
-            line.setAttribute('stroke', '#3b82f6');
+            // stroke color is now handled by CSS matching the theme
             line.setAttribute('stroke-width', '2');
             line.setAttribute('fill', 'none');
             line.style.pointerEvents = 'none';
@@ -668,32 +797,8 @@
             deleteButton.appendChild(xLine1);
             deleteButton.appendChild(xLine2);
 
-            // Add hover effects
-            let isHovering = false;
-
-            const showDeleteButton = () => {
-                isHovering = true;
-                line.setAttribute('stroke', '#ef4444');
-                line.setAttribute('stroke-width', '3');
-                deleteButton.style.display = 'block';
-            };
-
-            const hideDeleteButton = () => {
-                isHovering = false;
-                setTimeout(() => {
-                    if (!isHovering) {
-                        const defaultStroke = line.dataset.defaultStroke || getComputedStyle(line).stroke;
-                        line.setAttribute('stroke', defaultStroke);
-                        line.setAttribute('stroke-width', '2');
-                        deleteButton.style.display = 'none';
-                    }
-                }, 100);
-            };
-
-            hitArea.addEventListener('mouseenter', showDeleteButton);
-            hitArea.addEventListener('mouseleave', hideDeleteButton);
-            deleteButton.addEventListener('mouseenter', showDeleteButton);
-            deleteButton.addEventListener('mouseleave', hideDeleteButton);
+            // Hover effects are now handled by CSS .edge-group:hover
+            // Logic removed to prevent style conflicts
 
             // Delete on click
             const handleDelete = (e) => {
@@ -1063,6 +1168,10 @@
         // Check component types
         const componentTypes = {};
         const categories = {};
+
+        // Build graph map for validation
+        const nodeMap = new Map(state.nodes.map(n => [n.id, n]));
+
         state.nodes.forEach(node => {
             const type = node.type || 'unknown';
             componentTypes[type] = (componentTypes[type] || 0) + 1;
@@ -1071,6 +1180,50 @@
             if (component) {
                 const category = component.category || 'Other';
                 categories[category] = (categories[category] || 0) + 1;
+            }
+
+            // --- Advanced Validation Logic ---
+            const inputs = state.edges.filter(e => e.target === node.id);
+            const compId = node.data.componentId || '';
+
+            // 1. Missing Inputs
+            if (!['csv-loader', 'sample-data', 'text-loader'].includes(compId) && !compId.includes('loader')) {
+                if (inputs.length === 0) {
+                    errors.push(`Node "<b>${node.data.label}</b>" is disconnected (missing inputs).`);
+                }
+            }
+
+            // 2. Task Mismatches
+            if (compId === 'classification-metrics' || compId === 'confusion-matrix') {
+                const modelEdge = inputs.find(e => {
+                    const src = nodeMap.get(e.source);
+                    return src && src.type === 'model';
+                });
+
+                if (modelEdge) {
+                    const srcNode = nodeMap.get(modelEdge.source);
+                    const srcId = srcNode.data.componentId;
+                    // List of regression models
+                    if (['linear-regression', 'random-forest-regressor', 'svr', 'decision-tree-regressor'].includes(srcId)) {
+                        errors.push(`Invalid Connection: Cannot evaluate <b>${srcNode.data.label}</b> (Regression) with <b>${node.data.label}</b>.`);
+                    }
+                }
+            }
+
+            if (compId === 'regression-metrics') {
+                const modelEdge = inputs.find(e => {
+                    const src = nodeMap.get(e.source);
+                    return src && src.type === 'model';
+                });
+
+                if (modelEdge) {
+                    const srcNode = nodeMap.get(modelEdge.source);
+                    const srcId = srcNode.data.componentId;
+                    // List of classification models
+                    if (['random-forest-classifier', 'logistic-regression', 'svm-classifier', 'decision-tree-classifier', 'naive-bayes', 'knn-classifier', 'gradient-boosting-classifier', 'mlp-classifier'].includes(srcId)) {
+                        errors.push(`Invalid Connection: Cannot evaluate <b>${srcNode.data.label}</b> (Classification) with <b>${node.data.label}</b>.`);
+                    }
+                }
             }
         });
 
