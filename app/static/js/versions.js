@@ -1,12 +1,12 @@
 // Version Management - Pipeline Versioning System
-(function() {
+(function () {
     'use strict';
 
     let currentModelId = null;
     let versions = [];
 
     // Initialize version management
-    window.versionsInit = function() {
+    window.versionsInit = function () {
         setupEventListeners();
     };
 
@@ -32,7 +32,7 @@
         }
 
         currentModelId = window.getCurrentModelId();
-        
+
         // Open dialog
         const dialog = document.getElementById('versions-dialog');
         if (dialog) {
@@ -82,7 +82,7 @@
 
     function renderVersions(versions) {
         const container = document.getElementById('versions-list');
-        
+
         container.innerHTML = `
             <div class="versions-timeline">
                 ${versions.map(version => `
@@ -122,7 +122,7 @@
                 `).join('')}
             </div>
         `;
-        
+
         lucide.createIcons();
     }
 
@@ -166,10 +166,10 @@
     }
 
     // Load a specific version
-    window.loadVersion = async function(versionId) {
+    window.loadVersion = async function (versionId) {
         try {
             const response = await window.api.versions.get(versionId);
-            
+
             // Load into canvas
             if (window.loadCanvasState) {
                 window.loadCanvasState({
@@ -177,7 +177,7 @@
                     edges: response.edges
                 });
                 window.showToast(`Loaded ${response.name}`, 'success');
-                
+
                 // Close dialog
                 const dialog = document.getElementById('versions-dialog');
                 if (dialog) dialog.hidden = true;
@@ -188,7 +188,7 @@
     };
 
     // Activate a version
-    window.activateVersion = async function(versionId) {
+    window.activateVersion = async function (versionId) {
         if (!confirm('Set this as the active version?')) return;
 
         try {
@@ -201,7 +201,7 @@
     };
 
     // Delete a version
-    window.deleteVersion = async function(versionId) {
+    window.deleteVersion = async function (versionId) {
         if (!confirm('Delete this version? This action cannot be undone.')) return;
 
         try {
@@ -227,7 +227,7 @@
         if (diffMins < 60) return `${diffMins} min ago`;
         if (diffHours < 24) return `${diffHours} hr ago`;
         if (diffDays < 7) return `${diffDays} days ago`;
-        
+
         return date.toLocaleDateString();
     }
 
