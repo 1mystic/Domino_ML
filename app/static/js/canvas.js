@@ -1278,10 +1278,12 @@
             
             <div class="stats-section">
                 <h5 class="stats-subtitle">Complexity Score</h5>
-                <div class="complexity-bar">
-                    <div class="complexity-fill" style="width: ${complexityScore * 5}%"></div>
+                <div class="model-complexity">
+                    <div class="complexity-bar">
+                        <div class="complexity-fill" style="width: ${complexityScore * 5}%"></div>
+                    </div>
+                    <div class="complexity-value">${complexityScore}</div>
                 </div>
-                <div class="complexity-value">${complexityScore}</div>
             </div>
         `;
 

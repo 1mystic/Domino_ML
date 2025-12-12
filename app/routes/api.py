@@ -106,27 +106,35 @@ def generate_code():
 
 @bp.route('/validate', methods=['POST'])
 def validate_pipeline():
-    data = request.get_json()
-    nodes = data.get('nodes', [])
-    edges = data.get('edges', [])
-    
-    from app.utils.validation import validate_pipeline_structure, validate_hyperparameters
-    from app.utils.data_loader import get_components
-    
-    # Structure validation
-    errors, warnings = validate_pipeline_structure(nodes, edges)
-    
-    # Hyperparameter validation
-    components = get_components()
-    component_map = {c['id']: c for c in components}
-    
-    for node in nodes:
-        comp_id = node.get('data', {}).get('componentId')
-        if comp_id in component_map:
-            node_errors = validate_hyperparameters(node, component_map[comp_id])
-            errors.extend(node_errors)
-            
-    return jsonify({'errors': errors, 'warnings': warnings})
+    try:
+        data = request.get_json()
+        nodes = data.get('nodes', [])
+        edges = data.get('edges', [])
+        
+        from app.utils.validation import validate_pipeline_structure, validate_hyperparameters
+        from app.utils.data_loader import get_components
+        
+        # Structure validation
+        errors, warnings = validate_pipeline_structure(nodes, edges)
+        
+        # Hyperparameter validation
+        # data_loader.get_components returns a dict {'components': [...]}, not a list directly
+        components_data = get_components()
+        components = components_data.get('components', [])
+        component_map = {c['id']: c for c in components}
+        
+        for node in nodes:
+            comp_id = node.get('data', {}).get('componentId')
+            if comp_id in component_map:
+                node_errors = validate_hyperparameters(node, component_map[comp_id])
+                errors.extend(node_errors)
+                
+        return jsonify({'errors': errors, 'warnings': warnings})
+    except Exception as e:
+        import traceback
+        print(f"Validation error: {str(e)}")
+        traceback.print_exc()
+        return jsonify({'error': f"Server error during validation: {str(e)}"}), 500
 
 
 # ===== VERSION MANAGEMENT ENDPOINTS =====

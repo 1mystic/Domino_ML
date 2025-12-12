@@ -42,10 +42,10 @@
                 <span>Versions</span>
             </button>
 
-             <a id="templates-btn" 
+             <a id="gallery-btn" 
             href="{{ url_for('main.gallery') }}"
             style="text-decoration: none;"
-            class="btn btn-ghost btn-sm hide-mobile" title="Templates">
+            class="btn btn-ghost btn-sm hide-mobile" >
                 <i data-lucide="layout-template"></i>
                 Gallery
             </a>
@@ -76,10 +76,7 @@
                 Validate
             </button>
 
-            <button id="simulate-run-btn" class="btn btn-ghost btn-sm hide-mobile text-primary" title="Run Simulation">
-                <i data-lucide="play-circle"></i>
-                Run
-            </button>
+          
 
             <button id="present-btn" class="btn btn-ghost btn-sm hide-mobile" title="Presentation View">
                 <i data-lucide="presentation"></i>
@@ -413,7 +410,7 @@
             <div class="dialog-content">
                 <p class="text-muted">Review your model's structure, statistics, and potential issues</p>
 
-                <div class="validation-grid">
+                <div class="    -grid">
                     <div class="validation-section">
                         <h4 class="validation-section-title">Model Statistics</h4>
                         <div id="model-statistics"></div>
@@ -427,6 +424,10 @@
                 </div>
             </div>
             <div class="dialog-footer">
+                  <button id="simulate-run-btn" class="btn btn-ghost btn-sm hide-mobile text-primary" title="Run Simulation">
+                <i data-lucide="play-circle"></i>
+                Run
+            </button>
                 <button class="btn btn-primary" data-close-dialog="validation-dialog">OK</button>
             </div>
         </div>

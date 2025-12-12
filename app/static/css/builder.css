@@ -959,8 +959,9 @@
 .stats-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1rem;
+    gap: 2rem;
     margin-bottom: 1rem;
+    margin-top: 1rem;
 }
 
 .stat-item {
@@ -985,10 +986,11 @@
 
 .stats-section {
     margin-bottom: 1rem;
+    margin-top: 2rem;
 }
 
 .stats-subtitle {
-    font-size: 0.875rem;
+    font-size: 1rem;
     font-weight: 600;
     margin-bottom: 0.5rem;
     color: hsl(var(--foreground));
@@ -1000,12 +1002,22 @@
     gap: 0.5rem;
 }
 
+.model-complexity {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+    width: auto;
+    margin-top: 1rem;
+}
+
 .complexity-bar {
+    flex: 1;
     height: 8px;
     background: hsl(var(--muted));
     border-radius: 4px;
     overflow: hidden;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0;
+    max-width: 250px;
 }
 
 .complexity-fill {
@@ -1015,9 +1027,9 @@
 }
 
 .complexity-value {
-    text-align: right;
-    font-weight: 600;
+    font-weight: 700;
     color: hsl(var(--foreground));
+    min-width: 24px;
 }
 
 .validation-success {
@@ -1034,6 +1046,7 @@
     border: 1px solid #00ff88;
     color: #00ff88;
     font-weight: 500;
+    margin-top: 1rem;
 }
 
 .validation-check i {

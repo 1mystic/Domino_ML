@@ -11,3 +11,4 @@ Werkzeug
 email-validator
 gunicorn
 requests
+networkx
