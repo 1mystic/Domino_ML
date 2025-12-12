@@ -14,7 +14,7 @@
   --secondary: 0 0% 15%;
   --secondary-foreground: 0 0% 100%;
   --muted: 0 0% 15%;
-  --muted-foreground: 0 0% 63%;
+  --muted-foreground: 0 0% 75%;
   --accent: 0 0% 20%;
   --accent-foreground: 0 0% 100%;
   --destructive: 0 84.2% 60.2%;
@@ -199,17 +199,18 @@ h6 { font-size: 1rem; }
 }
 
 .btn-primary {
-  background: #ffffff;
-  color: #0d0d0d;
-  border: 1px solid #ffffff;
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  border: 1px solid hsl(var(--primary));
   font-weight: 600;
 }
 
 .btn-primary:hover {
-  background: #e0e0e0;
-  color: #0d0d0d;
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
   box-shadow: 0 2px 8px rgba(255, 255, 255, 0.2);
   transform: translateY(-1px);
+  border-color: hsl(var(--primary));
 }
 
 .btn-secondary {
@@ -219,7 +220,7 @@ h6 { font-size: 1rem; }
 }
 
 .btn-secondary:hover {
-  background-color: hsl(var(--muted));
+color: hsl(var(--secondary-foreground));
 }
 
 [data-theme="dark"] .btn-secondary {
@@ -541,21 +542,21 @@ h6 { font-size: 1rem; }
 }
 
 /* Text Utilities */
-.text-muted {
-  color: hsl(var(--muted-foreground));
+.text-muted{
+  color: hsl(var(--muted-foreground)) !important;
 }
 
-.text-sm { font-size: 0.875rem; }
-.text-base { font-size: 1rem; }
-.text-lg { font-size: 1.125rem; }
-.text-xl { font-size: 1.25rem; }
-.text-2xl { font-size: 1.5rem; }
-.text-3xl { font-size: 1.875rem; }
-.text-4xl { font-size: 2.25rem; }
+.text-sm { font-size: 0.875rem; color: hsl(var(--muted-foreground)); }
+.text-base { font-size: 1rem; color: hsl(var(--muted-foreground)); }
+.text-lg { font-size: 1.125rem; color: hsl(var(--muted-foreground)); }
+.text-xl { font-size: 1.25rem; color: hsl(var(--muted-foreground)); }
+.text-2xl { font-size: 1.5rem; color: hsl(var(--muted-foreground)); }
+.text-3xl { font-size: 1.875rem; color: hsl(var(--muted-foreground)); }
+.text-4xl { font-size: 2.25rem; color: hsl(var(--muted-foreground)); }
 
-.font-medium { font-weight: 500; }
-.font-semibold { font-weight: 600; }
-.font-bold { font-weight: 700; }
+.font-medium { font-weight: 500; color: hsl(var(--muted-foreground)); }
+.font-semibold { font-weight: 600; color: hsl(var(--muted-foreground)); }
+.font-bold { font-weight: 700; color: hsl(var(--muted-foreground)); }
 
 /* Spacing Utilities */
 .p-2 { padding: 0.5rem; }
