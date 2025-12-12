@@ -8,19 +8,25 @@ bp = Blueprint('main', __name__)
 def landing():
     return render_template('landing.html')
 
+from app.models import Classroom, Enrollment
+
 @bp.route('/dashboard')
 @login_required
 def dashboard():
-    return render_template('dashboard.html')
+    teaching = Classroom.query.filter_by(owner_id=current_user.id).all()
+    enrollments = Enrollment.query.filter_by(user_id=current_user.id).all()
+    enrolled = [e.classroom for e in enrollments]
+    return render_template('dashboard.html', teaching=teaching, enrolled=enrolled)
 
 @bp.route('/builder')
 def builder():
     return render_template('builder.html')
 
 @bp.route('/presentation')
+@bp.route('/presentation')
 @bp.route('/presentation/<int:model_id>')
 def presentation(model_id=None):
-    return render_template('presentation.html', model_id=model_id)
+    return render_template('builder.html', model_id=model_id, mode='presentation')
 
 @bp.route('/gallery')
 def gallery():

@@ -100,11 +100,12 @@
 }
 
 .dropdown-item:hover {
-    background: hsl(var(--muted));
+    background: rgb(234, 251, 245);
+    color : black;
 }
 
 .dropdown-item.disabled {
-    opacity: 0.5;
+    color : white;
     cursor: default;
 }
 

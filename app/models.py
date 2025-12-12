@@ -18,6 +18,11 @@ class User(UserMixin, db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     models = db.relationship('SavedModel', backref='user', lazy='dynamic', cascade='all, delete-orphan')
 
+    # LMS Relationships
+    enrollments = db.relationship('Enrollment', backref='user', lazy='dynamic', cascade='all, delete-orphan')
+    submissions = db.relationship('Submission', backref='student', lazy='dynamic', cascade='all, delete-orphan')
+    owned_classrooms = db.relationship('Classroom', backref='owner', lazy='dynamic')
+
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
@@ -26,6 +31,71 @@ class User(UserMixin, db.Model):
 
     def __repr__(self):
         return f'<User {self.username}>'
+
+# --- LMS MODELS ---
+
+class Classroom(db.Model):
+    __tablename__ = 'classrooms'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(200), nullable=False)
+    section = db.Column(db.String(100))
+    description = db.Column(db.Text)
+    join_code = db.Column(db.String(20), unique=True, index=True)
+    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    enrollments = db.relationship('Enrollment', backref='classroom', lazy='dynamic', cascade='all, delete-orphan')
+    classwork = db.relationship('Classwork', backref='classroom', lazy='dynamic', cascade='all, delete-orphan')
+
+    def generate_join_code(self):
+        import random, string
+        chars = string.ascii_uppercase + string.digits
+        self.join_code = ''.join(random.choice(chars) for _ in range(6))
+
+class Enrollment(db.Model):
+    __tablename__ = 'enrollments'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    classroom_id = db.Column(db.Integer, db.ForeignKey('classrooms.id'), nullable=False)
+    role = db.Column(db.String(20), default='student') # 'student', 'teacher'
+    joined_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+class Classwork(db.Model):
+    __tablename__ = 'classwork'
+    id = db.Column(db.Integer, primary_key=True)
+    classroom_id = db.Column(db.Integer, db.ForeignKey('classrooms.id'), nullable=False)
+    title = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text)
+    type = db.Column(db.String(50), default='material') # 'material', 'lab', 'assignment'
+    topic = db.Column(db.String(100)) # Simple grouping
+    
+    # Content storage
+    content_text = db.Column(db.Text) # For markdown
+    lab_model_id = db.Column(db.Integer, db.ForeignKey('saved_model.id')) # For labs (link to template)
+    
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    due_date = db.Column(db.DateTime)
+    
+    submissions = db.relationship('Submission', backref='work', lazy='dynamic', cascade='all, delete-orphan')
+
+class Submission(db.Model):
+    __tablename__ = 'submissions'
+    id = db.Column(db.Integer, primary_key=True)
+    classwork_id = db.Column(db.Integer, db.ForeignKey('classwork.id'), nullable=False)
+    student_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    
+    status = db.Column(db.String(20), default='assigned') # assigned, turned_in, graded
+    
+    # For Lab submissions, we might link to a NEW SavedModel (the student's copy)
+    submission_model_id = db.Column(db.Integer, db.ForeignKey('saved_model.id')) 
+    
+    grade = db.Column(db.Integer) # 0-100 or similar
+    feedback = db.Column(db.Text)
+    
+    submitted_at = db.Column(db.DateTime)
+    graded_at = db.Column(db.DateTime)
+
+# --- EXISTING MODELS ---
 
 class SavedModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -41,6 +111,10 @@ class SavedModel(db.Model):
     
     # Version tracking
     versions = db.relationship('PipelineVersion', backref='pipeline', lazy='dynamic', cascade='all, delete-orphan')
+    
+    # LMS Relationships
+    lab_templates = db.relationship('Classwork', backref='lab_template', lazy='dynamic', foreign_keys='Classwork.lab_model_id')
+    student_submissions = db.relationship('Submission', backref='submitted_model', lazy='dynamic', foreign_keys='Submission.submission_model_id')
 
     def __repr__(self):
         return f'<SavedModel {self.name}>'
@@ -166,4 +240,3 @@ class VersionComment(db.Model):
     
     def __repr__(self):
         return f'<VersionComment {self.id}>'
-

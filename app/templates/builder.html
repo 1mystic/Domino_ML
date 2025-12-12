@@ -5,10 +5,43 @@
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/builder.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+{% if mode == 'presentation' %}
+<style>
+    /* Presentation Mode Styles */
+    .sidebar,
+    .toolbar,
+    .property-panel,
+    .minimap-container {
+        display: none !important;
+    }
+
+    .builder-page {
+        grid-template-columns: 1fr !important;
+        height: 100vh !important;
+    }
+
+    .canvas-container {
+        border-radius: 0 !important;
+        background: radial-gradient(#333 1px, transparent 1px) !important;
+        background-color: #1a1a1a !important;
+        background-size: 30px 30px !important;
+    }
+
+    #present-exit-btn {
+        display: flex !important;
+    }
+</style>
+{% endif %}
 {% endblock %}
 
 {% block content %}
 <div class="builder-page">
+    {% if mode == 'presentation' %}
+    <a href="{{ url_for('main.dashboard') }}" id="present-exit-btn" class="btn btn-primary"
+        style="position:fixed; top:20px; right:20px; z-index:1000; display:none; box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
+        <i data-lucide="x"></i> Exit Presentation
+    </a>
+    {% endif %}
     <!-- Top Toolbar -->
     <div class="toolbar">
         <div class="toolbar-left">
@@ -42,13 +75,13 @@
                 <span>Versions</span>
             </button>
 
-             <a id="gallery-btn" 
-            href="{{ url_for('main.gallery') }}"
-            style="text-decoration: none;"
-            class="btn btn-ghost btn-sm hide-mobile" >
+            <a id="gallery-btn" href="{{ url_for('main.gallery') }}" style="text-decoration: none;"
+                class="btn btn-ghost btn-sm hide-mobile">
                 <i data-lucide="layout-template"></i>
                 Gallery
             </a>
+
+
 
 
 
@@ -66,9 +99,9 @@
 
             <div class="toolbar-divider hide-mobile"></div>
 
-           
 
-            
+
+
 
 
             <button id="validate-btn" class="btn btn-ghost btn-sm hide-mobile" title="Validate Pipeline">
@@ -76,7 +109,7 @@
                 Validate
             </button>
 
-          
+
 
             <button id="present-btn" class="btn btn-ghost btn-sm hide-mobile" title="Presentation View">
                 <i data-lucide="presentation"></i>
@@ -115,11 +148,16 @@
                     <i data-lucide="chevron-down"></i>
                 </button>
 
-                <div id="user-menu-dropdown" class="dropdown-menu" hidden>
+                <div id="user-menu-dropdown" class="dropdown-menu" style="display: none;">
                     <div class="dropdown-item disabled">
                         <i data-lucide="user"></i>
                         <span>{{ current_user.email }}</span>
                     </div>
+                    <div class="dropdown-divider"></div>
+                    <a href="{{ url_for('main.dashboard') }}" class="dropdown-item">
+                        <i data-lucide="layout-dashboard"></i>
+                        <span>Dashboard</span>
+                    </a>
                     <div class="dropdown-divider"></div>
                     <a href="{{ url_for('auth.logout') }}" class="dropdown-item">
                         <i data-lucide="log-out"></i>
@@ -424,10 +462,11 @@
                 </div>
             </div>
             <div class="dialog-footer">
-                  <button id="simulate-run-btn" class="btn btn-ghost btn-sm hide-mobile text-primary" title="Run Simulation">
-                <i data-lucide="play-circle"></i>
-                Run
-            </button>
+                <button id="simulate-run-btn" class="btn btn-ghost btn-sm hide-mobile text-primary"
+                    title="Run Simulation">
+                    <i data-lucide="play-circle"></i>
+                    Run
+                </button>
                 <button class="btn btn-primary" data-close-dialog="validation-dialog">OK</button>
             </div>
         </div>
@@ -694,11 +733,19 @@
         if (userMenuBtn && userMenuDropdown) {
             userMenuBtn.addEventListener('click', function (e) {
                 e.stopPropagation();
-                userMenuDropdown.hidden = !userMenuDropdown.hidden;
+                if (userMenuDropdown.style.display === 'none') {
+                    userMenuDropdown.style.display = 'block';
+                } else {
+                    userMenuDropdown.style.display = 'none';
+                }
             });
 
             document.addEventListener('click', function () {
-                userMenuDropdown.hidden = true;
+                userMenuDropdown.style.display = 'none';
+            });
+
+            userMenuDropdown.addEventListener('click', function (e) {
+                e.stopPropagation();
             });
         }
 

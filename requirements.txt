@@ -12,3 +12,5 @@ email-validator
 gunicorn
 requests
 networkx
+eventlet==0.40.4
+Flask-SocketIO==5.5.1

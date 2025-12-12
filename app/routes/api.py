@@ -41,7 +41,18 @@ def save_model():
 @login_required
 def get_model(model_id):
     model = SavedModel.query.get_or_404(model_id)
-    if model.user_id != current_user.id:
+    
+    # Access Control: Owner OR Teacher of submitted work
+    has_access = False
+    if model.user_id == current_user.id:
+        has_access = True
+    else:
+        # Check if this model is part of a submission for a class the current user owns
+        submission = model.student_submissions.first()
+        if submission and submission.work.classroom.owner_id == current_user.id:
+            has_access = True
+            
+    if not has_access:
         return jsonify({'error': 'Unauthorized'}), 403
     
     return jsonify({

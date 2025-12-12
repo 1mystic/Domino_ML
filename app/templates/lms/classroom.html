@@ -1,0 +1,453 @@
+{% extends "base.html" %}
+
+{% block title %}{{ classroom.name }} - DominoML{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+<style>
+    /* Classroom Specific Styles */
+    .classroom-header {
+        background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%);
+        border-radius: var(--radius-lg);
+        padding: 2rem;
+        color: hsl(var(--primary-foreground));
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid hsl(var(--border));
+    }
+
+    .class-code-badge {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 0.5rem 1rem;
+        border-radius: var(--radius);
+        font-family: monospace;
+        backdrop-filter: blur(4px);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+    }
+
+    /* Custom Tabs */
+    .class-tabs {
+        display: flex;
+        border-bottom: 1px solid hsl(var(--border));
+        margin-bottom: 2rem;
+        gap: 2rem;
+    }
+
+    .class-tab {
+        background: none;
+        border: none;
+        padding: 1rem 0;
+        color: hsl(var(--muted-foreground));
+        font-weight: 500;
+        cursor: pointer;
+        position: relative;
+        transition: color 0.2s;
+    }
+
+    .class-tab.active {
+        color: hsl(var(--foreground));
+    }
+
+    .class-tab.active::after {
+        content: '';
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: hsl(var(--foreground));
+    }
+
+    /* Feed/Stream */
+    .stream-input-card {
+        background: hsl(var(--card));
+        border: 1px solid hsl(var(--border));
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        cursor: pointer;
+        transition: border-color 0.2s;
+    }
+
+    .stream-input-card:hover {
+        border-color: hsl(var(--foreground));
+    }
+
+    .post-card {
+        background: hsl(var(--card));
+        border: 1px solid hsl(var(--border));
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .post-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .avatar-circle {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: hsl(var(--muted));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        color: hsl(var(--foreground));
+    }
+
+    /* Classwork List */
+    .work-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        border-bottom: 1px solid hsl(var(--border));
+        gap: 1rem;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    .work-item:hover {
+        background: hsl(var(--muted));
+    }
+
+    .work-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: hsl(var(--muted));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: hsl(var(--muted-foreground));
+    }
+
+    /* People List */
+    .people-section {
+        margin-bottom: 3rem;
+    }
+
+    .people-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid hsl(var(--primary));
+        padding-bottom: 0.5rem;
+        margin-bottom: 1.5rem;
+        color: hsl(var(--primary));
+    }
+
+    .person-row {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid hsl(var(--border));
+        gap: 1rem;
+    }
+
+    /* Utilities */
+    .flex {
+        display: flex;
+    }
+
+    .items-center {
+        align-items: center;
+    }
+
+    .justify-between {
+        justify-content: space-between;
+    }
+
+    .gap-3 {
+        gap: 0.75rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container container">
+    <!-- Header -->
+    <header class="header" style="margin-bottom: 2rem;">
+        <div class="navbar flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="{{ url_for('main.dashboard') }}" class="btn btn-ghost btn-sm"
+                    style="display:flex; align-items:center; gap:0.5rem; text-decoration:none; color:hsl(var(--muted-foreground));">
+                    <i data-lucide="arrow-left"></i> Back
+                </a>
+                <div style="width:1px; height:24px; background:hsl(var(--border));"></div>
+                <div class="logo-box" style="width:28px; height:28px;">
+                    <img src="{{ url_for('static', filename='images/domino-icon.svg') }}" alt="Logo"
+                        class="logo-icon-img">
+                </div>
+                <h1 class="logo-text" style="font-size:1.1rem; margin:0;">{{ classroom.name }}</h1>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <button id="theme-toggle" class="btn btn-ghost btn-sm">
+                    <i data-lucide="moon" class="theme-icon"></i>
+                </button>
+                <div class="avatar-placeholder"
+                    style="width:32px;height:32px;border-radius:50%;background:hsl(var(--primary));display:flex;align-items:center;justify-content:center;color:hsl(var(--primary-foreground));font-weight:600;">
+                    {{ current_user.username[0]|upper }}
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Banner -->
+    <div class="classroom-header">
+        <h1 style="font-size:2.5rem; font-weight:800; margin-bottom:0.5rem;">{{ classroom.name }}</h1>
+        <p style="opacity:0.9; margin-bottom:1.5rem;">{{ classroom.section or 'No Section' }}</p>
+        {% if is_teacher %}
+        <div class="class-code-badge"
+            onclick="navigator.clipboard.writeText('{{ classroom.join_code }}'); alert('Code copied!')">
+            Code: {{ classroom.join_code }} <i data-lucide="copy" style="width:14px; height:14px;"></i>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Tabs -->
+    <div class="class-tabs">
+        <button class="class-tab active" onclick="switchClassTab('stream')">Summary</button>
+        <button class="class-tab" onclick="switchClassTab('classwork')">Classwork</button>
+        <button class="class-tab" onclick="switchClassTab('people')">People</button>
+    </div>
+
+    <!-- TAB: SUMMARY (Formerly Stream) -->
+    <div id="stream-content">
+        <div
+            style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:1.5rem; margin-bottom:2rem;">
+            <!-- Stats Cards -->
+            <div class="content-card" style="padding:1.5rem; display:flex; align-items:center; gap:1rem;">
+                <div
+                    style="width:48px; height:48px; border-radius:12px; background:hsl(var(--primary)); color:hsl(var(--primary-foreground)); display:flex; align-items:center; justify-content:center;">
+                    <i data-lucide="users" width="24" height="24"></i>
+                </div>
+                <div>
+                    <div style="font-size:1.5rem; font-weight:700;">{{ classroom.enrollments.count() }}</div>
+                    <div style="color:hsl(var(--muted-foreground)); font-size:0.9rem;">Students Enrolled</div>
+                </div>
+            </div>
+
+            <div class="content-card" style="padding:1.5rem; display:flex; align-items:center; gap:1rem;">
+                <div
+                    style="width:48px; height:48px; border-radius:12px; background:hsl(var(--primary)); color:hsl(var(--primary-foreground)); display:flex; align-items:center; justify-content:center;">
+                    <i data-lucide="layers" width="24" height="24"></i>
+                </div>
+                <div>
+                    <div style="font-size:1.5rem; font-weight:700;">{{ classroom.classwork.count() }}</div>
+                    <div style="color:hsl(var(--muted-foreground)); font-size:0.9rem;">Active Items</div>
+                </div>
+            </div>
+        </div>
+
+        <h3 style="margin-bottom:1rem; font-size:1.2rem; font-weight:600;">Recent Activity</h3>
+        {% if classworks %}
+        {% for work in classworks[:3] %}
+        <a href="{{ url_for('lms.view_classwork', cw_id=work.id) }}" style="text-decoration:none;">
+            <div class="content-card work-item"
+                style="padding:1.5rem; display:flex; align-items:center; gap:1rem; margin-bottom:1rem; border:1px solid hsl(var(--border)); border-radius:var(--radius);">
+                <div class="work-icon">
+                    <i data-lucide="{{ 'flask-conical' if work.type == 'lab' else 'file-text' }}"></i>
+                </div>
+                <div style="flex:1;">
+                    <h4 style="margin:0 0 0.25rem 0; font-size:1.1rem; color:hsl(var(--foreground));">{{ work.title }}
+                    </h4>
+                    <div style="font-size:0.85rem; color:hsl(var(--muted-foreground));">
+                        Posted {{ work.created_at.strftime('%b %d') }} • {{ work.type|title }}
+                    </div>
+                </div>
+                <div style="color:hsl(var(--primary)); font-weight:500; font-size:0.9rem;">
+                    View <i data-lucide="arrow-right"
+                        style="width:16px; display:inline-block; vertical-align:middle;"></i>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+        {% else %}
+        <div
+            style="text-align:center; padding:3rem; color:hsl(var(--muted-foreground)); background:hsl(var(--muted)); border-radius:var(--radius);">
+            <i data-lucide="check-circle" style="width:48px; height:48px; margin-bottom:1rem; opacity:0.5;"></i>
+            <p>No activity yet.</p>
+        </div>
+        {% endif %}
+    </div>
+
+
+    <!-- TAB: CLASSWORK -->
+    <div id="classwork-content" style="display:none;">
+        {% if is_teacher %}
+        <div style="margin-bottom:2rem;">
+            <button onclick="document.getElementById('createWorkModal').style.display='flex'" class="btn btn-primary"
+                style="background:hsl(var(--primary)); color:hsl(var(--primary-foreground)); border-radius:2rem; padding:0.5rem 1.5rem;">
+                <i data-lucide="plus"></i> Create
+            </button>
+        </div>
+        {% endif %}
+
+        {% if classworks %}
+        {% for work in classworks %}
+        <div class="post-card" style="padding:0; overflow:hidden;">
+            <div class="work-item" onclick="toggleWorkDetails('details-{{ work.id }}')">
+                <div class="work-icon">
+                    <i data-lucide="{{ 'flask-conical' if work.type == 'lab' else 'file-text' }}"></i>
+                </div>
+                <div style="flex:1;">
+                    <h6 style="margin:0; color:hsl(var(--foreground));">{{ work.title }}</h6>
+                    <span style="font-size:0.8rem; color:hsl(var(--muted-foreground));">Posted {{
+                        work.created_at.strftime('%b %d') }}</span>
+                </div>
+            </div>
+            <div id="details-{{ work.id }}"
+                style="display:none; padding:1.5rem; background:hsl(var(--muted)); border-top:1px solid hsl(var(--border));">
+                <p style="color:hsl(var(--muted-foreground)); font-size:0.9rem; margin-bottom:1rem;">{{ work.description
+                    }}</p>
+                <div style="display:flex; justify-content:flex-end;">
+                    <a href="{{ url_for('lms.view_classwork', cw_id=work.id) }}" class="btn btn-secondary btn-sm"
+                        style="text-decoration:none;">View Material</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="dashboard-empty">
+            <span class="empty-icon">📝</span>
+            <h3 class="empty-title">No classwork yet</h3>
+            <p class="empty-text">Assignments and materials will appear here.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- TAB: PEOPLE -->
+    <div id="people-content" style="display:none;">
+        <div style="max-width:800px; margin:0 auto;">
+            <div class="people-section">
+                <div class="people-header">
+                    <h2 style="font-size:1.5rem; font-weight:600; margin:0;">Teachers</h2>
+                </div>
+                <div class="person-row">
+                    <div class="avatar-circle"
+                        style="background:hsl(var(--primary)); color:hsl(var(--primary-foreground));">
+                        {{ classroom.owner.username[0]|upper }}
+                    </div>
+                    <span style="font-weight:500; color:hsl(var(--foreground));">{{ classroom.owner.display_name or
+                        classroom.owner.username }}</span>
+                </div>
+            </div>
+
+            <div class="people-section">
+                <div class="people-header">
+                    <h2 style="font-size:1.5rem; font-weight:600; margin:0;">Students</h2>
+                    <span style="font-size:0.9rem; color:hsl(var(--muted-foreground));">{{ classroom.enrollments.count()
+                        }} students</span>
+                </div>
+                {% for enrollment in classroom.enrollments %}
+                <div class="person-row">
+                    <div class="avatar-circle">
+                        {{ enrollment.user.username[0]|upper }}
+                    </div>
+                    <span style="color:hsl(var(--foreground));">{{ enrollment.user.display_name or
+                        enrollment.user.username }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Create Classwork -->
+{% if is_teacher %}
+<div id="createWorkModal" class="dialog-overlay" style="display:none;">
+    <div class="dialog" style="max-width:600px;">
+        <form action="{{ url_for('lms.add_classwork', class_id=classroom.id) }}" method="POST">
+            <div class="dialog-header">
+                <h3>Create Assignment</h3>
+                <button type="button" class="dialog-close"
+                    onclick="document.getElementById('createWorkModal').style.display='none'"><i
+                        data-lucide="x"></i></button>
+            </div>
+            <div class="dialog-content">
+                <div style="margin-bottom:1rem;">
+                    <label style="display:block; margin-bottom:0.5rem; font-weight:500;">Title</label>
+                    <input type="text" name="title" required
+                        style="width:100%; padding:0.5rem; border:1px solid hsl(var(--border)); border-radius:0.25rem; background:hsl(var(--background)); color:hsl(var(--foreground));">
+                </div>
+                <div style="margin-bottom:1rem;">
+                    <label style="display:block; margin-bottom:0.5rem; font-weight:500;">Instructions</label>
+                    <textarea name="description" rows="4"
+                        style="width:100%; padding:0.5rem; border:1px solid hsl(var(--border)); border-radius:0.25rem; background:hsl(var(--background)); color:hsl(var(--foreground)); font-family:monospace;"></textarea>
+                </div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem;">
+                    <div>
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:500;">Type</label>
+                        <select name="type"
+                            style="width:100%; padding:0.5rem; border:1px solid hsl(var(--border)); border-radius:0.25rem; background:hsl(var(--background)); color:hsl(var(--foreground));">
+                            <option value="assignment">Assignment</option>
+                            <option value="lab">Interactive Lab</option>
+                            <option value="material">Material</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display:block; margin-bottom:0.5rem; font-weight:500;">Pipeline ID (for
+                            Lab)</label>
+                        <input type="number" name="lab_model_id" placeholder="Optional"
+                            style="width:100%; padding:0.5rem; border:1px solid hsl(var(--border)); border-radius:0.25rem; background:hsl(var(--background)); color:hsl(var(--foreground));">
+                    </div>
+                </div>
+            </div>
+            <div class="dialog-footer">
+                <button type="button" class="btn btn-secondary"
+                    onclick="document.getElementById('createWorkModal').style.display='none'">Cancel</button>
+                <button type="submit" class="btn btn-primary"
+                    style="background:hsl(var(--primary)); color:hsl(var(--primary-foreground));">Assign</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+<script>
+    lucide.createIcons();
+
+    function switchClassTab(tabName) {
+        // Toggle Buttons
+        document.querySelectorAll('.class-tab').forEach(t => t.classList.remove('active'));
+        document.querySelector(`.class-tab[onclick*="${tabName}"]`).classList.add('active');
+
+        // Toggle Content
+        document.getElementById('stream-content').style.display = 'none';
+        document.getElementById('classwork-content').style.display = 'none';
+        document.getElementById('people-content').style.display = 'none';
+
+        document.getElementById(`${tabName}-content`).style.display = 'block';
+    }
+
+    function toggleWorkDetails(id) {
+        const el = document.getElementById(id);
+        el.style.display = el.style.display === 'none' ? 'block' : 'none';
+    }
+
+    // Close modals on overlay click
+    document.querySelectorAll('.dialog-overlay').forEach(overlay => {
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) {
+                overlay.style.display = 'none';
+            }
+        });
+    });
+</script>
+{% endblock %}
