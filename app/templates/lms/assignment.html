@@ -268,13 +268,17 @@
 
                             {% if sub %}
                             <div
-                                style="background: hsl(var(--muted)); padding: 0.5rem; border-radius: 4px; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                                style="background: hsl(var(--muted)); padding: 0.75rem; border-radius: var(--radius); font-size: 0.9rem; margin-bottom: 0.5rem; border: 1px solid hsl(var(--border));">
                                 {% if sub.submission_model_id %}
-                                <a href="{{ url_for('main.builder', modelId=sub.submission_model_id) }}"
-                                    target="_blank">View Pipeline <i data-lucide="external-link"
-                                        style="width: 12px;"></i></a>
+                                <a href="{{ url_for('main.builder', modelId=sub.submission_model_id) }}" target="_blank"
+                                    style="display: flex; align-items: center; gap: 0.5rem; color: hsl(var(--primary)); text-decoration: none; font-weight: 500;">
+                                    <i data-lucide="workflow" style="width: 14px; height: 14px;"></i>
+                                    View Pipeline
+                                    <i data-lucide="external-link" style="width: 12px;"></i>
+                                </a>
                                 {% else %}
-                                {{ sub.feedback or "No content submitted" }}
+                                <span style="color: hsl(var(--muted-foreground));">{{ sub.feedback or "No content
+                                    submitted" }}</span>
                                 {% endif %}
                             </div>
                             <form action="{{ url_for('lms.grade_submission', sub_id=sub.id) }}" method="POST"
