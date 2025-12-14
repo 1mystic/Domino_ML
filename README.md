@@ -1,5 +1,5 @@
 
-![DominoML Banner](Snaps/banner.png)
+![DominoML Banner](Snaps/banner.jpeg)
 
 
 [![Deployed on Render](https://img.shields.io/badge/DEPLOYED_ON-RENDER-000000?style=for-the-badge&logo=render&logoColor=white)](https://domino-ml.onrender.com)
